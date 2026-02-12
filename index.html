@@ -390,21 +390,29 @@
       }
       .rotate-card {
         max-width: 90%;
-        font-size: 17px;
-        line-height: 1.9;
+        font-size: 18px;        /* 手機直向時，提示內文字再放大 */
+        line-height: 2.0;
+        padding: 26px 28px 20px;
       }
       .rotate-card h2 {
-        font-size: 24px;
+        font-size: 26px;        /* 標題再放大一級 */
+      }
+      .rotate-btn {
+        font-size: 16px;        /* 按鈕文字加大 */
+        padding: 8px 18px;
       }
       .game-wrapper {
         height: 100vh;
-        padding: 8px 6px 60px; /* 保留下方空間給方向鍵與安全區域 */
+        padding: 0; /* 直向時也讓畫面全滿，方向鍵浮在上面 */
       }
       canvas {
-        max-width: 100%;
-        max-height: 85vh; /* 直向時讓地圖更高，接近第二張圖的比例 */
-        border-radius: 12px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+        /* 以高度為基準放大，保持比例，不拉伸；多出的左右邊緣留在外層背景 */
+        height: 100vh;
+        width: auto;
+        max-height: 100vh;
+        max-width: none;
+        border-radius: 0;
+        box-shadow: none;
       }
       /* 手機直向：提示框浮在畫面內、靠近遊戲畫面下緣 */
       #infoBox {
@@ -1136,9 +1144,8 @@
     function shouldShowRotateOverlay() {
       const isMobile = window.innerWidth <= 1024;
       const isPortrait = window.innerHeight > window.innerWidth;
-      // 使用新版本的 key，避免之前的設定導致永遠不再顯示
-      const keepPortrait = window.localStorage.getItem('keepPortraitMode_v2') === '1';
-      return isMobile && isPortrait && !keepPortrait;
+      // 簡化：只要是手機直向，就每次顯示提示（不再記錄「維持直向」偏好）
+      return isMobile && isPortrait;
     }
 
     function updateRotateOverlay() {
@@ -1157,7 +1164,6 @@
     });
 
     rotateKeep.addEventListener('click', () => {
-      window.localStorage.setItem('keepPortraitMode_v2', '1');
       rotateOverlay.classList.add('hidden');
       showStartOverlayIfNeeded();
     });
