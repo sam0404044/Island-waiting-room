@@ -449,20 +449,23 @@
         width: 100%;
         height: 100%;
         display: grid;
-        grid-template-rows: 2fr 1fr;
+        grid-template-rows: 2.8fr 1fr; /* 更多空間給 canvas，畫面更大 */
         grid-template-columns: 1fr;
         justify-items: center;
         align-items: start; /* 內容靠上，減少上方黑邊 */
         gap: 0;
         min-height: 0;
-        padding: 2vh 3vw 0 3vw; /* 比例間距，不用固定 px */
-        padding-bottom: max(2vh, env(safe-area-inset-bottom, 0px));
+        padding: 1vh 2vw 0 2vw; /* 略減留白，畫面更大 */
+        padding-bottom: max(1.5vh, env(safe-area-inset-bottom, 0px));
         box-sizing: border-box;
+        overflow: hidden;
       }
       canvas {
         width: 100%;
         height: auto;
         max-height: 100%;
+        transform: scale(1.1); /* 放大約 10%，畫面更大 */
+        transform-origin: top center;
         border-radius: 18px;
         overflow: hidden;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
@@ -476,12 +479,25 @@
         max-width: 90%;
       }
       .controls {
-        position: static;
+        position: relative;
         margin: 0 auto;
         z-index: 20;
         grid-template-columns: 64px 64px 64px;
         grid-template-rows: 64px 64px 64px;
         gap: 8px;
+      }
+      .controls::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.75);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
+        z-index: -1;
       }
       .btn {
         font-size: 24px;
@@ -528,7 +544,6 @@
         gap: 6px;
       }
       .controls::after {
-        /* 桌機版：方向鍵後方深色方形底（只在桌機出現） */
         content: '';
         position: absolute;
         top: 50%;
@@ -536,14 +551,14 @@
         transform: translate(-50%, -50%);
         width: 190px;
         height: 190px;
-        border-radius: 20px;
+        border-radius: 50%;
         background: rgba(0, 0, 0, 0.75);
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
         z-index: -1;
       }
     }
 
-    /* 手機橫向：遊戲填滿高度、保持比例，方向鍵在畫面右下角，隱藏 ? 按鈕；右側卡片不顯示 */
+    /* 手機橫向：遊戲填滿高度、上方貼齊，方向鍵在畫面右下角，隱藏 ? 按鈕；右側卡片不顯示 */
     @media (max-width: 1024px) and (orientation: landscape) {
       .layout-desktop {
         flex-direction: column;
@@ -556,6 +571,12 @@
       }
       .layout-main {
         width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+        justify-content: flex-start;
+        align-items: center;
+        overflow: hidden;
       }
       .game-wrapper {
         height: 100vh;
@@ -567,12 +588,15 @@
         overflow: hidden; /* 若寬度略超出則裁掉左右黑邊，避免滾動條 */
       }
       canvas {
-        /* 手機橫向：Canvas 佔滿可用高度，取消上下 margin，維持等比縮放與圓角 */
+        /* 手機橫向：Canvas 放大約 12%，畫面更大、上方貼齊 */
         width: 100%;
         height: auto;
         max-height: 100vh;
         max-height: 100dvh;
         margin: 0;
+        display: block;
+        transform: scale(1.12);
+        transform-origin: top center;
         border-radius: 18px;
         overflow: hidden;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
@@ -605,6 +629,19 @@
         grid-template-rows: 64px 64px 64px;
         gap: 8px;
       }
+      .controls::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.75);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
+        z-index: -1;
+      }
 
       /* Landscape mobile: hide help button */
       .help-button-desktop {
@@ -612,7 +649,7 @@
       }
     }
 
-    /* 直向螢幕（含平板）：與 768px 以下相同，Canvas 與方向鍵 2:1、都置中 */
+    /* 直向螢幕（含平板）：與 768px 以下相同，Canvas 更大、方向鍵區略小 */
     @media (max-width: 1024px) and (orientation: portrait) {
       .layout-desktop {
         height: 100vh;
@@ -623,20 +660,38 @@
         width: 100%;
         height: 100%;
         display: grid;
-        grid-template-rows: 2fr 1fr;
+        grid-template-rows: 2.8fr 1fr;
         grid-template-columns: 1fr;
         justify-items: center;
-        align-items: start; /* 內容靠上，減少上方黑邊 */
+        align-items: start;
         gap: 0;
         min-height: 0;
-        padding: 2vh 3vw 0 3vw; /* 比例間距，不用固定 px */
-        padding-bottom: max(2vh, env(safe-area-inset-bottom, 0px));
+        padding: 1vh 2vw 0 2vw;
+        padding-bottom: max(1.5vh, env(safe-area-inset-bottom, 0px));
         box-sizing: border-box;
+        overflow: hidden;
+      }
+      .layout-main canvas {
+        transform: scale(1.1);
+        transform-origin: top center;
       }
       .controls {
-        position: static;
+        position: relative;
         margin: 0 auto;
         z-index: 20;
+      }
+      .controls::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.75);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.85);
+        z-index: -1;
       }
     }
   </style>
