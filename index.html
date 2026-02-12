@@ -300,15 +300,15 @@
       display: none;
     }
     .rotate-card {
-      max-width: 420px;
-      padding: 18px 20px 14px;
-      border-radius: 10px;
+      max-width: 520px;
+      padding: 24px 26px 18px;
+      border-radius: 12px;
       background: #f4f4f4;
       color: #222;
       text-align: center;
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
-      font-size: 14px;
-      line-height: 1.6;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.8);
+      font-size: 16px;
+      line-height: 1.8;
     }
     .rotate-icon {
       width: 40px;
@@ -342,8 +342,8 @@
       }
     }
     .rotate-card h2 {
-      margin: 0 0 8px 0;
-      font-size: 18px;
+      margin: 0 0 10px 0;
+      font-size: 22px;
     }
     .rotate-buttons {
       margin-top: 12px;
@@ -387,6 +387,14 @@
       }
       .help-content {
         font-size: 15px;
+      }
+      .rotate-card {
+        max-width: 90%;
+        font-size: 17px;
+        line-height: 1.9;
+      }
+      .rotate-card h2 {
+        font-size: 24px;
       }
       .game-wrapper {
         height: 100vh;
@@ -454,8 +462,9 @@
       }
       .controls {
         position: fixed;
-        right: max(8px, env(safe-area-inset-right, 0px));
-        bottom: max(8px, env(safe-area-inset-bottom, 0px));
+        right: max(10px, env(safe-area-inset-right, 0px) + 4px);
+        /* 往上抬高一些，避免被瀏覽器底部工具列或截圖裁切 */
+        bottom: max(40px, env(safe-area-inset-bottom, 0px) + 16px);
         left: auto;
         transform: none;
         margin: 0;
