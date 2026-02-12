@@ -452,11 +452,11 @@
         grid-template-rows: 2fr 1fr;
         grid-template-columns: 1fr;
         justify-items: center;
-        align-items: center;
+        align-items: start; /* 內容靠上，減少上方黑邊 */
         gap: 0;
         min-height: 0;
-        padding: 0 12px 0 12px;
-        padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+        padding: 2vh 3vw 0 3vw; /* 比例間距，不用固定 px */
+        padding-bottom: max(2vh, env(safe-area-inset-bottom, 0px));
         box-sizing: border-box;
       }
       canvas {
@@ -626,11 +626,11 @@
         grid-template-rows: 2fr 1fr;
         grid-template-columns: 1fr;
         justify-items: center;
-        align-items: center;
+        align-items: start; /* 內容靠上，減少上方黑邊 */
         gap: 0;
         min-height: 0;
-        padding: 0 12px 0 12px;
-        padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+        padding: 2vh 3vw 0 3vw; /* 比例間距，不用固定 px */
+        padding-bottom: max(2vh, env(safe-area-inset-bottom, 0px));
         box-sizing: border-box;
       }
       .controls {
