@@ -2,7 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Simple Canvas RPG Demo (Desktop + Mobile)</title>
+  <title>島嶼候車室－開往民主的轉型正義列車</title>
+  <!-- Social / link preview -->
+  <meta property="og:title" content="島嶼候車室－開往民主的轉型正義列車" />
+  <meta property="og:description" content="在車站場景中，跟隨角色一同尋找轉型正義的故事與見證點。" />
+  <meta property="og:image" content="assets/social_preview.png" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
   <style>
     body {
       /* subtle dark neutral gradient, low-contrast and not flashy */
@@ -280,9 +286,30 @@
       background: #777;
     }
     @media (max-width: 768px) {
+      body {
+        font-size: 16px;
+      }
+      #infoBox {
+        font-size: 16px;
+      }
+      .popup-title {
+        font-size: clamp(20px, 5.2vw, 26px);
+      }
+      .popup-body {
+        font-size: 15px;
+      }
+      .start-card h1 {
+        font-size: 18px;
+      }
+      .start-card p {
+        font-size: 15px;
+      }
+      .help-content {
+        font-size: 15px;
+      }
       .game-wrapper {
         height: 100vh;
-        padding: 8px 6px 54px; /* reserve space at bottom for controls */
+        padding: 8px 6px 70px; /* 多留一點空間給較大的按鍵 */
       }
       canvas {
         max-width: 100%;
@@ -298,6 +325,12 @@
         margin-top: 0;
         margin-bottom: 0;
         z-index: 20;
+        grid-template-columns: 64px 64px 64px;
+        grid-template-rows: 64px 64px 64px;
+        gap: 8px;
+      }
+      .btn {
+        font-size: 24px;
       }
       .help-button-desktop,
       .help-overlay {
@@ -317,7 +350,7 @@
         <h3 class="popup-title">周清月的記者證</h3>
         <div class="popup-body">
           <div class="popup-figure">
-            <img src="1_0.png" alt="周清月的記者證圖像" />
+            <img src="assets/1_0.png" alt="周清月的記者證圖像" />
             <span>圖說：周清月的記者證</span>
           </div>
           <p>民國 70 年 7 月 3 日，陳文成教授被發現陳屍在臺灣大學校內。而後，他在美國卡內基．梅隆大學的同事──法醫魏契與統計系主任狄格魯來臺，對陳文成之死進行獨立調查。</p>
@@ -428,17 +461,17 @@
       }
     };
 
-    // Current file on disk is station.jpg; if you rename it to station.png,
-    // just update this path back to 'station.png'.
-    bgImage.src = 'station.jpg';
-    collisionMask.src = 'station_mask.png';
+    // Map images are now placed in the maps/ folder.
+    // If you rename them, just update these paths accordingly.
+    bgImage.src = 'maps/station.jpg';
+    collisionMask.src = 'maps/station_mask.png';
 
     // Small journalist card icon placed on the map at the red dot.
     const cardIdleImage = new Image();
     const cardActiveImage = new Image();
     // Idle and "nearby" versions of the reporter ID icon.
-    cardIdleImage.src = '1_0.png';
-    cardActiveImage.src = '2_0.png';
+    cardIdleImage.src = 'assets/1_0.png';
+    cardActiveImage.src = 'assets/2_0.png';
 
     // Player directional sprites (32x32). Put these PNGs in the same folder.
     const playerSprites = {
@@ -447,10 +480,10 @@
       left: new Image(),
       right: new Image()
     };
-    playerSprites.up.src = 'player_up.png';
-    playerSprites.down.src = 'player_down.png';
-    playerSprites.left.src = 'player_left.png';
-    playerSprites.right.src = 'player_right.png';
+    playerSprites.up.src = 'characters/player_up.png';
+    playerSprites.down.src = 'characters/player_down.png';
+    playerSprites.left.src = 'characters/player_left.png';
+    playerSprites.right.src = 'characters/player_right.png';
 
     // Fractions for important positions based on the station map.
     // PLAYER_POS is only used for initial band; exact start will be bottom-left of walkable area.
