@@ -75,7 +75,7 @@
       align-items: center;
       justify-content: center;
       background: rgba(0, 0, 0, 0.6);
-      z-index: 10;
+      z-index: 50; /* 高於方向鍵與 ? 按鈕，確保跳窗永遠在最上層 */
     }
     .popup-overlay.hidden {
       display: none;
@@ -294,7 +294,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 35;
+      z-index: 45; /* 高於 start-overlay，先顯示「建議橫向」 */
     }
     .rotate-overlay.hidden {
       display: none;
@@ -390,13 +390,22 @@
       }
       .game-wrapper {
         height: 100vh;
-        padding: 8px 6px 70px; /* 多留一點空間給較大的按鍵 */
+        padding: 8px 6px 60px; /* 保留下方空間給方向鍵與安全區域 */
       }
       canvas {
         max-width: 100%;
-        max-height: 75vh; /* taller canvas on mobile, but still not full-screen */
+        max-height: 85vh; /* 直向時讓地圖更高，接近第二張圖的比例 */
         border-radius: 12px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+      }
+      /* 手機直向：提示框浮在畫面內、靠近遊戲畫面下緣 */
+      #infoBox {
+        position: absolute;
+        left: 50%;
+        bottom: 80px; /* 在方向鍵上方一些 */
+        transform: translateX(-50%);
+        margin-top: 0;
+        max-width: 90%;
       }
       .controls {
         position: fixed;
@@ -419,31 +428,43 @@
       }
     }
 
-    /* 手機橫向：遊戲全螢幕顯示，方向鍵在畫面右下角，隱藏 ? 按鈕 */
-    body.mobile-landscape .game-wrapper {
-      height: 100vh;
-      padding: 0;
-    }
-    body.mobile-landscape canvas {
-      width: 100vw;
-      height: 100vh;
-      max-width: 100vw;
-      max-height: 100vh;
-      border-radius: 0;
-      box-shadow: none;
-    }
-    body.mobile-landscape .controls {
-      position: fixed;
-      right: max(8px, env(safe-area-inset-right, 0px));
-      bottom: max(8px, env(safe-area-inset-bottom, 0px));
-      left: auto;
-      transform: none;
-      margin: 0;
-      z-index: 30;
-    }
-    body.mobile-landscape .help-button-desktop,
-    body.mobile-landscape .help-overlay {
-      display: none;
+    /* 手機橫向：遊戲填滿高度、保持比例，方向鍵在畫面右下角，隱藏 ? 按鈕 */
+    @media (max-width: 1024px) and (orientation: landscape) {
+      .game-wrapper {
+        height: 100vh;
+        padding: 0;
+        overflow: hidden; /* 若寬度略超出則裁掉左右黑邊，避免滾動條 */
+      }
+      canvas {
+        /* 以高度為基準放大，保持比例，不拉伸 */
+        height: 100vh;
+        width: auto;
+        max-height: 100vh;
+        max-width: none;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      #infoBox {
+        position: absolute;
+        left: 50%;
+        bottom: max(80px, env(safe-area-inset-bottom, 0px) + 80px);
+        transform: translateX(-50%);
+        margin-top: 0;
+        max-width: 90%;
+      }
+      .controls {
+        position: fixed;
+        right: max(8px, env(safe-area-inset-right, 0px));
+        bottom: max(8px, env(safe-area-inset-bottom, 0px));
+        left: auto;
+        transform: none;
+        margin: 0;
+        z-index: 30;
+      }
+      .help-button-desktop,
+      .help-overlay {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -485,7 +506,8 @@
   </div>
 
   <!-- Experience start overlay -->
-  <div class="start-overlay" id="startOverlay">
+  <!-- 一開始先隱藏，之後依流程顯示 -->
+  <div class="start-overlay hidden" id="startOverlay">
     <div class="start-card">
       <h1>島嶼候車室－開往民主的轉型正義列車</h1>
       <p>點擊下方按鈕開始體驗這段關於轉型正義、記憶與前行的車站旅程。</p>
@@ -1088,6 +1110,13 @@
     });
 
     // --- Start overlay behavior ---
+    let hasShownStart = false;
+    function showStartOverlayIfNeeded() {
+      if (!hasShownStart) {
+        startOverlay.classList.remove('hidden');
+        hasShownStart = true;
+      }
+    }
     function hideStartOverlay() {
       startOverlay.classList.add('hidden');
     }
@@ -1096,9 +1125,10 @@
 
     // --- 手機版：建議橫向顯示，但可選擇維持直向 ---
     function shouldShowRotateOverlay() {
-      const isMobile = window.innerWidth <= 768;
+      const isMobile = window.innerWidth <= 1024;
       const isPortrait = window.innerHeight > window.innerWidth;
-      const keepPortrait = window.localStorage.getItem('keepPortraitMode') === '1';
+      // 使用新版本的 key，避免之前的設定導致永遠不再顯示
+      const keepPortrait = window.localStorage.getItem('keepPortraitMode_v2') === '1';
       return isMobile && isPortrait && !keepPortrait;
     }
 
@@ -1107,16 +1137,20 @@
         rotateOverlay.classList.remove('hidden');
       } else {
         rotateOverlay.classList.add('hidden');
+        // 當不需要提示旋轉時，才顯示開始畫面
+        showStartOverlayIfNeeded();
       }
     }
 
     rotateOk.addEventListener('click', () => {
       rotateOverlay.classList.add('hidden');
+      showStartOverlayIfNeeded();
     });
 
     rotateKeep.addEventListener('click', () => {
-      window.localStorage.setItem('keepPortraitMode', '1');
+      window.localStorage.setItem('keepPortraitMode_v2', '1');
       rotateOverlay.classList.add('hidden');
+      showStartOverlayIfNeeded();
     });
 
     window.addEventListener('resize', updateRotateOverlay);
@@ -1124,21 +1158,6 @@
 
     // 初次載入時檢查一次（只在手機有效）
     updateRotateOverlay();
-
-    // --- 依手機橫向/直向調整版面（橫向：全螢幕、按鍵在右下角、隱藏 ?） ---
-    function updateOrientationLayout() {
-      const isMobile = window.innerWidth <= 1024 && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
-      const isLandscape = window.innerWidth > window.innerHeight;
-      if (isMobile && isLandscape) {
-        document.body.classList.add('mobile-landscape');
-      } else {
-        document.body.classList.remove('mobile-landscape');
-      }
-    }
-
-    window.addEventListener('resize', updateOrientationLayout);
-    window.addEventListener('orientationchange', updateOrientationLayout);
-    updateOrientationLayout();
   </script>
 </body>
 </html>
