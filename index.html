@@ -487,19 +487,9 @@
         font-size: 24px;
       }
 
-      /* Mobile: turn help button into a small hamburger menu instead of hiding it */
+      /* Mobile: hide help button (no hamburger / question mark on phone) */
       .help-button-desktop {
-        right: 12px;
-        top: 12px;
-        width: 40px;
-        height: 32px;
-        border-radius: 8px;
-        font-size: 0; /* hide original ? text */
-      }
-      .help-button-desktop::before {
-        content: '☰';
-        font-size: 20px;
-        line-height: 1;
+        display: none;
       }
     }
     /* 桌機版：Canvas 依高度縮放，寬度自動計算，不做水平拉伸；方向鍵固定在右下角 */
@@ -616,19 +606,9 @@
         gap: 8px;
       }
 
-      /* Landscape mobile: also use hamburger-style help button */
+      /* Landscape mobile: hide help button */
       .help-button-desktop {
-        right: max(16px, env(safe-area-inset-right, 0px) + 8px);
-        top: max(12px, env(safe-area-inset-top, 0px) + 8px);
-        width: 42px;
-        height: 34px;
-        border-radius: 8px;
-        font-size: 0;
-      }
-      .help-button-desktop::before {
-        content: '☰';
-        font-size: 20px;
-        line-height: 1;
+        display: none;
       }
     }
 
