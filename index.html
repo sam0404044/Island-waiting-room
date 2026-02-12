@@ -577,12 +577,12 @@
         overflow: hidden; /* 若寬度略超出則裁掉左右黑邊，避免滾動條 */
       }
       canvas {
-        /* 手機橫向：Canvas 也略小於螢幕，留出空隙並圓角裁切，維持等比縮放 */
+        /* 手機橫向：Canvas 佔滿可用高度，取消上下 margin，維持等比縮放與圓角 */
         width: 100%;
         height: auto;
-        max-height: 84vh;
-        max-height: 84dvh;
-        margin: 3vh auto;
+        max-height: 100vh;
+        max-height: 100dvh;
+        margin: 0;
         border-radius: 18px;
         overflow: hidden;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
@@ -594,6 +594,12 @@
         transform: translateX(-50%);
         margin-top: 0;
         max-width: 90%;
+      }
+
+      /* 手機橫向：資訊跳窗盡量寬（90%）、高 90vh，減少捲動需求 */
+      .popup-content {
+        max-width: 90%;
+        max-height: 90vh;
       }
       .controls {
         /* 手機橫向：方向鍵固定在畫面右下角 */
