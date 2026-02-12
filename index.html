@@ -310,6 +310,37 @@
       font-size: 14px;
       line-height: 1.6;
     }
+    .rotate-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 3px solid #444;
+      border-top-color: #bbbbbb;
+      margin: 0 auto 10px auto;
+      box-sizing: border-box;
+      animation: rotate-icon-spin 1.4s linear infinite;
+      position: relative;
+    }
+    .rotate-icon::after {
+      content: '';
+      position: absolute;
+      top: -4px;
+      right: 10px;
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 10px solid #bbbbbb;
+      transform: rotate(20deg);
+    }
+    @keyframes rotate-icon-spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
     .rotate-card h2 {
       margin: 0 0 8px 0;
       font-size: 18px;
@@ -387,6 +418,33 @@
         display: none;
       }
     }
+
+    /* 手機橫向：遊戲全螢幕顯示，方向鍵在畫面右下角，隱藏 ? 按鈕 */
+    body.mobile-landscape .game-wrapper {
+      height: 100vh;
+      padding: 0;
+    }
+    body.mobile-landscape canvas {
+      width: 100vw;
+      height: 100vh;
+      max-width: 100vw;
+      max-height: 100vh;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    body.mobile-landscape .controls {
+      position: fixed;
+      right: max(8px, env(safe-area-inset-right, 0px));
+      bottom: max(8px, env(safe-area-inset-bottom, 0px));
+      left: auto;
+      transform: none;
+      margin: 0;
+      z-index: 30;
+    }
+    body.mobile-landscape .help-button-desktop,
+    body.mobile-landscape .help-overlay {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -455,6 +513,7 @@
   <!-- 手機版：建議橫向，但可選擇維持直向 -->
   <div class="rotate-overlay hidden" id="rotateOverlay">
     <div class="rotate-card">
+      <div class="rotate-icon"></div>
       <h2>建議橫向體驗</h2>
       <p>為了讓你更清楚地看見車站與互動點，建議將手機旋轉為橫向瀏覽。</p>
       <p>如果你想維持直向模式，也可以直接繼續體驗。</p>
@@ -1065,6 +1124,21 @@
 
     // 初次載入時檢查一次（只在手機有效）
     updateRotateOverlay();
+
+    // --- 依手機橫向/直向調整版面（橫向：全螢幕、按鍵在右下角、隱藏 ?） ---
+    function updateOrientationLayout() {
+      const isMobile = window.innerWidth <= 1024 && ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+      const isLandscape = window.innerWidth > window.innerHeight;
+      if (isMobile && isLandscape) {
+        document.body.classList.add('mobile-landscape');
+      } else {
+        document.body.classList.remove('mobile-landscape');
+      }
+    }
+
+    window.addEventListener('resize', updateOrientationLayout);
+    window.addEventListener('orientationchange', updateOrientationLayout);
+    updateOrientationLayout();
   </script>
 </body>
 </html>
