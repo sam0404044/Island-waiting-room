@@ -798,7 +798,7 @@
     let VIEW_WIDTH = 1024;
     let VIEW_HEIGHT = 576;
     const TILE_SIZE = 32; // grid size for tile-based movement
-    const MOVE_SPEED = 4; // pixels per frame for smooth movement
+    const MOVE_SPEED = 240; // pixels per second (frame-independent for consistent speed)
 
     // Background image of the station.
     // Use the station map image in this folder.
@@ -1104,7 +1104,8 @@
       });
     }
 
-    function update() {
+    function update(dt) {
+      player.dt = dt;
       // If not currently moving to a tile, check held directions and start a new step.
       if (!player.moving) {
         let dir = null;
@@ -1118,24 +1119,25 @@
         }
       }
 
-      // Smoothly move player towards target tile if currently moving
+      // Smoothly move player towards target tile if currently moving (delta-time based)
       if (player.moving) {
         const dx = player.targetX - player.x;
         const dy = player.targetY - player.y;
         const dist = Math.hypot(dx, dy);
+        const step = player.speed * (player.dt ?? 1/60); // pixels this frame
 
-        if (dist <= player.speed || dist === 0) {
+        if (dist <= step || dist === 0) {
           // Snap to tile and finish movement
           player.x = player.targetX;
           player.y = player.targetY;
           player.moving = false;
           player.remainingDist = 0;
         } else {
-          const stepX = (dx / dist) * player.speed;
-          const stepY = (dy / dist) * player.speed;
+          const stepX = (dx / dist) * step;
+          const stepY = (dy / dist) * step;
           player.x += stepX;
           player.y += stepY;
-          player.remainingDist = dist - player.speed;
+          player.remainingDist = dist - step;
         }
       }
 
@@ -1253,8 +1255,13 @@
       drawPlayer(screenPlayer);
     }
 
-    function loop() {
-      update();
+    let lastFrameTime = 0;
+    function loop(now) {
+      now = now ?? performance.now();
+      if (lastFrameTime === 0) lastFrameTime = now;
+      const dt = Math.min((now - lastFrameTime) / 1000, 0.1); // seconds, cap to avoid jump after tab focus
+      lastFrameTime = now;
+      update(dt);
       draw();
       requestAnimationFrame(loop);
     }
