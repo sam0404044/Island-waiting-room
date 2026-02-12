@@ -285,6 +285,56 @@
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
       background: #777;
     }
+
+    /* 建議橫向遊玩的提示覆蓋層（手機用） */
+    .rotate-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 35;
+    }
+    .rotate-overlay.hidden {
+      display: none;
+    }
+    .rotate-card {
+      max-width: 420px;
+      padding: 18px 20px 14px;
+      border-radius: 10px;
+      background: #f4f4f4;
+      color: #222;
+      text-align: center;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .rotate-card h2 {
+      margin: 0 0 8px 0;
+      font-size: 18px;
+    }
+    .rotate-buttons {
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    .rotate-btn {
+      padding: 6px 14px;
+      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .rotate-btn-primary {
+      background: #333;
+      color: #fff;
+    }
+    .rotate-btn-secondary {
+      background: #ddd;
+      color: #222;
+    }
     @media (max-width: 768px) {
       body {
         font-size: 16px;
@@ -402,6 +452,19 @@
     </div>
   </div>
 
+  <!-- 手機版：建議橫向，但可選擇維持直向 -->
+  <div class="rotate-overlay hidden" id="rotateOverlay">
+    <div class="rotate-card">
+      <h2>建議橫向體驗</h2>
+      <p>為了讓你更清楚地看見車站與互動點，建議將手機旋轉為橫向瀏覽。</p>
+      <p>如果你想維持直向模式，也可以直接繼續體驗。</p>
+      <div class="rotate-buttons">
+        <button class="rotate-btn rotate-btn-primary" id="rotateOk">我已旋轉／開始</button>
+        <button class="rotate-btn rotate-btn-secondary" id="rotateKeep">維持直向</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const canvas = document.getElementById('game');
     const ctx = canvas.getContext('2d');
@@ -414,6 +477,9 @@
     const helpClose = document.getElementById('helpClose');
     const startOverlay = document.getElementById('startOverlay');
     const startButton = document.getElementById('startButton');
+    const rotateOverlay = document.getElementById('rotateOverlay');
+    const rotateOk = document.getElementById('rotateOk');
+    const rotateKeep = document.getElementById('rotateKeep');
 
     // Logical game size; will be updated to match background image dimensions
     // World size (map) and view size (visible screen window in world coordinates)
@@ -439,8 +505,16 @@
       WORLD_WIDTH = bgImage.naturalWidth;
       WORLD_HEIGHT = bgImage.naturalHeight;
 
-      // View size: smaller window that can scroll over the world, same aspect ratio
-      VIEW_WIDTH = Math.min(WORLD_WIDTH, 1280);
+      // 基本視窗寬度（桌機用），不超過 1280
+      const baseViewWidth = Math.min(WORLD_WIDTH, 1280);
+      const isMobile = window.innerWidth <= 768;
+
+      // 手機視角：鏡頭拉近一些，只看世界的一小部分
+      if (isMobile) {
+        VIEW_WIDTH = Math.max(10 * TILE_SIZE, baseViewWidth * 0.6);
+      } else {
+        VIEW_WIDTH = baseViewWidth;
+      }
       VIEW_HEIGHT = VIEW_WIDTH * (WORLD_HEIGHT / WORLD_WIDTH);
 
       canvas.width = VIEW_WIDTH;
@@ -960,6 +1034,37 @@
     }
     startButton.addEventListener('click', hideStartOverlay);
     startOverlay.addEventListener('click', hideStartOverlay);
+
+    // --- 手機版：建議橫向顯示，但可選擇維持直向 ---
+    function shouldShowRotateOverlay() {
+      const isMobile = window.innerWidth <= 768;
+      const isPortrait = window.innerHeight > window.innerWidth;
+      const keepPortrait = window.localStorage.getItem('keepPortraitMode') === '1';
+      return isMobile && isPortrait && !keepPortrait;
+    }
+
+    function updateRotateOverlay() {
+      if (shouldShowRotateOverlay()) {
+        rotateOverlay.classList.remove('hidden');
+      } else {
+        rotateOverlay.classList.add('hidden');
+      }
+    }
+
+    rotateOk.addEventListener('click', () => {
+      rotateOverlay.classList.add('hidden');
+    });
+
+    rotateKeep.addEventListener('click', () => {
+      window.localStorage.setItem('keepPortraitMode', '1');
+      rotateOverlay.classList.add('hidden');
+    });
+
+    window.addEventListener('resize', updateRotateOverlay);
+    window.addEventListener('orientationchange', updateRotateOverlay);
+
+    // 初次載入時檢查一次（只在手機有效）
+    updateRotateOverlay();
   </script>
 </body>
 </html>
