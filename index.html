@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simple Canvas RPG Demo (Desktop + Mobile)</title>
+  <style>
+    body {
+      /* subtle dark neutral gradient, low-contrast and not flashy */
+      background: linear-gradient(180deg, #1f242b 0%, #101318 100%);
+      color: #fff;
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .game-wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      max-width: 100%;
+      max-height: 100%;
+      width: 100%;
+      height: 100vh;
+      padding: 12px 8px 18px;
+      box-sizing: border-box;
+      backdrop-filter: blur(2px);
+    }
+    canvas {
+      border: none;
+      background: #000;
+      image-rendering: pixelated;
+      max-width: 100vw;
+      max-height: 100vh;
+      width: auto;
+      height: auto;
+      display: block;
+      border-radius: 16px; /* rounded rectangle for game view */
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    }
+    #infoBox {
+      margin-top: 8px;
+      padding: 8px 12px;
+      min-height: 24px;
+      background: #333;
+      border-radius: 4px;
+      border: 1px solid #555;
+      width: auto;
+      max-width: 80%;
+      box-sizing: border-box;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    /* Popup image overlay when player is at the interaction point */
+    .popup-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 10;
+    }
+    .popup-overlay.hidden {
+      display: none;
+    }
+    .popup-content {
+      position: relative;
+      background: #f4e9d7; /* close to the info.png beige */
+      padding: 16px 20px;
+      border-radius: 4px;
+      max-width: 60%;   /* 水平更窄，寬度略大於遊戲畫面 */
+      max-height: 98%;  /* 垂直更高，幾乎填滿可視高度 */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      overflow-y: auto;
+      border: 2px solid #c2b59b;
+    }
+    .popup-title {
+      font-size: clamp(26px, 4.6vw, 34px); /* larger title like the image */
+      margin: 0 0 16px 0;
+      color: #003366; /* deep blue similar to info.png title */
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #ffffff; /* clear white underline under the title */
+    }
+    .popup-body {
+      font-size: clamp(12px, 1.9vw, 16px); /* slightly smaller to fit more text */
+      line-height: 1.8;
+      color: #333333;
+    }
+    .popup-body p {
+      margin: 0 0 10px 0;
+    }
+    .popup-figure {
+      float: right;
+      margin: 0 0 8px 12px;
+      text-align: center;
+    }
+    .popup-figure img {
+      display: block;
+      max-width: 140px;
+      width: 100%;
+      height: auto;
+    }
+    .popup-figure span {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      color: #555;
+    }
+    @media (max-width: 600px) {
+      .popup-figure {
+        float: none;
+        margin: 0 0 10px 0;
+      }
+    }
+    .popup-close {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid #666;
+      background: #f4e9d7;
+      color: #555;
+      font-size: 18px;
+      line-height: 1;
+      padding: 0;
+      cursor: pointer;
+    }
+    .popup-close:hover {
+      background: #e2d6c1;
+    }
+
+    .controls {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: 52px 52px 52px;
+      grid-template-rows: 52px 52px 52px;
+      gap: 6px;
+      touch-action: none;
+      user-select: none;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+
+    /* Desktop-only help button on the right side */
+    .help-button-desktop {
+      position: fixed;
+      right: 16px;
+      top: 16px;
+      transform: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid #666;
+      background: #333;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+      z-index: 30;
+    }
+
+    .help-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 29;
+    }
+    .help-overlay.hidden {
+      display: none;
+    }
+    .help-content {
+      max-width: 480px;
+      max-height: 80vh;
+      padding: 16px 20px;
+      background: #f4f4f4;
+      color: #222;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+      overflow-y: auto;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .help-content h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+    .help-close {
+      margin-top: 12px;
+      display: inline-block;
+      padding: 6px 12px;
+      background: #333;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    /* Experience start screen */
+    .start-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 40;
+    }
+    .start-overlay.hidden {
+      display: none;
+    }
+    .start-card {
+      max-width: 520px;
+      padding: 20px 24px 18px;
+      border-radius: 10px;
+      background: #f4f4f4;
+      color: #222;
+      text-align: center;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.7);
+    }
+    .start-card h1 {
+      margin: 0 0 10px 0;
+      font-size: 20px;
+      line-height: 1.6;
+    }
+    .start-card p {
+      margin: 0 0 14px 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .start-button {
+      display: inline-block;
+      padding: 8px 20px;
+      border-radius: 18px;
+      background: #333;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+    }
+    .start-button:hover {
+      background: #555;
+    }
+    .btn {
+      background: #444;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      border: 1px solid #666;
+      color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
+    }
+    .btn.active {
+      transform: translateY(1px);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+      background: #777;
+    }
+    @media (max-width: 768px) {
+      .game-wrapper {
+        height: 100vh;
+        padding: 8px 6px 54px; /* reserve space at bottom for controls */
+      }
+      canvas {
+        max-width: 100%;
+        max-height: 75vh; /* taller canvas on mobile, but still not full-screen */
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+      }
+      .controls {
+        position: fixed;
+        left: 50%;
+        bottom: 8px;
+        transform: translateX(-50%);
+        margin-top: 0;
+        margin-bottom: 0;
+        z-index: 20;
+      }
+      .help-button-desktop,
+      .help-overlay {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="game-wrapper">
+    <canvas id="game" width="590" height="368"></canvas>
+    <div id="infoBox">去尋找地圖上可以互動的點。</div>
+
+    <!-- Popup info page shown when player first stands on the red dot -->
+    <div id="popup" class="popup-overlay hidden">
+      <div class="popup-content">
+        <h3 class="popup-title">周清月的記者證</h3>
+        <div class="popup-body">
+          <div class="popup-figure">
+            <img src="1_0.png" alt="周清月的記者證圖像" />
+            <span>圖說：周清月的記者證</span>
+          </div>
+          <p>民國 70 年 7 月 3 日，陳文成教授被發現陳屍在臺灣大學校內。而後，他在美國卡內基．梅隆大學的同事──法醫魏契與統計系主任狄格魯來臺，對陳文成之死進行獨立調查。</p>
+          <p>陳文成之死引起國內外廣泛關注，美聯社記者周清月（Tina Chou）採訪陳文成的父親後，針對狄格魯與魏契來臺撰寫了報導。因為這篇報導，周清月被新聞局以「在國際間嚴重損及中華民國主權與法律的尊嚴」為由，取消了記者證，並禁止她從事任何新聞工作。</p>
+          <p>因為報導中提到魏契與狄格魯來臺「驗屍」（autopsy），而新聞局認為兩人僅是「檢視」（view）屍體，並非「驗屍」。</p>
+        </div>
+        <button id="popupClose" class="popup-close" aria-label="關閉">✕</button>
+      </div>
+    </div>
+
+    <div class="controls" id="controls">
+      <div></div>
+      <div class="btn" data-dir="up">▲</div>
+      <div></div>
+
+      <div class="btn" data-dir="left">◀</div>
+      <div></div>
+      <div class="btn" data-dir="right">▶</div>
+
+      <div></div>
+      <div class="btn" data-dir="down">▼</div>
+      <div></div>
+    </div>
+  </div>
+
+  <!-- Experience start overlay -->
+  <div class="start-overlay" id="startOverlay">
+    <div class="start-card">
+      <h1>島嶼候車室－開往民主的轉型正義列車</h1>
+      <p>點擊下方按鈕開始體驗這段關於轉型正義、記憶與前行的車站旅程。</p>
+      <button class="start-button" id="startButton">開始體驗</button>
+    </div>
+  </div>
+
+  <!-- Desktop help button and overlay -->
+  <div class="help-button-desktop" id="helpButton">?</div>
+  <div class="help-overlay hidden" id="helpOverlay">
+    <div class="help-content">
+      <h3>關於本專案</h3>
+      <p><strong>轉型正義 Gather Town 線上展覽，促轉列車搶先試乘</strong></p>
+      <p>如果轉型正義，是一台通往民主未來的列車……</p>
+      <p>促轉會的核心理念之一，是將「轉型正義」的成果與社會共享。除了將三年以來的努力整理成詳細報告《任務推動及調查成果報告書》之外，更希望透過多元途徑，讓國人接觸、認識、進一步參與轉型正義。</p>
+      <p>因此促轉會透過 GatherTown，佈置線上展覽《島嶼候車室－開往民主的轉型正義列車》，將報告書的內容比喻成「虛擬火車站」，揭露壓迫體制輪廓、重述權威下受害者故事，以及描繪未來轉型正義工程願景。</p>
+      <p>🚇 現在只要留言「試乘」並分享此則貼文<br>
+         🚇 就有機會搶先參與體驗線上展覽<br>
+         🚇 還有機會獲得特製精美口罩</p>
+      <p>透過你的「見證」與「續寫」，讓我們一起成為後人記憶中的前行者！</p>
+      <div class="help-close" id="helpClose">關閉</div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const infoBox = document.getElementById('infoBox');
+    const popup = document.getElementById('popup');
+    const popupClose = document.getElementById('popupClose');
+    const popupContent = document.querySelector('.popup-content');
+    const helpButton = document.getElementById('helpButton');
+    const helpOverlay = document.getElementById('helpOverlay');
+    const helpClose = document.getElementById('helpClose');
+    const startOverlay = document.getElementById('startOverlay');
+    const startButton = document.getElementById('startButton');
+
+    // Logical game size; will be updated to match background image dimensions
+    // World size (map) and view size (visible screen window in world coordinates)
+    let WORLD_WIDTH = 1024;
+    let WORLD_HEIGHT = 576;
+    let VIEW_WIDTH = 1024;
+    let VIEW_HEIGHT = 576;
+    const TILE_SIZE = 32; // grid size for tile-based movement
+    const MOVE_SPEED = 4; // pixels per frame for smooth movement
+
+    // Background image of the station.
+    // Use the station map image in this folder.
+    const bgImage = new Image();
+
+    // Collision mask (black = blocked, non-black = walkable), same size as station image.
+    const collisionMask = new Image();
+    const maskCanvas = document.createElement('canvas');
+    const maskCtx = maskCanvas.getContext('2d');
+    let blockedTiles = []; // blockedTiles[row][col] === true => cannot walk
+
+    bgImage.onload = () => {
+      // World (map) size = image size
+      WORLD_WIDTH = bgImage.naturalWidth;
+      WORLD_HEIGHT = bgImage.naturalHeight;
+
+      // View size: smaller window that can scroll over the world, same aspect ratio
+      VIEW_WIDTH = Math.min(WORLD_WIDTH, 1280);
+      VIEW_HEIGHT = VIEW_WIDTH * (WORLD_HEIGHT / WORLD_WIDTH);
+
+      canvas.width = VIEW_WIDTH;
+      canvas.height = VIEW_HEIGHT;
+
+      updateLogicalPositions();
+
+      // 如果遮罩已載入，建立碰撞資料
+      if (collisionMask.complete && collisionMask.naturalWidth > 0) {
+        prepareCollisionMask();
+      }
+    };
+
+    // 遮罩載入完成後，如果背景尺寸已知，建立碰撞資料
+    collisionMask.onload = () => {
+      if (WORLD_WIDTH > 0 && WORLD_HEIGHT > 0) {
+        prepareCollisionMask();
+      }
+    };
+
+    // Current file on disk is station.jpg; if you rename it to station.png,
+    // just update this path back to 'station.png'.
+    bgImage.src = 'station.jpg';
+    collisionMask.src = 'station_mask.png';
+
+    // Small journalist card icon placed on the map at the red dot.
+    const cardIdleImage = new Image();
+    const cardActiveImage = new Image();
+    // Idle and "nearby" versions of the reporter ID icon.
+    cardIdleImage.src = '1_0.png';
+    cardActiveImage.src = '2_0.png';
+
+    // Player directional sprites (32x32). Put these PNGs in the same folder.
+    const playerSprites = {
+      up: new Image(),
+      down: new Image(),
+      left: new Image(),
+      right: new Image()
+    };
+    playerSprites.up.src = 'player_up.png';
+    playerSprites.down.src = 'player_down.png';
+    playerSprites.left.src = 'player_left.png';
+    playerSprites.right.src = 'player_right.png';
+
+    // Fractions for important positions based on the station map.
+    // PLAYER_POS is only used for initial band; exact start will be bottom-left of walkable area.
+    const PLAYER_POS = { x: 0.1, y: 0.75 };
+    const ZONE_POS = { x: 0.5, y: 0.42, w: 40, h: 30 };
+
+    // Player: 32x64（寬一格、高兩格）的人物.
+    const player = {
+      x: WORLD_WIDTH * PLAYER_POS.x,
+      y: WORLD_HEIGHT * PLAYER_POS.y,
+      width: TILE_SIZE,        // 32px
+      height: TILE_SIZE * 2,   // 64px
+      moving: false,
+      targetX: 0,
+      targetY: 0,
+      remainingDist: 0,
+      speed: MOVE_SPEED,
+      dir: 'down' // current facing direction: 'up' | 'down' | 'left' | 'right'
+    };
+
+    // Single interaction point: where the character is standing on the screenshot.
+    // You can fine‑tune these numbers later.
+    const interactionZone = {
+      x: WORLD_WIDTH * ZONE_POS.x - ZONE_POS.w / 2,
+      y: WORLD_HEIGHT * ZONE_POS.y - ZONE_POS.h / 2,
+      width: ZONE_POS.w,
+      height: ZONE_POS.h,
+      info: 'This is the key interaction point on the platform.'
+    };
+
+    const keys = { up: false, down: false, left: false, right: false };
+    let wasInZone = false;
+    let isInZoneNow = false;
+    let isNearZoneNow = false;
+
+    // Camera representing the top-left of the visible window in world coordinates
+    const camera = { x: 0, y: 0 };
+
+    // Set canvas to initial logical size and compute positions.
+    canvas.width = VIEW_WIDTH;
+    canvas.height = VIEW_HEIGHT;
+
+    function updateLogicalPositions() {
+      // Define a walkable band that roughly matches the green floor of the platform.
+      // Character should start在月台偏左中間的位置（避開最左側遮罩區域）。
+      const walkTop = WORLD_HEIGHT * 0.63;
+      const walkBottom = WORLD_HEIGHT * 0.86;
+
+      // Start a bit more to the right、稍微更靠下的位置。
+      player.x = TILE_SIZE * 4.5;
+      player.y = (walkTop + walkBottom) / 2;
+
+      // Interaction zone stays roughly in the middle of the platform.
+      interactionZone.x = WORLD_WIDTH * ZONE_POS.x - ZONE_POS.w / 2;
+      interactionZone.y = WORLD_HEIGHT * ZONE_POS.y - ZONE_POS.h / 2;
+
+      // Cache walk band for collision checks.
+      player.walkTop = walkTop;
+      player.walkBottom = walkBottom;
+    }
+
+    updateLogicalPositions();
+
+    // 利用遮罩圖片建立 blockedTiles：黑色(接近 #000) 視為不可通行
+    function prepareCollisionMask() {
+      maskCanvas.width = WORLD_WIDTH;
+      maskCanvas.height = WORLD_HEIGHT;
+      maskCtx.clearRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+      maskCtx.drawImage(collisionMask, 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+
+      const cols = Math.ceil(WORLD_WIDTH / TILE_SIZE);
+      const rows = Math.ceil(WORLD_HEIGHT / TILE_SIZE);
+      blockedTiles = new Array(rows);
+
+      const imgData = maskCtx.getImageData(0, 0, WORLD_WIDTH, WORLD_HEIGHT).data;
+
+      for (let row = 0; row < rows; row++) {
+        blockedTiles[row] = new Array(cols).fill(false);
+        for (let col = 0; col < cols; col++) {
+          // 取該格中心點的顏色
+          const sampleX = Math.min(
+            WORLD_WIDTH - 1,
+            Math.floor(col * TILE_SIZE + TILE_SIZE / 2)
+          );
+          const sampleY = Math.min(
+            WORLD_HEIGHT - 1,
+            Math.floor(row * TILE_SIZE + TILE_SIZE / 2)
+          );
+          const idx = (sampleY * WORLD_WIDTH + sampleX) * 4;
+          const r = imgData[idx];
+          const g = imgData[idx + 1];
+          const b = imgData[idx + 2];
+          const a = imgData[idx + 3];
+
+          // 不透明且非常接近黑色 => 視為牆
+          if (a > 0 && r < 10 && g < 10 && b < 10) {
+            blockedTiles[row][col] = true;
+          }
+        }
+      }
+    }
+
+    // --- Tile-based movement helpers ---
+    function tryMove(dxTiles, dyTiles) {
+      const dx = dxTiles * TILE_SIZE;
+      const dy = dyTiles * TILE_SIZE;
+      if (dx === 0 && dy === 0) return;
+      if (player.moving) return; // wait until current step finishes
+
+      let newX = player.x + dx;
+      let newY = player.y + dy;
+
+      const halfW = player.width / 2;
+      const halfH = player.height / 2;
+
+      // Clamp to world bounds
+      newX = Math.max(halfW, Math.min(WORLD_WIDTH - halfW, newX));
+      newY = Math.max(halfH, Math.min(WORLD_HEIGHT - halfH, newY));
+
+      // 依照遮罩判斷目標格是否被封鎖
+      if (blockedTiles.length > 0) {
+        const col = Math.floor(newX / TILE_SIZE);
+        const row = Math.floor(newY / TILE_SIZE);
+        if (
+          row >= 0 &&
+          row < blockedTiles.length &&
+          col >= 0 &&
+          col < blockedTiles[0].length &&
+          blockedTiles[row][col]
+        ) {
+          // 目標是黑色區塊，取消這一步
+          return;
+        }
+      }
+
+      const dist = Math.hypot(newX - player.x, newY - player.y);
+      if (dist === 0) return;
+
+      // Set up smooth movement towards the target tile
+      player.targetX = newX;
+      player.targetY = newY;
+      player.remainingDist = dist;
+      player.moving = true;
+    }
+
+    function moveFromDirection(dir) {
+      switch (dir) {
+        case 'up':
+          player.dir = 'up';
+          tryMove(0, -1); break;
+        case 'down':
+          player.dir = 'down';
+          tryMove(0, 1); break;
+        case 'left':
+          player.dir = 'left';
+          tryMove(-1, 0); break;
+        case 'right':
+          player.dir = 'right';
+          tryMove(1, 0); break;
+      }
+    }
+
+    // Keyboard input: keep direction pressed while key held down
+    window.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case 'ArrowUp':
+        case 'w':
+        case 'W':
+          keys.up = true; break;
+        case 'ArrowDown':
+        case 's':
+        case 'S':
+          keys.down = true; break;
+        case 'ArrowLeft':
+        case 'a':
+        case 'A':
+          keys.left = true; break;
+        case 'ArrowRight':
+        case 'd':
+        case 'D':
+          keys.right = true; break;
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      switch (e.key) {
+        case 'ArrowUp':
+        case 'w':
+        case 'W':
+          keys.up = false; break;
+        case 'ArrowDown':
+        case 's':
+        case 'S':
+          keys.down = false; break;
+        case 'ArrowLeft':
+        case 'a':
+        case 'A':
+          keys.left = false; break;
+        case 'ArrowRight':
+        case 'd':
+        case 'D':
+          keys.right = false; break;
+      }
+    });
+
+    const controls = document.getElementById('controls');
+
+    // Touch / mouse buttons: hold to keep moving in that direction
+    controls.querySelectorAll('.btn').forEach(btn => {
+      const dir = btn.dataset.dir;
+
+      const start = (e) => {
+        e.preventDefault();
+        btn.classList.add('active');
+        keys[dir] = true;
+      };
+
+      const end = (e) => {
+        e.preventDefault();
+        btn.classList.remove('active');
+        keys[dir] = false;
+      };
+
+      btn.addEventListener('touchstart', start, { passive: false });
+      btn.addEventListener('touchend', end, { passive: false });
+      btn.addEventListener('touchcancel', end, { passive: false });
+
+      btn.addEventListener('mousedown', start);
+      window.addEventListener('mouseup', end);
+    });
+
+    function update() {
+      // If not currently moving to a tile, check held directions and start a new step.
+      if (!player.moving) {
+        let dir = null;
+        if (keys.up) dir = 'up';
+        else if (keys.down) dir = 'down';
+        else if (keys.left) dir = 'left';
+        else if (keys.right) dir = 'right';
+
+        if (dir) {
+          moveFromDirection(dir);
+        }
+      }
+
+      // Smoothly move player towards target tile if currently moving
+      if (player.moving) {
+        const dx = player.targetX - player.x;
+        const dy = player.targetY - player.y;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist <= player.speed || dist === 0) {
+          // Snap to tile and finish movement
+          player.x = player.targetX;
+          player.y = player.targetY;
+          player.moving = false;
+          player.remainingDist = 0;
+        } else {
+          const stepX = (dx / dist) * player.speed;
+          const stepY = (dy / dist) * player.speed;
+          player.x += stepX;
+          player.y += stepY;
+          player.remainingDist = dist - player.speed;
+        }
+      }
+
+      // Keep player inside the world bounds
+      const halfW = player.width / 2;
+      const halfH = player.height / 2;
+      player.x = Math.max(halfW, Math.min(WORLD_WIDTH - halfW, player.x));
+      player.y = Math.max(halfH, Math.min(WORLD_HEIGHT - halfH, player.y));
+
+      // Update camera to follow the player
+      camera.x = player.x - VIEW_WIDTH / 2;
+      camera.y = player.y - VIEW_HEIGHT / 2;
+      camera.x = Math.max(0, Math.min(WORLD_WIDTH - VIEW_WIDTH, camera.x));
+      camera.y = Math.max(0, Math.min(WORLD_HEIGHT - VIEW_HEIGHT, camera.y));
+
+      // Distance between player and the center of the interaction object
+      const objCenterX = interactionZone.x + interactionZone.width / 2;
+      const objCenterY = interactionZone.y + interactionZone.height / 2;
+      const dxCenter = player.x - objCenterX;
+      const dyCenter = player.y - objCenterY;
+      const distToCenter = Math.hypot(dxCenter, dyCenter);
+
+      // "Near" definition: close to the icon but not necessarily inside the trigger zone yet
+      isNearZoneNow = distToCenter < 90;
+
+      // Interaction detection: show popup each time player fully enters the small zone
+      const inZone = isPlayerInZone(player, interactionZone);
+      isInZoneNow = inZone;
+      if (inZone && !wasInZone) {
+        infoBox.textContent = '那裡似乎有什麼東西。';
+        popup.classList.remove('hidden');
+      } else if (!inZone && wasInZone) {
+        popup.classList.add('hidden');
+        infoBox.textContent = '去尋找地圖上可以互動的點。';
+      }
+      wasInZone = inZone;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
+
+      // Draw background station image (if loaded)
+      if (bgImage.complete && bgImage.naturalWidth > 0) {
+        // Draw only the portion of the world that is inside the camera
+        ctx.drawImage(
+          bgImage,
+          camera.x, camera.y, VIEW_WIDTH, VIEW_HEIGHT,
+          0, 0, VIEW_WIDTH, VIEW_HEIGHT
+        );
+      } else {
+        // fallback: dark background if image not loaded yet
+        ctx.fillStyle = '#111';
+        ctx.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
+      }
+
+      // Position of the interaction object (journalist card) in world coordinates
+      const objX = interactionZone.x + interactionZone.width / 2;
+      const objY = interactionZone.y + interactionZone.height / 2;
+      // Convert to screen coordinates relative to camera
+      const screenObjX = objX - camera.x;
+      const screenObjY = objY - camera.y;
+
+      // Glow effect:
+      // - when the player is "near" the card: soft yellow halo
+      // - when the player is actually on the trigger zone: stronger halo
+      if (isNearZoneNow || isInZoneNow) {
+        const t = Date.now() / 300;
+        const pulse = (Math.sin(t) + 1) / 2; // 0..1
+        const baseRadius = isInZoneNow ? 30 : 22;
+        const extra = isInZoneNow ? 10 : 6;
+        const radius = baseRadius + extra * pulse;
+        const gradient = ctx.createRadialGradient(
+          screenObjX, screenObjY, 4,
+          screenObjX, screenObjY, radius
+        );
+        gradient.addColorStop(0, 'rgba(255, 255, 180, 0.9)');
+        gradient.addColorStop(1, 'rgba(255, 255, 180, 0)');
+
+        ctx.save();
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(screenObjX, screenObjY, radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Draw the journalist card icon at the interaction point on the map
+      const cardWidth = 60;
+      const cardHeight = 60;
+      const useActive = isNearZoneNow || isInZoneNow;
+      const icon = useActive ? cardActiveImage : cardIdleImage;
+      if (icon.complete && icon.naturalWidth > 0) {
+        ctx.drawImage(
+          icon,
+          screenObjX - cardWidth / 2,
+          screenObjY - cardHeight / 2,
+          cardWidth,
+          cardHeight
+        );
+      } else {
+        // fallback: small red dot if image not yet loaded
+        ctx.save();
+        ctx.fillStyle = '#ff0000';
+        ctx.beginPath();
+        ctx.arc(screenObjX, screenObjY, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Draw player icon (simple human shape) in screen coordinates
+      const screenPlayer = {
+        x: player.x - camera.x,
+        y: player.y - camera.y,
+        width: player.width,
+        height: player.height
+      };
+      drawPlayer(screenPlayer);
+    }
+
+    function loop() {
+      update();
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    function drawPlayer(p) {
+      const halfW = p.width / 2;
+      const halfH = p.height / 2;
+      const x = p.x - halfW;
+      const y = p.y - halfH;
+
+      const sprite = playerSprites[player.dir];
+      if (sprite && sprite.complete && sprite.naturalWidth > 0) {
+        // Use directional sprite image with a soft glow
+        ctx.save();
+        ctx.shadowColor = 'rgba(255, 255, 200, 0.8)';
+        ctx.shadowBlur = 15;
+        ctx.drawImage(sprite, x, y, p.width, p.height);
+        ctx.restore();
+        return;
+      }
+
+      // Fallback: simple placeholder if sprites not found
+      ctx.fillStyle = '#3b7cff';
+      ctx.fillRect(x + p.width * 0.2, y + p.height * 0.3, p.width * 0.6, p.height * 0.5);
+
+      const headRadius = p.width * 0.3;
+      ctx.fillStyle = '#ffddaa';
+      ctx.beginPath();
+      ctx.arc(p.x, y + headRadius + 2, headRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#222';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(p.x - p.width * 0.15, y + p.height * 0.8);
+      ctx.lineTo(p.x - p.width * 0.15, y + p.height);
+      ctx.moveTo(p.x + p.width * 0.15, y + p.height * 0.8);
+      ctx.lineTo(p.x + p.width * 0.15, y + p.height);
+      ctx.stroke();
+    }
+
+    function isPlayerInZone(p, zone) {
+      const halfW = p.width / 2;
+      const halfH = p.height / 2;
+      const left = p.x - halfW;
+      const right = p.x + halfW;
+      const top = p.y - halfH;
+      const bottom = p.y + halfH;
+
+      return !(
+        right < zone.x ||
+        left > zone.x + zone.width ||
+        bottom < zone.y ||
+        top > zone.y + zone.height
+      );
+    }
+
+    // Start loop immediately; background will appear once loaded.
+    loop();
+
+    // --- Popup behavior ---
+    function hidePopup() {
+      popup.classList.add('hidden');
+    }
+
+    popup.addEventListener('click', hidePopup);
+    popupClose.addEventListener('click', (e) => {
+      e.stopPropagation();
+      hidePopup();
+    });
+    popupContent.addEventListener('click', (e) => {
+      // Prevent clicks on content from closing via overlay handler
+      e.stopPropagation();
+    });
+
+    // --- Help overlay behavior (desktop) ---
+    helpButton.addEventListener('click', () => {
+      helpOverlay.classList.remove('hidden');
+    });
+    helpClose.addEventListener('click', () => {
+      helpOverlay.classList.add('hidden');
+    });
+    helpOverlay.addEventListener('click', () => {
+      helpOverlay.classList.add('hidden');
+    });
+
+    // --- Start overlay behavior ---
+    function hideStartOverlay() {
+      startOverlay.classList.add('hidden');
+    }
+    startButton.addEventListener('click', hideStartOverlay);
+    startOverlay.addEventListener('click', hideStartOverlay);
+  </script>
+</body>
+</html>
+
