@@ -11,20 +11,27 @@
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <style>
+    * {
+      box-sizing: border-box;
+    }
     body {
-      /* 深色背景，襯托白色圖卡 */
       background: linear-gradient(180deg, #101318 0%, #05070a 100%);
       color: #111;
       font-family: sans-serif;
       margin: 0;
       padding: 0;
-      overflow: hidden; /* 不允許整體頁面滾動 */
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      overflow: hidden;
       min-height: 100vh;
       height: 100vh;
-      height: 100dvh; /* 行動裝置使用真實可視高度，避免上下被裁切 */
+      height: 100dvh;
+      width: 100%;
+    }
+    @media (min-width: 769px) {
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
     }
 
     /* Desktop layout: large main card + two stacked side cards */
@@ -35,7 +42,8 @@
       gap: 24px;
       padding: 24px;
       box-sizing: border-box;
-      height: 100vh;       /* 三張卡片整體與螢幕等高 */
+      height: 100vh;
+      margin: 0 auto;
     }
     .layout-main {
       flex: 1 1 auto;
@@ -48,15 +56,20 @@
       padding: 20px;
       box-sizing: border-box;
     }
+    .game-canvas-wrap {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
     canvas {
       border: none;
       background: #000;
       image-rendering: pixelated;
-      /* 預設：依照畫布本身比例等比縮放，不做水平或垂直拉伸；圓角矩形 */
-      width: 100%;
-      height: auto;
-      max-height: 100vh;
-      max-width: 100%;
+      image-rendering: crisp-edges;
       display: block;
       border-radius: 16px;
       overflow: hidden;
@@ -64,29 +77,35 @@
     }
     /* (原 infoBox 樣式已刪除，不再顯示畫面提示框) */
 
-    /* Popup image overlay when player is at the interaction point */
+    /* Popup (Modal) overlay: fullscreen，RWD 滿版 */
     .popup-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      margin: 0;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
       display: flex;
       align-items: center;
       justify-content: center;
       background: rgba(0, 0, 0, 0.6);
-      z-index: 50; /* 高於方向鍵與 ? 按鈕，確保跳窗永遠在最上層 */
+      z-index: 50;
     }
     .popup-overlay.hidden {
       display: none;
     }
     .popup-content {
       position: relative;
-      background: #f4e9d7; /* close to the info.png beige */
+      background: #f4e9d7;
       padding: 16px 20px;
+      padding-top: max(16px, env(safe-area-inset-top));
+      padding-bottom: max(16px, env(safe-area-inset-bottom));
       border-radius: 4px;
-      max-width: 60%;   /* 水平更窄，寬度略大於遊戲畫面 */
-      max-height: 98%;  /* 垂直更高，幾乎填滿可視高度 */
+      width: min(96vw, 520px);
+      max-width: 96vw;
+      margin: 0 auto;
+      max-height: min(80vh, 720px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
       overflow-y: auto;
       border: 2px solid #c2b59b;
@@ -288,53 +307,6 @@
       background: #777;
     }
 
-    /* 建議橫向遊玩的提示覆蓋層（手機用） */
-    .rotate-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 45; /* 高於 start-overlay，先顯示「建議橫向」 */
-    }
-    .rotate-overlay.hidden {
-      display: none;
-    }
-    .rotate-card {
-      max-width: 520px;
-      padding: 24px 26px 18px;
-      border-radius: 12px;
-      background: #f4f4f4;
-      color: #222;
-      text-align: center;
-      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.8);
-      font-size: 16px;
-      line-height: 1.8;
-    }
-    .rotate-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 3px solid #444;
-      border-top-color: #bbbbbb;
-      margin: 0 auto 10px auto;
-      box-sizing: border-box;
-      animation: rotate-icon-spin 1.4s linear infinite;
-      position: relative;
-    }
-    .rotate-icon::after {
-      content: '';
-      position: absolute;
-      top: -4px;
-      right: 10px;
-      width: 0;
-      height: 0;
-      border-left: 6px solid transparent;
-      border-right: 6px solid transparent;
-      border-bottom: 10px solid #bbbbbb;
-      transform: rotate(20deg);
-    }
     /* Global soft fade-in animation */
     @keyframes fade-in-soft {
       from {
@@ -347,14 +319,6 @@
       }
     }
 
-    @keyframes rotate-icon-spin {
-      from {
-        transform: rotate(0deg);
-      }
-      to {
-        transform: rotate(360deg);
-      }
-    }
     /* Apply fade-in to main cards and key UI elements */
     body,
     .layout-desktop,
@@ -364,36 +328,10 @@
     .controls,
     .start-overlay,
     .help-overlay,
-    .rotate-overlay,
     #popup {
       animation: fade-in-soft 0.7s ease-out both;
     }
 
-    .rotate-card h2 {
-      margin: 0 0 10px 0;
-      font-size: 22px;
-    }
-    .rotate-buttons {
-      margin-top: 12px;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-    }
-    .rotate-btn {
-      padding: 6px 14px;
-      border-radius: 16px;
-      border: none;
-      cursor: pointer;
-      font-size: 13px;
-    }
-    .rotate-btn-primary {
-      background: #333;
-      color: #fff;
-    }
-    .rotate-btn-secondary {
-      background: #ddd;
-      color: #222;
-    }
     @media (max-width: 768px) {
       body {
         font-size: 16px;
@@ -416,58 +354,41 @@
       .help-content {
         font-size: 15px;
       }
-      .rotate-card {
-        max-width: 90%;
-        font-size: 18px;        /* 手機直向時，提示內文字再放大 */
-        line-height: 2.0;
-        padding: 26px 28px 20px;
-      }
-      .rotate-card h2 {
-        font-size: 26px;        /* 標題再放大一級 */
-      }
-      .rotate-btn {
-        font-size: 16px;        /* 按鈕文字加大 */
-        padding: 8px 18px;
-      }
-      /* 手機直向：只保留主遊戲卡片，右側兩張卡片隱藏；整體高度=可視高度，不留多餘 padding */
+      /* 手機直向：滿版，無左右間距 */
       .layout-desktop {
         flex-direction: column;
         padding: 0;
+        margin: 0;
+        width: 100%;
+        max-width: 100%;
         height: 100vh;
         height: 100dvh;
       }
       .layout-side {
         display: none;
       }
-      /* 手機直向：Canvas 與方向鍵 2:1 比例，都水平置中，方向鍵在版面內不裁切 */
-      .layout-desktop {
-        height: 100vh;
-        height: 100dvh;
-        padding: 0;
-      }
       .layout-main {
         width: 100%;
         height: 100%;
         display: grid;
-        grid-template-rows: 2.8fr 1fr; /* 更多空間給 canvas，畫面更大 */
+        grid-template-rows: 3.6fr 1fr;
         grid-template-columns: 1fr;
-        justify-items: center;
-        align-items: start; /* 內容靠上，減少上方黑邊 */
+        justify-items: stretch;
+        align-items: start;
         gap: 0;
         min-height: 0;
-        padding: 0 2vw 0 2vw; /* 上方不留白，Canvas 貼齊 */
+        padding: 0;
         padding-bottom: max(1.5vh, env(safe-area-inset-bottom, 0px));
         box-sizing: border-box;
         overflow: hidden;
       }
-      canvas {
+      .game-canvas-wrap {
+        min-height: 0;
         width: 100%;
-        height: auto;
-        max-height: 100%;
-        transform: scale(1.1); /* 放大約 10%，畫面更大 */
-        transform-origin: top center;
+        max-width: 100vw;
+      }
+      canvas {
         border-radius: 18px;
-        overflow: hidden;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
       }
       #infoBox {
@@ -479,12 +400,18 @@
         max-width: 90%;
       }
       .controls {
-        position: relative;
-        margin: 0 auto;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100vw;
+        margin: 0;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
         z-index: 20;
         grid-template-columns: 64px 64px 64px;
         grid-template-rows: 64px 64px 64px;
         gap: 8px;
+        justify-content: center;
       }
       .controls::after {
         content: '';
@@ -523,12 +450,11 @@
         height: 100%;
         margin: 0;
       }
-      canvas {
-        /* 以高度為基準等比縮放，避免水平拉伸；圓角矩形 */
+      .game-canvas-wrap {
         height: 90vh;
-        width: auto;
-        max-height: 90vh;
-        max-width: 100%;
+        width: 100%;
+      }
+      canvas {
         border-radius: 16px;
         overflow: hidden;
       }
@@ -585,18 +511,17 @@
         margin: 0;
         border-radius: 0;
         box-shadow: none;
-        overflow: hidden; /* 若寬度略超出則裁掉左右黑邊，避免滾動條 */
+        overflow: hidden;
+      }
+      .game-canvas-wrap {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
       }
       canvas {
-        /* 手機橫向：Canvas 放大約 12%，畫面更大、上方貼齊 */
-        width: 100%;
-        height: auto;
-        max-height: 100vh;
-        max-height: 100dvh;
+        /* 手機橫向：由 resizeCanvas + contain 繪製，不另用 CSS scale */
         margin: 0;
         display: block;
-        transform: scale(1.12);
-        transform-origin: top center;
         border-radius: 18px;
         overflow: hidden;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
@@ -610,11 +535,11 @@
         max-width: 90%;
       }
 
-      /* 手機橫向：跳窗水平更長（95% 寬）、高 90vh，減少捲動需求 */
+      /* 手機橫向：跳窗接近滿版、可捲動 */
       .popup-content {
-        width: 95%;
-        max-width: 95%;
-        max-height: 90vh;
+        width: min(96vw, 520px);
+        max-width: 96vw;
+        max-height: min(80vh, 720px);
       }
       .controls {
         /* 手機橫向：方向鍵固定在畫面右下角 */
@@ -649,12 +574,14 @@
       }
     }
 
-    /* 直向螢幕（含平板）：與 768px 以下相同，Canvas 更大、方向鍵區略小 */
+    /* 直向螢幕（含平板）：滿版、無左右間距 */
     @media (max-width: 1024px) and (orientation: portrait) {
       .layout-desktop {
         height: 100vh;
         height: 100dvh;
         padding: 0;
+        margin: 0;
+        max-width: 100%;
       }
       .layout-main {
         width: 100%;
@@ -662,23 +589,25 @@
         display: grid;
         grid-template-rows: 2.8fr 1fr;
         grid-template-columns: 1fr;
-        justify-items: center;
+        justify-items: stretch;
         align-items: start;
         gap: 0;
         min-height: 0;
-        padding: 0 2vw 0 2vw;
+        padding: 0;
         padding-bottom: max(1.5vh, env(safe-area-inset-bottom, 0px));
         box-sizing: border-box;
         overflow: hidden;
       }
-      .layout-main canvas {
-        transform: scale(1.1);
-        transform-origin: top center;
-      }
       .controls {
-        position: relative;
-        margin: 0 auto;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100vw;
+        margin: 0;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
         z-index: 20;
+        justify-content: center;
       }
       .controls::after {
         content: '';
@@ -699,7 +628,9 @@
 <body>
   <div class="layout-desktop">
     <div class="layout-main">
-      <canvas id="game" width="590" height="368"></canvas>
+      <div id="game-canvas-wrap" class="game-canvas-wrap">
+        <canvas id="game"></canvas>
+      </div>
 
       <!-- Popup info page shown when player first stands on the red dot -->
       <div id="popup" class="popup-overlay hidden">
@@ -762,20 +693,6 @@
     </div>
   </div>
 
-  <!-- 手機版：建議橫向，但可選擇維持直向 -->
-  <div class="rotate-overlay hidden" id="rotateOverlay">
-    <div class="rotate-card">
-      <div class="rotate-icon"></div>
-      <h2>建議橫向體驗</h2>
-      <p>為了讓你更清楚地看見車站與互動點，建議將手機旋轉為橫向瀏覽。</p>
-      <p>如果你想維持直向模式，也可以直接繼續體驗。</p>
-      <div class="rotate-buttons">
-        <button class="rotate-btn rotate-btn-primary" id="rotateOk">我已旋轉／開始</button>
-        <button class="rotate-btn rotate-btn-secondary" id="rotateKeep">維持直向</button>
-      </div>
-    </div>
-  </div>
-
   <script>
     const canvas = document.getElementById('game');
     const ctx = canvas.getContext('2d');
@@ -787,9 +704,6 @@
     const helpClose = document.getElementById('helpClose');
     const startOverlay = document.getElementById('startOverlay');
     const startButton = document.getElementById('startButton');
-    const rotateOverlay = document.getElementById('rotateOverlay');
-    const rotateOk = document.getElementById('rotateOk');
-    const rotateKeep = document.getElementById('rotateKeep');
 
     // Logical game size; will be updated to match background image dimensions
     // World size (map) and view size (visible screen window in world coordinates)
@@ -797,6 +711,12 @@
     let WORLD_HEIGHT = 576;
     let VIEW_WIDTH = 1024;
     let VIEW_HEIGHT = 576;
+
+    // Canvas 顯示尺寸與 scale（由 resizeCanvas 設定，供 draw 置中用）
+    let canvasCssWidth = 0;
+    let canvasCssHeight = 0;
+    let dpr = 1;
+    let currentScale = 1;
     const TILE_SIZE = 32; // grid size for tile-based movement
     const MOVE_SPEED = 240; // pixels per second (frame-independent for consistent speed)
 
@@ -820,9 +740,11 @@
       const isMobile = window.innerWidth <= 768;
 
       if (isMobile) {
-        // 手機視角：鏡頭再拉近（看世界的一小部分），但保持原始比例不拉伸
-        VIEW_WIDTH = Math.max(10 * TILE_SIZE, baseViewWidth * 0.52);
-        VIEW_HEIGHT = VIEW_WIDTH * (WORLD_HEIGHT / WORLD_WIDTH);
+        // 手機直式：使用直長畫面比例（約 9:16），讓遊戲區明顯變長
+        const portraitAspect = 360 / 640; // 寬/高，畫面比寬更長
+        VIEW_HEIGHT = WORLD_HEIGHT;
+        VIEW_WIDTH = Math.min(WORLD_WIDTH, Math.round(VIEW_HEIGHT * portraitAspect));
+        VIEW_WIDTH = Math.max(VIEW_WIDTH, 10 * TILE_SIZE);
       } else {
         // 桌機視角：視窗偏寬屏，顯示更大片水平內容，但不拉伸畫面，只是裁掉一點上下
         const desktopAspect = 2.1; // 約 21:10，比原始 16:9 更寬
@@ -830,10 +752,8 @@
         VIEW_HEIGHT = VIEW_WIDTH / desktopAspect;
       }
 
-      canvas.width = VIEW_WIDTH;
-      canvas.height = VIEW_HEIGHT;
-
       updateLogicalPositions();
+      resizeCanvas();
 
       // 如果遮罩已載入，建立碰撞資料
       if (collisionMask.complete && collisionMask.naturalWidth > 0) {
@@ -906,12 +826,53 @@
     let isInZoneNow = false;
     let isNearZoneNow = false;
 
-    // Camera representing the top-left of the visible window in world coordinates
-    const camera = { x: 0, y: 0 };
+    // Camera: 左上角世界座標；viewW/viewH 為實際可視範圍（cover 時 = screen/scale）
+    const camera = { x: 0, y: 0, viewW: VIEW_WIDTH, viewH: VIEW_HEIGHT };
 
-    // Set canvas to initial logical size and compute positions.
-    canvas.width = VIEW_WIDTH;
-    canvas.height = VIEW_HEIGHT;
+    // --- 第一步：正確 resize canvas（含 devicePixelRatio，不拉伸）---
+    function getGameCanvasContainerSize() {
+      var w = window.innerWidth;
+      var wrap = document.getElementById('game-canvas-wrap');
+      var h = (wrap && wrap.clientHeight > 0) ? wrap.clientHeight : window.innerHeight;
+      return { width: w, height: h };
+    }
+
+    function resizeCanvas() {
+      dpr = window.devicePixelRatio || 1;
+      var size = getGameCanvasContainerSize();
+      var screenW = Math.max(1, size.width);
+      var screenH = Math.max(1, size.height);
+
+      var DESIGN_W = VIEW_WIDTH;
+      var DESIGN_H = VIEW_HEIGHT;
+      var scale = Math.max(screenW / DESIGN_W, screenH / DESIGN_H);
+
+      var drawW = DESIGN_W * scale;
+      var drawH = DESIGN_H * scale;
+
+      camera.viewW = screenW / scale;
+      camera.viewH = screenH / scale;
+      currentScale = scale;
+
+      canvas.style.width = drawW + 'px';
+      canvas.style.height = drawH + 'px';
+
+      canvas.width = Math.floor(drawW * dpr);
+      canvas.height = Math.floor(drawH * dpr);
+
+      ctx.setTransform(dpr * scale, 0, 0, dpr * scale, 0, 0);
+
+      canvasCssWidth = drawW;
+      canvasCssHeight = drawH;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const gameCanvasWrap = document.getElementById('game-canvas-wrap');
+    if (gameCanvasWrap && typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(resizeCanvas).observe(gameCanvasWrap);
+    }
 
     function updateLogicalPositions() {
       // Define a walkable band that roughly matches the green floor of the platform.
@@ -1147,11 +1108,13 @@
       player.x = Math.max(halfW, Math.min(WORLD_WIDTH - halfW, player.x));
       player.y = Math.max(halfH, Math.min(WORLD_HEIGHT - halfH, player.y));
 
-      // Update camera to follow the player
-      camera.x = player.x - VIEW_WIDTH / 2;
-      camera.y = player.y - VIEW_HEIGHT / 2;
-      camera.x = Math.max(0, Math.min(WORLD_WIDTH - VIEW_WIDTH, camera.x));
-      camera.y = Math.max(0, Math.min(WORLD_HEIGHT - VIEW_HEIGHT, camera.y));
+      // Camera 跟隨玩家中心，並 clamp 不超出地圖
+      var viewW = camera.viewW;
+      var viewH = camera.viewH;
+      camera.x = player.x + player.width / 2 - viewW / 2;
+      camera.y = player.y + player.height / 2 - viewH / 2;
+      camera.x = Math.max(0, Math.min(camera.x, WORLD_WIDTH - viewW));
+      camera.y = Math.max(0, Math.min(camera.y, WORLD_HEIGHT - viewH));
 
       // Distance between player and the center of the interaction object
       const objCenterX = interactionZone.x + interactionZone.width / 2;
@@ -1174,42 +1137,39 @@
       wasInZone = inZone;
     }
 
+    // --- 等比例繪製（cover 模式）：世界座標 translate，可視範圍 = camera.viewW / viewH ---
     function draw() {
-      ctx.clearRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
+      var viewW = camera.viewW;
+      var viewH = camera.viewH;
+      if (viewW <= 0 || viewH <= 0) return;
 
-      // Draw background station image (if loaded)
+      ctx.clearRect(0, 0, canvasCssWidth, canvasCssHeight);
+
+      var offsetX = canvasCssWidth / 2 - viewW * currentScale / 2 - camera.x;
+      var offsetY = canvasCssHeight / 2 - viewH * currentScale / 2 - camera.y;
+
+      ctx.save();
+      ctx.translate(offsetX, offsetY);
+
       if (bgImage.complete && bgImage.naturalWidth > 0) {
-        // Draw only the portion of the world that is inside the camera
-        ctx.drawImage(
-          bgImage,
-          camera.x, camera.y, VIEW_WIDTH, VIEW_HEIGHT,
-          0, 0, VIEW_WIDTH, VIEW_HEIGHT
-        );
+        ctx.drawImage(bgImage, 0, 0, WORLD_WIDTH, WORLD_HEIGHT, 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
       } else {
-        // fallback: dark background if image not loaded yet
         ctx.fillStyle = '#111';
-        ctx.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
+        ctx.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
       }
 
-      // Position of the interaction object (journalist card) in world coordinates
-      const objX = interactionZone.x + interactionZone.width / 2;
-      const objY = interactionZone.y + interactionZone.height / 2;
-      // Convert to screen coordinates relative to camera
-      const screenObjX = objX - camera.x;
-      const screenObjY = objY - camera.y;
+      var objX = interactionZone.x + interactionZone.width / 2;
+      var objY = interactionZone.y + interactionZone.height / 2;
 
-      // Glow effect:
-      // - when the player is "near" the card: soft yellow halo
-      // - when the player is actually on the trigger zone: stronger halo
       if (isNearZoneNow || isInZoneNow) {
-        const t = Date.now() / 300;
-        const pulse = (Math.sin(t) + 1) / 2; // 0..1
-        const baseRadius = isInZoneNow ? 30 : 22;
-        const extra = isInZoneNow ? 10 : 6;
-        const radius = baseRadius + extra * pulse;
-        const gradient = ctx.createRadialGradient(
-          screenObjX, screenObjY, 4,
-          screenObjX, screenObjY, radius
+        var t = Date.now() / 300;
+        var pulse = (Math.sin(t) + 1) / 2;
+        var baseRadius = isInZoneNow ? 30 : 22;
+        var extra = isInZoneNow ? 10 : 6;
+        var radius = baseRadius + extra * pulse;
+        var gradient = ctx.createRadialGradient(
+          objX, objY, 4,
+          objX, objY, radius
         );
         gradient.addColorStop(0, 'rgba(255, 255, 180, 0.9)');
         gradient.addColorStop(1, 'rgba(255, 255, 180, 0)');
@@ -1217,42 +1177,40 @@
         ctx.save();
         ctx.fillStyle = gradient;
         ctx.beginPath();
-        ctx.arc(screenObjX, screenObjY, radius, 0, Math.PI * 2);
+        ctx.arc(objX, objY, radius, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
       }
 
-      // Draw the journalist card icon at the interaction point on the map
-      const cardWidth = 60;
-      const cardHeight = 60;
-      const useActive = isNearZoneNow || isInZoneNow;
-      const icon = useActive ? cardActiveImage : cardIdleImage;
+      var cardWidth = 60;
+      var cardHeight = 60;
+      var useActive = isNearZoneNow || isInZoneNow;
+      var icon = useActive ? cardActiveImage : cardIdleImage;
       if (icon.complete && icon.naturalWidth > 0) {
         ctx.drawImage(
           icon,
-          screenObjX - cardWidth / 2,
-          screenObjY - cardHeight / 2,
+          objX - cardWidth / 2,
+          objY - cardHeight / 2,
           cardWidth,
           cardHeight
         );
       } else {
-        // fallback: small red dot if image not yet loaded
         ctx.save();
         ctx.fillStyle = '#ff0000';
         ctx.beginPath();
-        ctx.arc(screenObjX, screenObjY, 4, 0, Math.PI * 2);
+        ctx.arc(objX, objY, 4, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
       }
 
-      // Draw player icon (simple human shape) in screen coordinates
-      const screenPlayer = {
-        x: player.x - camera.x,
-        y: player.y - camera.y,
+      drawPlayer({
+        x: player.x,
+        y: player.y,
         width: player.width,
         height: player.height
-      };
-      drawPlayer(screenPlayer);
+      });
+
+      ctx.restore();
     }
 
     let lastFrameTime = 0;
@@ -1362,39 +1320,7 @@
     startButton.addEventListener('click', hideStartOverlay);
     startOverlay.addEventListener('click', hideStartOverlay);
 
-    // --- 手機版：建議橫向顯示，但可選擇維持直向 ---
-    function shouldShowRotateOverlay() {
-      const isMobile = window.innerWidth <= 1024;
-      const isPortrait = window.innerHeight > window.innerWidth;
-      // 簡化：只要是手機直向，就每次顯示提示（不再記錄「維持直向」偏好）
-      return isMobile && isPortrait;
-    }
-
-    function updateRotateOverlay() {
-      if (shouldShowRotateOverlay()) {
-        rotateOverlay.classList.remove('hidden');
-      } else {
-        rotateOverlay.classList.add('hidden');
-        // 當不需要提示旋轉時，才顯示開始畫面
-        showStartOverlayIfNeeded();
-      }
-    }
-
-    rotateOk.addEventListener('click', () => {
-      rotateOverlay.classList.add('hidden');
-      showStartOverlayIfNeeded();
-    });
-
-    rotateKeep.addEventListener('click', () => {
-      rotateOverlay.classList.add('hidden');
-      showStartOverlayIfNeeded();
-    });
-
-    window.addEventListener('resize', updateRotateOverlay);
-    window.addEventListener('orientationchange', updateRotateOverlay);
-
-    // 初次載入時檢查一次（只在手機有效）
-    updateRotateOverlay();
+    showStartOverlayIfNeeded();
   </script>
 </body>
 </html>
