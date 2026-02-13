@@ -847,23 +847,22 @@
       var DESIGN_H = VIEW_HEIGHT;
       var scale = Math.max(screenW / DESIGN_W, screenH / DESIGN_H);
 
-      var drawW = DESIGN_W * scale;
-      var drawH = DESIGN_H * scale;
-
       camera.viewW = screenW / scale;
       camera.viewH = screenH / scale;
+      camera.viewW = Math.max(1, camera.viewW);
+      camera.viewH = Math.max(1, camera.viewH);
       currentScale = scale;
 
-      canvas.style.width = drawW + 'px';
-      canvas.style.height = drawH + 'px';
+      canvas.style.width = screenW + 'px';
+      canvas.style.height = screenH + 'px';
 
-      canvas.width = Math.floor(drawW * dpr);
-      canvas.height = Math.floor(drawH * dpr);
+      canvas.width = Math.floor(screenW * dpr);
+      canvas.height = Math.floor(screenH * dpr);
 
       ctx.setTransform(dpr * scale, 0, 0, dpr * scale, 0, 0);
 
-      canvasCssWidth = drawW;
-      canvasCssHeight = drawH;
+      canvasCssWidth = camera.viewW;
+      canvasCssHeight = camera.viewH;
     }
 
     window.addEventListener('resize', resizeCanvas);
@@ -1108,13 +1107,17 @@
       player.x = Math.max(halfW, Math.min(WORLD_WIDTH - halfW, player.x));
       player.y = Math.max(halfH, Math.min(WORLD_HEIGHT - halfH, player.y));
 
-      // Camera 跟隨玩家中心，並 clamp 不超出地圖
       var viewW = camera.viewW;
       var viewH = camera.viewH;
       camera.x = player.x + player.width / 2 - viewW / 2;
       camera.y = player.y + player.height / 2 - viewH / 2;
-      camera.x = Math.max(0, Math.min(camera.x, WORLD_WIDTH - viewW));
-      camera.y = Math.max(0, Math.min(camera.y, WORLD_HEIGHT - viewH));
+      var maxCamX = Math.max(0, WORLD_WIDTH - viewW);
+      var maxCamY = Math.max(0, WORLD_HEIGHT - viewH);
+      camera.x = Math.max(0, Math.min(camera.x, maxCamX));
+      camera.y = Math.max(0, Math.min(camera.y, maxCamY));
+      if (DEBUG_CAMERA && viewH > WORLD_HEIGHT) {
+        console.warn('[camera] viewH > mapH', { mapH: WORLD_HEIGHT, viewH: viewH, cameraY: camera.y });
+      }
 
       // Distance between player and the center of the interaction object
       const objCenterX = interactionZone.x + interactionZone.width / 2;
@@ -1137,19 +1140,25 @@
       wasInZone = inZone;
     }
 
-    // --- 等比例繪製（cover 模式）：世界座標 translate，可視範圍 = camera.viewW / viewH ---
+    var DEBUG_CAMERA = false;
+
     function draw() {
       var viewW = camera.viewW;
       var viewH = camera.viewH;
       if (viewW <= 0 || viewH <= 0) return;
 
-      ctx.clearRect(0, 0, canvasCssWidth, canvasCssHeight);
+      ctx.setTransform(dpr * currentScale, 0, 0, dpr * currentScale, 0, 0);
 
-      var offsetX = canvasCssWidth / 2 - viewW * currentScale / 2 - camera.x;
-      var offsetY = canvasCssHeight / 2 - viewH * currentScale / 2 - camera.y;
+      ctx.clearRect(0, 0, viewW, viewH);
+
+      ctx.fillStyle = '#111';
+      ctx.fillRect(0, 0, viewW, viewH);
 
       ctx.save();
-      ctx.translate(offsetX, offsetY);
+      ctx.beginPath();
+      ctx.rect(0, 0, viewW, viewH);
+      ctx.clip();
+      ctx.translate(-camera.x, -camera.y);
 
       if (bgImage.complete && bgImage.naturalWidth > 0) {
         ctx.drawImage(bgImage, 0, 0, WORLD_WIDTH, WORLD_HEIGHT, 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
@@ -1211,6 +1220,19 @@
       });
 
       ctx.restore();
+
+      if (DEBUG_CAMERA) {
+        var mapH = WORLD_HEIGHT;
+        var mapW = WORLD_WIDTH;
+        var diffH = mapH - camera.viewH;
+        var viewLargerThanMap = camera.viewH > mapH;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.font = '10px monospace';
+        ctx.fillStyle = '#0f0';
+        ctx.fillText('mapH=' + mapH + ' viewH=' + camera.viewH + ' diff=' + diffH, 4, 12);
+        ctx.fillText('camera.y=' + camera.y + ' view>map=' + viewLargerThanMap, 4, 24);
+        ctx.setTransform(dpr * currentScale, 0, 0, dpr * currentScale, 0, 0);
+      }
     }
 
     let lastFrameTime = 0;
