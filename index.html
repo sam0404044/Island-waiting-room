@@ -106,13 +106,27 @@
       border-bottom: none;
       border-radius: 16px 16px 0 0;
       box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
-      overflow-y: auto;
-      padding-bottom: env(safe-area-inset-bottom);
       transform: translateY(100%);
       transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: env(safe-area-inset-bottom);
+      padding-right: 0;
     }
     .bottom-sheet.open {
       transform: translateY(0);
+    }
+    .bottom-sheet-scroll {
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      flex: 1;
+      min-height: 0;
+      padding-right: 14px;
+    }
+    .bottom-sheet-scroll::-webkit-scrollbar {
+      display: none;
     }
     .drag-handle {
       width: 40px;
@@ -121,6 +135,35 @@
       background: #999;
       border-radius: 2px;
       flex-shrink: 0;
+    }
+    /* 捲動進度條：右側垂直條 */
+    .scroll-progress-wrap {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      width: 8px;
+      background: rgba(0, 51, 102, 0.1);
+      border-radius: 8px 0 0 8px;
+      overflow: hidden;
+      cursor: pointer;
+      z-index: 2;
+      box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.06);
+    }
+    .scroll-progress-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 20%;
+      min-height: 24px;
+      border-radius: 6px;
+      background: linear-gradient(180deg, #00509e 0%, #004080 50%, #003366 100%);
+      box-shadow: 0 0 8px rgba(0, 80, 128, 0.4);
+      transition: top 0.12s ease-out;
+    }
+    .scroll-progress-wrap:hover {
+      background: rgba(0, 51, 102, 0.18);
     }
     .popup-content {
       position: relative;
@@ -161,16 +204,23 @@
       font-size: 11px;
       color: #555;
     }
+    /* 黃家母女隨身包：可選裁切，設為 0 即原尺寸 */
+    .popup-figure--crop img {
+      clip-path: inset(0);
+    }
     @media (max-width: 600px) {
       .popup-figure {
-        float: none;
-        margin: 0 0 10px 0;
+        float: right;
+        margin: 0 0 10px 12px;
+      }
+      .popup-figure img {
+        max-width: 100px;
       }
     }
     .popup-close {
       position: absolute;
       top: 6px;
-      right: 8px;
+      right: 14px;
       width: 26px;
       height: 26px;
       border-radius: 50%;
@@ -181,6 +231,7 @@
       line-height: 1;
       padding: 0;
       cursor: pointer;
+      z-index: 3;
     }
     .popup-close:hover {
       background: #e2d6c1;
@@ -246,6 +297,64 @@
       cursor: pointer;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
       z-index: 30;
+    }
+
+    /* DEBUG 模式按鈕與座標面板 */
+    .debug-btn {
+      position: fixed;
+      left: 16px;
+      top: 16px;
+      width: 48px;
+      height: 32px;
+      border-radius: 6px;
+      border: 1px solid #555;
+      background: #2a2a2a;
+      color: #0f0;
+      font-size: 11px;
+      font-family: monospace;
+      cursor: pointer;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .debug-panel {
+      position: fixed;
+      left: 16px;
+      top: 54px;
+      min-width: 200px;
+      padding: 8px 10px;
+      background: rgba(0, 0, 0, 0.85);
+      border: 1px solid #444;
+      border-radius: 6px;
+      color: #0f0;
+      font-size: 12px;
+      font-family: monospace;
+      line-height: 1.5;
+      z-index: 31;
+      white-space: pre;
+      user-select: text;
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+    }
+    .debug-panel.hidden {
+      display: none;
+    }
+    .debug-copy-btn {
+      margin-top: 8px;
+      padding: 4px 10px;
+      width: 100%;
+      border: 1px solid #555;
+      border-radius: 4px;
+      background: #333;
+      color: #0f0;
+      font-size: 12px;
+      font-family: monospace;
+      cursor: pointer;
+    }
+    .debug-copy-btn:hover {
+      background: #444;
     }
 
     .help-overlay {
@@ -737,21 +846,198 @@
 
       <!-- Popup: 底部抽屜 Bottom Sheet -->
       <div id="popup" class="popup-overlay hidden">
-        <div class="bottom-sheet">
-          <div class="drag-handle" aria-hidden="true"></div>
-          <div class="popup-content">
-            <h3 class="popup-title">周清月的記者證</h3>
-          <div class="popup-body">
-            <div class="popup-figure">
-              <img src="assets/1_0.png" alt="周清月的記者證圖像" />
-              <span>圖說：周清月的記者證</span>
+        <div class="bottom-sheet" id="bottomSheetZhou">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollZhou">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">周清月的記者證</h3>
+              <div class="popup-body">
+                <div class="popup-figure">
+                  <img src="assets/1_0.png" alt="周清月的記者證圖像" />
+                  <span>圖說：周清月的記者證</span>
+                </div>
+                <p>民國 70 年 7 月 3 日，陳文成教授被發現陳屍在臺灣大學校內。而後，他在美國卡內基．梅隆大學的同事──法醫魏契與統計系主任狄格魯來臺，對陳文成之死進行獨立調查。</p>
+                <p>陳文成之死引起國內外廣泛關注，美聯社記者周清月（Tina Chou）採訪陳文成的父親後，針對狄格魯與魏契來臺撰寫了報導。因為這篇報導，周清月被新聞局以「在國際間嚴重損及中華民國主權與法律的尊嚴」為由，取消了記者證，並禁止她從事任何新聞工作。</p>
+                <p>因為報導中提到魏契與狄格魯來臺「驗屍」（autopsy），而新聞局認為兩人僅是「檢視」（view）屍體，並非「驗屍」。</p>
+              </div>
             </div>
-            <p>民國 70 年 7 月 3 日，陳文成教授被發現陳屍在臺灣大學校內。而後，他在美國卡內基．梅隆大學的同事──法醫魏契與統計系主任狄格魯來臺，對陳文成之死進行獨立調查。</p>
-            <p>陳文成之死引起國內外廣泛關注，美聯社記者周清月（Tina Chou）採訪陳文成的父親後，針對狄格魯與魏契來臺撰寫了報導。因為這篇報導，周清月被新聞局以「在國際間嚴重損及中華民國主權與法律的尊嚴」為由，取消了記者證，並禁止她從事任何新聞工作。</p>
-            <p>因為報導中提到魏契與狄格魯來臺「驗屍」（autopsy），而新聞局認為兩人僅是「檢視」（view）屍體，並非「驗屍」。</p>
+          </div>
+          <div class="scroll-progress-wrap" id="scrollProgressZhou" aria-label="閱讀進度">
+            <div class="scroll-progress-bar" id="scrollProgressBarZhou"></div>
           </div>
           <button id="popupClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 黃家母女的隨身包 -->
+      <div id="popupHuang" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetHuang">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollHuang">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">黃家母女的隨身包</h3>
+              <div class="popup-body">
+                <div class="popup-figure popup-figure--crop">
+                  <img src="車廂1物件/黃家母女無人.png" alt="黃家母女的隨身包圖像" />
+                  <span>圖說：黃家母女的隨身包</span>
+                </div>
+                <p>民國42年，黃溫恭遭到槍決，當時他的長女黃鈴蘭年僅5歲。</p>
+                <p>黃溫恭是路竹鄉的齒科醫生，因涉及「省工委燕巢、路竹支部案」被判刑，留下妻子黃楊清蓮和三個孩子。</p>
+                <p>姊姊黃鈴蘭成長記憶裡，母親總是隨身帶一個小包包，裡面放著各式證件，以備警察檢查。晚年失智時，母親常檢查完身分證又馬上忘記，忘記又再檢查。直到臨終，母親依舊將裝滿證件的小包包放在床邊，終日生活在恐懼下。</p>
+                <p>而即使姊妹兩人長大成人，步入婚嫁，來自政府的監控仍沒有停止。</p>
+                <p>每周都會有警察進行戶口查察，在市場做生意時，警察也利用各種理由打擾。例如要求寫問卷調查來留下筆跡，比較直白的警察，還會直接索取照片，那種無形的壓力，在心中埋藏很久。</p>
+                <p>妹妹黃春蘭偶爾也會想：「其實整個事情是父親一個人做的，為什麼家裡所有人都要受到這種監控？」</p>
+                <p>對黃家的監控自民國48年開始，至79年撤銷，持續超過30年。</p>
+                <p>檔案解密後，黃春蘭在閱覽檔案時分享：「我們政治受難者家屬最常聽到的，就是『事情都這麼久了，該放下，要走出去，可是你們為什麼一直不走過去呢？為什麼一直不放下？』我覺得歷史尚未完全明朗，這種事情對我們來說其實相當沉重，不是我們不想走過去，我也希望有非常快樂的人生呀……」</p>
+              </div>
+            </div>
           </div>
+          <div class="scroll-progress-wrap" id="scrollProgressHuang" aria-label="閱讀進度">
+            <div class="scroll-progress-bar" id="scrollProgressBarHuang"></div>
+          </div>
+          <button id="popupHuangClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 杜孝生 -->
+      <div id="popupDu" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetDu">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollDu">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">杜孝生的聽診器</h3>
+              <div class="popup-body">
+                <div class="popup-figure">
+                  <img src="車廂1物件/杜孝生無人.png" alt="杜孝生的聽診器圖像" />
+                  <span>圖說：杜孝生的聽診器</span>
+                </div>
+                <p>新美農場的開拓並不容易，鄒族人到這裡時，土地還是一片森林。</p>
+                <p>當時鄒族人生活場域能夠耕作的地很少且陡峭，阿里山鄒族領袖高一生與胞弟杜孝生（Voytte Tosktt），希望讓族人的生活過得更好，所以由達邦（tapangx）部落遷移至新美（yaisana）農場。</p>
+                <p>杜孝生畢業於臺北帝國大學附屬醫學專門部，同時兼任吳鳳鄉衛生所所長，以及新美農場場長。</p>
+                <p>一開始新美農場尚未有糧食產出，因此第一批族人每 10 天就需要往返達邦搬運地瓜等物資作物，供墾荒之用。路途遙遠，甚至要中途過夜，長達半年之久。</p>
+                <p>民國 41 年 9 月，杜孝生與高一生被以「下山開會」為由誘出，實為情治單位的誘捕。逮捕後，當局在部落內散播指控杜孝生等人「侵占新美農場公款與種子」「侵占政府配發肥料與棉布」等宣傳。</p>
+                <p>本應由普通法院審理的案件，在參謀總長周至柔要求下改由軍法審判。軍法官未調查對杜孝生有利的證據，情治機關也未取得關鍵證據「新美農場帳冊」。杜孝生被判 17 年徒刑。</p>
+                <p>出獄後因冤名未雪，不被部落接納，杜孝生後於台東開設診所。政府對阿里山原住民的政治監控意在壓制異議、控制原住民族，「貪污」污名至今仍影響部落。</p>
+              </div>
+            </div>
+          </div>
+          <div class="scroll-progress-wrap" id="scrollProgressDu" aria-label="閱讀進度">
+            <div class="scroll-progress-bar" id="scrollProgressBarDu"></div>
+          </div>
+          <button id="popupDuClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 劉永祥 -->
+      <div id="popupLiu" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetLiu">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollLiu">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">劉永祥的學生證</h3>
+              <div class="popup-body">
+                <div class="popup-figure">
+                  <img src="車廂1物件/劉永祥無人.png" alt="劉永祥的學生證圖像" />
+                  <span>圖說：劉永祥的學生證</span>
+                </div>
+                <p>國共內戰爆發後，有數千名學生從青島撤退上海，輾轉湖南、廣東，最後倉皇逃到澎湖，劉永祥就是其中之一。</p>
+                <p>教育部和澎湖防守司令部商定，讓這群來自山東的流亡學生 17 歲以上「半訓半讀」，16 歲以下則是設立「澎湖防守司令部子弟學校」繼續上課。</p>
+                <p>但澎湖防衛司令部為補充國共內戰中耗損的兵員，不顧與教育部商定「半訓半讀」的保證，將超過千名流亡學生強制編入部隊，並以武力壓制反對的聲音，造成 2 名學生遭刺傷。</p>
+                <p>被強制編入部隊的學生在書信中表達不滿，澎湖防衛司令部卻將他們的訴求斥為「滿紙匪諜反動言語」。澎湖防衛司令部將案件移送軍法審判時的紀錄顯示，共有 96 名師生遭逮捕，並受到「疲勞偵訊」。</p>
+                <p>挺身維護學生權益的兩位校長，以及劉永祥與另外 5 名學生，被認定為「主要匪犯」，判處死刑，於新店溪畔堤防旁的馬場町刑場槍決。這起事件即為歷史上所稱的「七一三事件」。</p>
+              </div>
+            </div>
+          </div>
+          <div class="scroll-progress-wrap" id="scrollProgressLiu" aria-label="閱讀進度">
+            <div class="scroll-progress-bar" id="scrollProgressBarLiu"></div>
+          </div>
+          <button id="popupLiuClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 楊翰 -->
+      <div id="popupYang" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetYang">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollYang">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">陽翰的情報報告</h3>
+              <div class="popup-body">
+                <div class="popup-figure">
+                  <img src="車廂1物件/陽翰無人.png" alt="陽翰的情報報告圖像" />
+                  <span>圖說：陽翰的情報報告</span>
+                </div>
+                <p>在監控檔案裡寫著，線民「陽翰」負責在《新文化》雜誌社、《臺灣文藝》情蒐，而陽翰真實身分的欄位，寫是前衛出版社負責人林文欽。</p>
+                <p>但這件事，仔細查看陽翰的情報報告，又會看到「臺灣新文化雜誌社務委員林文欽於辦公室談話……」這樣的內容，等於是林文欽自己在監控自己。</p>
+                <p>再加上《臺灣新文化》雜誌受政府監控，多次停刊及查扣，如果林文欽是線民，協助政府監控結果自己損失慘重，也不符常理。</p>
+                <p>為了確認檔案內容，促轉會請主管這份檔案的情治機關人員說明，該人員坦言，檔案裡雖然註記陽翰是林文欽，但事實卻不盡是。</p>
+                <p>「〈情報報告〉上面有一個格式，你要寫來源，你就掛一個名字。實際上你自己去蒐報，去問人。」</p>
+                <p>為什麼白紙黑字的檔案，會出現這樣的灰色地帶？可能因為線民陽翰的身分對外保密，因此在調查人員便自行行事，檔案記載的相關資訊，就背離了事實。</p>
+                <p>但像陽翰的情況是否只是個案？在缺乏大規模的檔案研究與核實工作之前，難以妄下評論。</p>
+                <p>還原歷史真相的工作，便是透過檔案資料核實的過程，對檔案中的灰色段落保持警惕，這是因應檔案開放不得不審慎面對的重要工程，否則不但可能難以還原歷史真相，反而招致更多的誤解及傷害。</p>
+              </div>
+            </div>
+          </div>
+          <div class="scroll-progress-wrap" id="scrollProgressYang" aria-label="閱讀進度">
+            <div class="scroll-progress-bar" id="scrollProgressBarYang"></div>
+          </div>
+          <button id="popupYangClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 王再傳的黨員手冊 -->
+      <div id="popupWang" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetWang">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollWang">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">王再傳的黨員手冊</h3>
+              <div class="popup-body">
+                <div class="popup-figure">
+                  <img src="車廂1物件/王再傳無人.png" alt="王再傳的黨員手冊圖像" />
+                  <span>圖說：王再傳的黨員手冊</span>
+                </div>
+                <p>歷史上的「鹿窟事件」，是指由國防部保密局主導，在民國 41、42 年間，鎖定在汐止、石碇、瑞芳等地發展的共產黨組織，進行一連串的調查、搜捕及審判。</p>
+                <p>王再傳被起訴曾在大安印刷廠充當印刷工，翻印《開國文獻》、《28 週年紀念》、《黨員手冊》等書，以及在鹿窟基地充任戰鬥員，因此判處死刑。</p>
+                <p>王再傳參與共產黨組織或許是事實，但調閱審判相關檔案資料，會發現判決內容與過程存有眾多疑義。</p>
+                <p>王再傳在審判紀錄中表示：「因為當時生病沒有受訓，戰鬥員的部分是法官問大家有沒有我也有，他們寫的，我沒有承認。」</p>
+                <p>王再傳案最終審理日期為民國 43 年 9 月 22 日，但判決書所載辯護人接見日期卻是 9 月 23 日，意即辯護人未實際接見被告即撰寫辯護意旨書，並代為「自白認罪」。</p>
+                <p>依《懲治叛亂條例》即便翻印書籍、受訓，參加叛亂組織通常為無期徒刑或十年以上有期徒刑，但判決卻以「直接以非法之方法顛覆政府」論處死刑。</p>
+                <p>可見當時的司法已非保障人權的最後防線，而是統治者整肅異己的機制，法官未依證據定罪，事後救濟無門，造成不少人權迫害。</p>
+              </div>
+            </div>
+          </div>
+          <div class="scroll-progress-wrap" id="scrollProgressWang" aria-label="閱讀進度">
+            <div class="scroll-progress-bar" id="scrollProgressBarWang"></div>
+          </div>
+          <button id="popupWangClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 新竹高工裡的塗鴉 -->
+      <div id="popupZhugong" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetZhugong">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollZhugong">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">新竹高工裡的塗鴉</h3>
+              <div class="popup-body">
+                <div class="popup-figure">
+                  <img src="車廂1物件/竹工無人.png" alt="新竹高工裡的塗鴉圖像" />
+                  <span>圖說：新竹高工裡的塗鴉</span>
+                </div>
+                <p>民國 70 年，新竹高工廁所裡有人用原子筆寫下「信仰馬列主義」、「反對中央政府」、「打擊黑狗」等字句。</p>
+                <p>「打擊黑狗」的「黑狗」是該校教官的綽號，塗鴉可能出自對校園生活不滿的學生。如今看來或許只是廁所塗鴉，當時這類「不當文字」卻引起情治機關高度重視。</p>
+                <p>情治機關為找出廁所塗鴉的學生，發動全校性的筆跡比對，收繳學生週記、作業等進行比對。筆跡鑑定並不容易，經全面比對師生筆跡後，先後篩出 56 份可疑筆跡，再經細部比對，卻無一與廁所塗鴉筆跡相符。</p>
+                <p>情治機關又針對與綽號「黑狗」的教官有衝突的學生進行調查，懷疑是不滿學生所為，仍無法鎖定塗鴉學生。</p>
+                <p>塗鴉發現於民國 70 年，整起調查與筆跡收繳耗費大量人力物力，案件直至民國 74 年才以放棄偵辦結案，前後長達四年。</p>
+              </div>
+            </div>
+          </div>
+          <div class="scroll-progress-wrap" id="scrollProgressZhugong" aria-label="閱讀進度">
+            <div class="scroll-progress-bar" id="scrollProgressBarZhugong"></div>
+          </div>
+          <button id="popupZhugongClose" class="popup-close" aria-label="關閉">✕</button>
         </div>
       </div>
 
@@ -790,6 +1076,13 @@
     </div>
   </div>
 
+  <!-- DEBUG 按鈕與座標面板 -->
+  <button type="button" class="debug-btn" id="debugBtn" aria-label="DEBUG 座標">DEBUG</button>
+  <div class="debug-panel hidden" id="debugPanel">
+    <div id="debugPanelText"></div>
+    <button type="button" class="debug-copy-btn" id="debugCopyBtn">複製座標</button>
+  </div>
+
   <!-- Desktop help button and overlay -->
   <div class="help-button-desktop" id="helpButton">?</div>
   <div class="help-overlay hidden" id="helpOverlay">
@@ -814,12 +1107,34 @@
     const popupClose = document.getElementById('popupClose');
     const popupContent = document.querySelector('.popup-content');
     const bottomSheet = document.querySelector('.bottom-sheet');
+    const popupHuang = document.getElementById('popupHuang');
+    const popupHuangClose = document.getElementById('popupHuangClose');
+    const bottomSheetHuang = popupHuang ? popupHuang.querySelector('.bottom-sheet') : null;
+    const popupDu = document.getElementById('popupDu');
+    const popupDuClose = document.getElementById('popupDuClose');
+    const bottomSheetDu = popupDu ? popupDu.querySelector('.bottom-sheet') : null;
+    const popupLiu = document.getElementById('popupLiu');
+    const popupLiuClose = document.getElementById('popupLiuClose');
+    const bottomSheetLiu = popupLiu ? popupLiu.querySelector('.bottom-sheet') : null;
+    const popupYang = document.getElementById('popupYang');
+    const popupYangClose = document.getElementById('popupYangClose');
+    const bottomSheetYang = popupYang ? popupYang.querySelector('.bottom-sheet') : null;
+    const popupWang = document.getElementById('popupWang');
+    const popupWangClose = document.getElementById('popupWangClose');
+    const bottomSheetWang = popupWang ? popupWang.querySelector('.bottom-sheet') : null;
+    const popupZhugong = document.getElementById('popupZhugong');
+    const popupZhugongClose = document.getElementById('popupZhugongClose');
+    const bottomSheetZhugong = popupZhugong ? popupZhugong.querySelector('.bottom-sheet') : null;
     var gameState = { inputLocked: false };
     const helpButton = document.getElementById('helpButton');
     const helpOverlay = document.getElementById('helpOverlay');
     const helpClose = document.getElementById('helpClose');
     const startOverlay = document.getElementById('startOverlay');
     const startButton = document.getElementById('startButton');
+    const debugBtn = document.getElementById('debugBtn');
+    const debugPanel = document.getElementById('debugPanel');
+    const debugPanelText = document.getElementById('debugPanelText');
+    const debugCopyBtn = document.getElementById('debugCopyBtn');
 
     // Logical game size; will be updated to match background image dimensions
     // World size (map) and view size (visible screen window in world coordinates)
@@ -836,66 +1151,150 @@
     const TILE_SIZE = 32; // grid size for tile-based movement
     const MOVE_SPEED = 240; // pixels per second (frame-independent for consistent speed)
 
-    // Background image of the station.
-    // Use the station map image in this folder.
-    const bgImage = new Image();
+    // 傳送點座標（依 col/row）：DEBUG 時以綠色方塊顯示
+    const TRANSMISSION_ZONES = {
+      platform: [
+        { col1: 27, col2: 28, row1: 12, row2: 13 },   // 月台 車廂關 → 車廂開 (entrance / open door)
+        { col1: 27, col2: 28, row1: 14, row2: 14 },   // 月台 車廂開 → 車廂關 (col 27-28, row 14)
+        { col1: 51, col2: 51, row1: 10, row2: 11 }    // 月台 車廂開 → 車廂2
+      ],
+      platformClosedToCar2: [                          // 月台 車廂關 右側兩格 → 車廂2
+        { col1: 50, col2: 50, row1: 10, row2: 11 },
+        { col1: 51, col2: 51, row1: 10, row2: 11 }
+      ],
+      car2ToPlatformOpen: [                            // 車廂2 → 返回車廂一（月台 車廂開）col 22, row 10-11
+        { col1: 22, col2: 22, row1: 10, row2: 11 }
+      ],
+      car2ToCar3: [                                    // 車廂2 → 車廂3 col 51, row 10-11
+        { col1: 51, col2: 51, row1: 10, row2: 11 }
+      ],
+      car3ToCar2: [                                    // 車廂3 → 傳送回車廂2 col 22, row 10-11
+        { col1: 22, col2: 22, row1: 10, row2: 11 }
+      ]
+    };
+    const CAR2_SPAWN = { x: 757, y: 352 }; // 通往車廂2 的傳送出生點（col 23, row 11）
+    const CAR3_SPAWN = { x: 757, y: 352 }; // 通往車廂3 的傳送出生點（col 23, row 11）
+    const CAR2_SPAWN_FROM_CAR3 = { x: 1621, y: 352 }; // 從車廂3 回到車廂2 的出生點 x（col 50），y 保持當前 row
+    const PLATFORM_OPEN_SPAWN_FROM_CAR2 = { x: 1612.8, y: 352 }; // 從車廂2 回到月台（車廂開）的出生點（col 50, row 11）
 
-    // Collision mask (black = blocked, non-black = walkable), same size as station image.
-    const collisionMask = new Image();
+    // 三張地圖：月台（車廂關/車廂開同一張地圖只換圖）、車廂2、車廂3（底圖 + 前景，車廂3 僅底圖）
+    const MAP_LIST = [
+      { name: '月台', base: 'maps/月台底圖_車廂關.png', foreground: 'maps/月台前景_車廂關.png', mask: 'maps/月台底圖_車廂_mask.png' },
+      { name: '車廂2', base: 'maps/車廂2底圖.png', foreground: 'maps/車廂2前景.png', mask: 'maps/車廂2底圖_mask.png' },
+      { name: '車廂3', base: 'maps/車廂3底圖.png', foreground: null, mask: 'maps/車廂2底圖_mask.png' }
+    ];
+    let currentMapIndex = 0;
+    let platformCarriageOpen = false; // 月台：車廂關(false) / 車廂開(true)
+    const mapImages = MAP_LIST.map(m => ({
+      base: new Image(),
+      foreground: m.foreground ? new Image() : null,
+      mask: new Image(),
+      width: 0,
+      height: 0
+    }));
+    // 月台「車廂開」用圖（同一張地圖，只換圖）
+    mapImages[0].baseOpen = new Image();
+    mapImages[0].baseOpen.src = 'maps/月台底圖_車廂開.png';
+    mapImages[0].foregroundOpen = new Image();
+    mapImages[0].foregroundOpen.src = 'maps/月台前景_車廂開.png';
+    mapImages[0].maskOpen = new Image();
+    mapImages[0].maskOpen.onload = () => {
+      if (currentMapIndex === 0 && platformCarriageOpen && WORLD_WIDTH > 0 && WORLD_HEIGHT > 0) prepareCollisionMask();
+    };
+    mapImages[0].maskOpen.src = 'maps/月台底圖_車廂_mask.png';
+
     const maskCanvas = document.createElement('canvas');
     const maskCtx = maskCanvas.getContext('2d');
     let blockedTiles = []; // blockedTiles[row][col] === true => cannot walk
 
-    bgImage.onload = () => {
-      // World (map) size = image size
-      WORLD_WIDTH = bgImage.naturalWidth;
-      WORLD_HEIGHT = bgImage.naturalHeight;
+    function applyWorldSizeFromMap(index) {
+      const m = mapImages[index];
+      if (m.width > 0 && m.height > 0) {
+        WORLD_WIDTH = m.width;
+        WORLD_HEIGHT = m.height;
+      }
+    }
 
-      // 基本視窗寬度（桌機用），再縮小一些當作「鏡頭縮放」基準
+    function onFirstMapReady() {
+      applyWorldSizeFromMap(0);
       const baseViewWidth = Math.min(WORLD_WIDTH, 1920);
       const isMobile = window.innerWidth <= 768;
-
       if (isMobile) {
-        // 手機直式：使用直長畫面比例（約 9:16），讓遊戲區明顯變長
-        const portraitAspect = 360 / 640; // 寬/高，畫面比寬更長
+        const portraitAspect = 360 / 640;
         VIEW_HEIGHT = WORLD_HEIGHT;
         VIEW_WIDTH = Math.min(WORLD_WIDTH, Math.round(VIEW_HEIGHT * portraitAspect));
         VIEW_WIDTH = Math.max(VIEW_WIDTH, 10 * TILE_SIZE);
       } else {
-        // 桌機視角：依螢幕尺寸顯示更多內容，減少 zoom in 感
-        const desktopAspect = 2.1; // 約 21:10
-        const zoomFactor = 0.92;   // 提高可見範圍（原 0.78 太 zoom in）
+        const desktopAspect = 2.1;
+        const zoomFactor = 0.92;
         VIEW_WIDTH = baseViewWidth * zoomFactor;
         VIEW_HEIGHT = VIEW_WIDTH / desktopAspect;
       }
-
       updateLogicalPositions();
       resizeCanvas();
+      prepareCollisionMask();
+    }
 
-      // 如果遮罩已載入，建立碰撞資料
-      if (collisionMask.complete && collisionMask.naturalWidth > 0) {
-        prepareCollisionMask();
-      }
-    };
+    MAP_LIST.forEach((cfg, i) => {
+      const m = mapImages[i];
+      m.base.onload = () => {
+        m.width = m.base.naturalWidth;
+        m.height = m.base.naturalHeight;
+        if (i === 0) onFirstMapReady();
+      };
+      m.base.src = cfg.base;
+      if (m.foreground) m.foreground.src = cfg.foreground;
+      m.mask.src = cfg.mask;
+    });
 
-    // 遮罩載入完成後，如果背景尺寸已知，建立碰撞資料
-    collisionMask.onload = () => {
-      if (WORLD_WIDTH > 0 && WORLD_HEIGHT > 0) {
-        prepareCollisionMask();
-      }
-    };
+    // 遮罩載入完成後，若當前地圖尺寸已知則建立碰撞
+    MAP_LIST.forEach((cfg, i) => {
+      mapImages[i].mask.onload = () => {
+        if (currentMapIndex === i && WORLD_WIDTH > 0 && WORLD_HEIGHT > 0) prepareCollisionMask();
+      };
+    });
 
-    // Map images are now placed in the maps/ folder.
-    // If you rename them, just update these paths accordingly.
-    bgImage.src = 'maps/station.jpg';
-    collisionMask.src = 'maps/station_mask.png';
-
-    // Small journalist card icon placed on the map at the red dot.
+    // 周清月記者證：遠離時 周清月無人.png，靠近時 周清月.png
     const cardIdleImage = new Image();
     const cardActiveImage = new Image();
-    // Idle and "nearby" versions of the reporter ID icon.
-    cardIdleImage.src = 'assets/1_0.png';
-    cardActiveImage.src = 'assets/2_0.png';
+    cardIdleImage.src = '車廂1物件/周清月無人.png';
+    cardActiveImage.src = '車廂1物件/周清月.png';
+
+    // 黃家母女：遠離時 黃家母女無人.png，靠近時 黃家母女.png
+    const huangIdleImage = new Image();
+    const huangActiveImage = new Image();
+    huangIdleImage.src = '車廂1物件/黃家母女無人.png';
+    huangActiveImage.src = '車廂1物件/黃家母女.png';
+
+    // 杜孝生：遠離時 杜孝生無人.png，靠近時 杜孝生.png
+    const duIdleImage = new Image();
+    const duActiveImage = new Image();
+    duIdleImage.src = '車廂1物件/杜孝生無人.png';
+    duActiveImage.src = '車廂1物件/杜孝生.png';
+
+    // 劉永祥：遠離時 劉永祥無人.png，靠近時 劉永祥.png
+    const liuIdleImage = new Image();
+    const liuActiveImage = new Image();
+    liuIdleImage.src = '車廂1物件/劉永祥無人.png';
+    liuActiveImage.src = '車廂1物件/劉永祥.png';
+
+    // 陽翰的情報報告：說明圖（遠離）陽翰無人.png，靠近圖 陽翰.png，觸發點 col 33 row 10
+    const yangIdleImage = new Image();
+    const yangActiveImage = new Image();
+    yangIdleImage.src = '車廂1物件/陽翰無人.png';
+    yangActiveImage.src = '車廂1物件/陽翰.png';
+
+    // 王再傳的黨員手冊：說明圖 王再傳無人.png，靠近圖 王再傳.png，觸發點 col 43 row 10
+    const wangIdleImage = new Image();
+    const wangActiveImage = new Image();
+    wangIdleImage.src = '車廂1物件/王再傳無人.png';
+    wangActiveImage.src = '車廂1物件/王再傳.png';
+
+    // 竹工（新竹高工的塗鴉）：說明圖 竹工無人.png，靠近圖 竹工.png，觸發範圍 col 45-46 row 10-11
+    const zhugongIdleImage = new Image();
+    const zhugongActiveImage = new Image();
+    zhugongIdleImage.src = '車廂1物件/竹工無人.png';
+    zhugongActiveImage.src = '車廂1物件/竹工.png';
 
     // Player directional sprites (32x32). Put these PNGs in the same folder.
     const playerSprites = {
@@ -909,10 +1308,9 @@
     playerSprites.left.src = 'characters/player_left.png';
     playerSprites.right.src = 'characters/player_right.png';
 
-    // Fractions for important positions based on the station map.
-    // PLAYER_POS is only used for initial band; exact start will be bottom-left of walkable area.
-    const PLAYER_POS = { x: 0.1, y: 0.75 };
-    const ZONE_POS = { x: 0.5, y: 0.42, w: 40, h: 30 };
+    // 出生點：x、y 為地圖「比例」0～1（0.18=左側18%，0.88=下方88%）；勿用 5.40 會出界
+    const PLAYER_POS = { x: 0.40, y: 0.80 };
+    const ZONE_POS = { x: 1228.8 / 1792, y: 320 / 1600, w: 40, h: 30 }; // 周清月：月台 車廂開 col 38, row 10 (1228.8, 320)
 
     // Player: 32x64（寬一格、高兩格）的人物.
     const player = {
@@ -938,10 +1336,36 @@
       info: 'This is the key interaction point on the platform.'
     };
 
+    // 觸發區僅涵蓋 row 10（y 320～352），在 row 11 時因距離/範圍不重疊故不觸發
+    // 黃家母女互動區：月台 車廂開 col 23, row 10
+    const huangZone = { x: 732, y: 320, width: 40, height: 32 };
+    // 杜孝生互動區：月台 車廂開 col 26, row 10
+    const duZone = { x: 828, y: 320, width: 40, height: 32 };
+    // 劉永祥互動區：月台 車廂開 col 29, row 10
+    const liuZone = { x: 924, y: 320, width: 40, height: 32 };
+    // 陽翰的情報報告觸發點：月台 車廂開 col 33, row 10
+    const yangZone = { x: 1052, y: 320, width: 40, height: 32 };
+    // 王再傳的黨員手冊觸發點：月台 車廂開 col 43, row 10
+    const wangZone = { x: 1372, y: 320, width: 40, height: 32 };
+    // 竹工（新竹高工的塗鴉）觸發範圍：月台 車廂開 col 45-46, row 10-11（2x2 格）
+    const zhugongZone = { x: 1440, y: 320, width: 64, height: 64 };
+
     const keys = { up: false, down: false, left: false, right: false };
     let wasInZone = false;
     let isInZoneNow = false;
     let isNearZoneNow = false;
+    let isNearHuangNow = false;
+    let wasInHuangZone = false;
+    let isNearDuNow = false;
+    let wasInDuZone = false;
+    let isNearLiuNow = false;
+    let wasInLiuZone = false;
+    let isNearYangNow = false;
+    let wasInYangZone = false;
+    let isNearWangNow = false;
+    let wasInWangZone = false;
+    let isNearZhugongNow = false;
+    let wasInZhugongZone = false;
 
     // Camera: 左上角世界座標；viewW/viewH 為實際可視範圍（cover 時 = screen/scale）
     const camera = { x: 0, y: 0, viewW: VIEW_WIDTH, viewH: VIEW_HEIGHT };
@@ -996,18 +1420,18 @@
     }
 
     function updateLogicalPositions() {
-      // Define a walkable band that roughly matches the green floor of the platform.
-      // Character should start在月台偏左中間的位置（避開最左側遮罩區域）。
+      // 可通行帶（月台地板範圍）
       const walkTop = WORLD_HEIGHT * 0.63;
       const walkBottom = WORLD_HEIGHT * 0.86;
 
-      // Start a bit more to the right、稍微更靠下的位置。
-      player.x = TILE_SIZE * 4.5;
-      player.y = (walkTop + walkBottom) / 2;
+      // 出生點（由 PLAYER_POS 控制）
+      player.x = WORLD_WIDTH * PLAYER_POS.x;
+      player.y = WORLD_HEIGHT * PLAYER_POS.y;
 
       // Interaction zone stays roughly in the middle of the platform.
       interactionZone.x = WORLD_WIDTH * ZONE_POS.x - ZONE_POS.w / 2;
-      interactionZone.y = WORLD_HEIGHT * ZONE_POS.y - ZONE_POS.h / 2;
+      interactionZone.y = 10 * TILE_SIZE;
+      interactionZone.height = TILE_SIZE;
 
       // Cache walk band for collision checks.
       player.walkTop = walkTop;
@@ -1016,12 +1440,21 @@
 
     updateLogicalPositions();
 
-    // 利用遮罩圖片建立 blockedTiles：黑色(接近 #000) 視為不可通行
+    // 利用當前地圖的遮罩建立 blockedTiles；無遮罩或未載入則全部可通行
+    // MASK 只適用於該地圖：切換地圖後必須呼叫本函式，以該地圖的 mask 重新建立禁止通行區域
+    // 月台車廂關／車廂開都讀取 MASK（月台底圖_車廂_mask.png）
     function prepareCollisionMask() {
+      const cur = mapImages[currentMapIndex];
+      const usePlatformOpenMask = currentMapIndex === 0 && platformCarriageOpen && cur.maskOpen && cur.maskOpen.complete && cur.maskOpen.naturalWidth > 0;
+      const maskImg = usePlatformOpenMask ? cur.maskOpen : cur.mask;
+      if (!maskImg.complete || maskImg.naturalWidth === 0) {
+        blockedTiles = [];
+        return;
+      }
       maskCanvas.width = WORLD_WIDTH;
       maskCanvas.height = WORLD_HEIGHT;
       maskCtx.clearRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
-      maskCtx.drawImage(collisionMask, 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+      maskCtx.drawImage(maskImg, 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
 
       const cols = Math.ceil(WORLD_WIDTH / TILE_SIZE);
       const rows = Math.ceil(WORLD_HEIGHT / TILE_SIZE);
@@ -1029,27 +1462,62 @@
 
       const imgData = maskCtx.getImageData(0, 0, WORLD_WIDTH, WORLD_HEIGHT).data;
 
+      // 只算「純黑」不算灰；只取每格「中心一點」，避免範圍過大把非黑區也算進去
+      const BLACK = 18;
       for (let row = 0; row < rows; row++) {
         blockedTiles[row] = new Array(cols).fill(false);
         for (let col = 0; col < cols; col++) {
-          // 取該格中心點的顏色
-          const sampleX = Math.min(
-            WORLD_WIDTH - 1,
-            Math.floor(col * TILE_SIZE + TILE_SIZE / 2)
-          );
-          const sampleY = Math.min(
-            WORLD_HEIGHT - 1,
-            Math.floor(row * TILE_SIZE + TILE_SIZE / 2)
-          );
+          const sampleX = Math.min(WORLD_WIDTH - 1, col * TILE_SIZE + Math.floor(TILE_SIZE / 2));
+          const sampleY = Math.min(WORLD_HEIGHT - 1, row * TILE_SIZE + Math.floor(TILE_SIZE / 2));
           const idx = (sampleY * WORLD_WIDTH + sampleX) * 4;
-          const r = imgData[idx];
-          const g = imgData[idx + 1];
-          const b = imgData[idx + 2];
-          const a = imgData[idx + 3];
-
-          // 不透明且非常接近黑色 => 視為牆
-          if (a > 0 && r < 10 && g < 10 && b < 10) {
-            blockedTiles[row][col] = true;
+          const r = imgData[idx], g = imgData[idx + 1], b = imgData[idx + 2], a = imgData[idx + 3];
+          if (a > 0 && r < BLACK && g < BLACK && b < BLACK) blockedTiles[row][col] = true;
+        }
+      }
+      // 強制指定座標所在格為可通行（DEBUG 用）
+      const forceWalkX = 716, forceWalkY = 1184;
+      const fc = Math.floor(forceWalkX / TILE_SIZE), fr = Math.floor(forceWalkY / TILE_SIZE);
+      if (fr >= 0 && fr < blockedTiles.length && fc >= 0 && fc < blockedTiles[0].length) {
+        blockedTiles[fr][fc] = false;
+      }
+      // 月台：返回地圖一時的出生點強制可通行，避免卡住
+      if (currentMapIndex === 0) {
+        const platformSpawnX = WORLD_WIDTH - 85;
+        const platformSpawnY = WORLD_HEIGHT * 0.5;
+        for (let or = -1; or <= 1; or++) {
+          for (let oc = -1; oc <= 1; oc++) {
+            const c = Math.floor(platformSpawnX / TILE_SIZE) + oc;
+            const r = Math.floor(platformSpawnY / TILE_SIZE) + or;
+            if (r >= 0 && r < blockedTiles.length && c >= 0 && c < blockedTiles[0].length) {
+              blockedTiles[r][c] = false;
+            }
+          }
+        }
+        if (platformCarriageOpen) {
+          // 月台車廂開：col 21-23, row 10-12 強制不可行走
+          for (let c = 21; c <= 23; c++) {
+            for (let r = 10; r <= 12; r++) {
+              if (r >= 0 && r < blockedTiles.length && c >= 0 && c < blockedTiles[0].length) {
+                blockedTiles[r][c] = true;
+              }
+            }
+          }
+          // 月台車廂開：col 22-23, row 10-11 開放行走
+          for (let c = 22; c <= 23; c++) {
+            for (let r = 10; r <= 11; r++) {
+              if (r >= 0 && r < blockedTiles.length && c >= 0 && c < blockedTiles[0].length) {
+                blockedTiles[r][c] = false;
+              }
+            }
+          }
+        } else {
+          // 月台車廂關：col 21-23, row 10-12 強制可通行
+          for (let c = 21; c <= 23; c++) {
+            for (let r = 10; r <= 12; r++) {
+              if (r >= 0 && r < blockedTiles.length && c >= 0 && c < blockedTiles[0].length) {
+                blockedTiles[r][c] = false;
+              }
+            }
           }
         }
       }
@@ -1223,9 +1691,109 @@
         }
       }
 
-      // Keep player inside the world bounds
       const halfW = player.width / 2;
       const halfH = player.height / 2;
+
+      // 切換地圖時清除移動狀態，避免還往舊地圖座標移動
+      function onMapSwitch() {
+        player.moving = false;
+        player.targetX = player.x;
+        player.targetY = player.y;
+        player.remainingDist = 0;
+      }
+
+      // 傳送點依 col/row 判斷（與 TRANSMISSION_ZONES 一致）
+      const playerCol = Math.floor(player.x / TILE_SIZE);
+      const playerRow = Math.floor(player.y / TILE_SIZE);
+      const platformZones = TRANSMISSION_ZONES.platform;
+      const closedToCar2Zones = TRANSMISSION_ZONES.platformClosedToCar2 || [];
+      const inZoneOpen = platformZones[0] && playerCol >= platformZones[0].col1 && playerCol <= platformZones[0].col2 && playerRow >= platformZones[0].row1 && playerRow <= platformZones[0].row2;
+      const inZoneToClosed = platformZones[1] && playerCol >= platformZones[1].col1 && playerCol <= platformZones[1].col2 && playerRow >= platformZones[1].row1 && playerRow <= platformZones[1].row2;
+      const inZoneCar2 = platformZones[2] && playerCol >= platformZones[2].col1 && playerCol <= platformZones[2].col2 && playerRow >= platformZones[2].row1 && playerRow <= platformZones[2].row2;
+      const inZoneClosedToCar2 = closedToCar2Zones.some(function (z) {
+        return playerCol >= z.col1 && playerCol <= z.col2 && playerRow >= z.row1 && playerRow <= z.row2;
+      });
+      const car2ToPlatformOpenZones = TRANSMISSION_ZONES.car2ToPlatformOpen || [];
+      const inZoneCar2ToPlatformOpen = car2ToPlatformOpenZones.some(function (z) {
+        return playerCol >= z.col1 && playerCol <= z.col2 && playerRow >= z.row1 && playerRow <= z.row2;
+      });
+      const car2ToCar3Zones = TRANSMISSION_ZONES.car2ToCar3 || [];
+      const inZoneCar2ToCar3 = car2ToCar3Zones.some(function (z) {
+        return playerCol >= z.col1 && playerCol <= z.col2 && playerRow >= z.row1 && playerRow <= z.row2;
+      });
+      const car3ToCar2Zones = TRANSMISSION_ZONES.car3ToCar2 || [];
+      const inZoneCar3ToCar2 = car3ToCar2Zones.some(function (z) {
+        return playerCol >= z.col1 && playerCol <= z.col2 && playerRow >= z.row1 && playerRow <= z.row2;
+      });
+      if (currentMapIndex === 0 && !platformCarriageOpen && inZoneOpen) {
+        platformCarriageOpen = true;
+        prepareCollisionMask(); // 切換為車廂開後，改用車廂開 MASK
+      } else if (currentMapIndex === 0 && platformCarriageOpen && inZoneToClosed) {
+        platformCarriageOpen = false;
+        prepareCollisionMask(); // 切回車廂關後，改用車廂關 MASK
+      } else if (currentMapIndex === 0 && !platformCarriageOpen && inZoneClosedToCar2 && mapImages[1].width > 0 && mapImages[1].height > 0) {
+        currentMapIndex = 1;
+        applyWorldSizeFromMap(1);
+        player.x = CAR2_SPAWN.x;
+        player.y = CAR2_SPAWN.y;
+        onMapSwitch();
+        prepareCollisionMask(); // 切換到車廂2後，用該地圖的 MASK 更新禁止通行區域
+      } else if (currentMapIndex === 0 && platformCarriageOpen && inZoneCar2 && mapImages[1].width > 0 && mapImages[1].height > 0) {
+        currentMapIndex = 1;
+        applyWorldSizeFromMap(1);
+        player.x = CAR2_SPAWN.x;
+        player.y = CAR2_SPAWN.y;
+        onMapSwitch();
+        prepareCollisionMask(); // 切換到車廂2後，用該地圖的 MASK 更新禁止通行區域
+      } else if (currentMapIndex === 1 && inZoneCar2ToPlatformOpen && mapImages[0].width > 0 && mapImages[0].height > 0) {
+        currentMapIndex = 0;
+        platformCarriageOpen = true; // 車廂一 = 月台 車廂開
+        applyWorldSizeFromMap(0);
+        player.x = PLATFORM_OPEN_SPAWN_FROM_CAR2.x;
+        player.y = Math.max(halfH, Math.min(WORLD_HEIGHT - halfH, player.y)); // 保持當前 row 對應的 y（如 row 10→320, row 11→352）
+        onMapSwitch();
+        prepareCollisionMask(); // 切換到月台後，用該地圖的 MASK 更新禁止通行區域
+      } else if (currentMapIndex === 1 && inZoneCar2ToCar3 && mapImages[2].width > 0 && mapImages[2].height > 0) {
+        currentMapIndex = 2;
+        applyWorldSizeFromMap(2);
+        player.x = CAR3_SPAWN.x;
+        player.y = CAR3_SPAWN.y;
+        onMapSwitch();
+        prepareCollisionMask(); // 切換到車廂3後，用該地圖的 MASK 更新禁止通行區域
+      } else if (currentMapIndex === 2 && inZoneCar3ToCar2 && mapImages[1].width > 0 && mapImages[1].height > 0) {
+        currentMapIndex = 1;
+        applyWorldSizeFromMap(1);
+        player.x = CAR2_SPAWN_FROM_CAR3.x;
+        player.y = Math.max(halfH, Math.min(WORLD_HEIGHT - halfH, player.y)); // 保持當前 row（row 10→320, row 11→352）
+        onMapSwitch();
+        prepareCollisionMask(); // 切換到車廂2後，用該地圖的 MASK 更新禁止通行區域
+      }
+
+      const edgeW = 70;
+      const spawnInset = 85; // 切換地圖後出生點要比 edgeW 大，才不會立刻觸發「左邊緣回上一張」
+      if (player.x >= WORLD_WIDTH - edgeW && currentMapIndex < MAP_LIST.length - 1) {
+        const next = mapImages[currentMapIndex + 1];
+        if (next.width > 0 && next.height > 0) {
+          currentMapIndex++;
+          applyWorldSizeFromMap(currentMapIndex);
+          player.x = spawnInset;
+          player.y = Math.max(halfH, Math.min(WORLD_HEIGHT - halfH, WORLD_HEIGHT * 0.5));
+          onMapSwitch();
+          prepareCollisionMask(); // 切換地圖後，用該地圖的 MASK 更新禁止通行區域
+        }
+      } else if (player.x <= edgeW && currentMapIndex > 0) {
+        const prev = mapImages[currentMapIndex - 1];
+        if (prev.width > 0 && prev.height > 0) {
+          currentMapIndex--;
+          if (currentMapIndex === 0) platformCarriageOpen = false; // 回月台時改回車廂關
+          applyWorldSizeFromMap(currentMapIndex);
+          player.x = WORLD_WIDTH - spawnInset;
+          player.y = Math.max(halfH, Math.min(WORLD_HEIGHT - halfH, WORLD_HEIGHT * 0.5));
+          onMapSwitch();
+          prepareCollisionMask(); // 切換地圖後，用該地圖的 MASK 更新禁止通行區域
+        }
+      }
+
       player.x = Math.max(halfW, Math.min(WORLD_WIDTH - halfW, player.x));
       player.y = Math.max(halfH, Math.min(WORLD_HEIGHT - halfH, player.y));
 
@@ -1241,31 +1809,252 @@
         console.warn('[camera] viewH > mapH', { mapH: WORLD_HEIGHT, viewH: viewH, cameraY: camera.y });
       }
 
-      // Distance between player and the center of the interaction object
       const objCenterX = interactionZone.x + interactionZone.width / 2;
-      const objCenterY = interactionZone.y + interactionZone.height / 2;
+      const objCenterY = 10 * TILE_SIZE; // 與圖示同高（320），和其他物件一致
       const dxCenter = player.x - objCenterX;
       const dyCenter = player.y - objCenterY;
       const distToCenter = Math.hypot(dxCenter, dyCenter);
 
-      // "Near" definition: close to the icon but not necessarily inside the trigger zone yet
-      isNearZoneNow = distToCenter < 90;
+      // 黃家母女圖示位置：月台 車廂開 col 23, row 10 往上半格
+      const huangCenterX = 23 * TILE_SIZE + TILE_SIZE / 2;
+      const huangCenterY = 10 * TILE_SIZE; // 320，剛好比格子中心往上半格
+      const dxHuang = player.x - huangCenterX;
+      const dyHuang = player.y - huangCenterY;
+      const distToHuang = Math.hypot(dxHuang, dyHuang);
+      // 杜孝生圖示位置：月台 車廂開 col 26, row 10
+      const duCenterX = 26 * TILE_SIZE + TILE_SIZE / 2;
+      const duCenterY = 10 * TILE_SIZE;
+      const dxDu = player.x - duCenterX;
+      const dyDu = player.y - duCenterY;
+      const distToDu = Math.hypot(dxDu, dyDu);
+      // 劉永祥圖示位置：月台 車廂開 col 29, row 10
+      const liuCenterX = 29 * TILE_SIZE + TILE_SIZE / 2;
+      const liuCenterY = 10 * TILE_SIZE;
+      const dxLiu = player.x - liuCenterX;
+      const dyLiu = player.y - liuCenterY;
+      const distToLiu = Math.hypot(dxLiu, dyLiu);
+      // 陽翰的情報報告圖示位置：月台 車廂開 col 33, row 10
+      const yangCenterX = 33 * TILE_SIZE + TILE_SIZE / 2;
+      const yangCenterY = 10 * TILE_SIZE;
+      const dxYang = player.x - yangCenterX;
+      const dyYang = player.y - yangCenterY;
+      const distToYang = Math.hypot(dxYang, dyYang);
+      // 王再傳的黨員手冊圖示位置：月台 車廂開 col 43, row 10
+      const wangCenterX = 43 * TILE_SIZE + TILE_SIZE / 2;
+      const wangCenterY = 10 * TILE_SIZE;
+      const dxWang = player.x - wangCenterX;
+      const dyWang = player.y - wangCenterY;
+      const distToWang = Math.hypot(dxWang, dyWang);
+      // 竹工（新竹高工的塗鴉）圖示位置：col 45-46 row 10-11 中心 (1472, 352)
+      const zhugongCenterX = 45 * TILE_SIZE + TILE_SIZE;  // 1472
+      const zhugongCenterY = 10 * TILE_SIZE + TILE_SIZE;   // 352
+      const dxZhugong = player.x - zhugongCenterX;
+      const dyZhugong = player.y - zhugongCenterY;
+      const distToZhugong = Math.hypot(dxZhugong, dyZhugong);
 
-      // Interaction detection: show HTML popup overlay when player fully enters the small zone
-      const inZone = isPlayerInZone(player, interactionZone);
+      // 周清月記者證互動僅在月台 車廂開（地圖 0 且 platformCarriageOpen）
+      const onPlatformOpen = currentMapIndex === 0 && platformCarriageOpen;
+      // 預覽（光暈+靠近圖）：距離放大，較遠即可看到
+      const NEAR_PREVIEW_DIST = 96;
+      // 六個物件：用「玩家中心點在區內」判定；觸發區 y 只含 row 10，故 row 11 自然不會觸發（測量距離達成）
+      isNearZoneNow = onPlatformOpen && distToCenter < NEAR_PREVIEW_DIST;
+      const inZone = onPlatformOpen && isPlayerCenterInZone(player, interactionZone);
+      isNearHuangNow = onPlatformOpen && distToHuang < NEAR_PREVIEW_DIST;
+      const inHuangZone = onPlatformOpen && isPlayerCenterInZone(player, huangZone);
+      isNearDuNow = onPlatformOpen && distToDu < NEAR_PREVIEW_DIST;
+      const inDuZone = onPlatformOpen && isPlayerCenterInZone(player, duZone);
+      isNearLiuNow = onPlatformOpen && distToLiu < NEAR_PREVIEW_DIST;
+      const inLiuZone = onPlatformOpen && isPlayerCenterInZone(player, liuZone);
+      isNearYangNow = onPlatformOpen && distToYang < NEAR_PREVIEW_DIST;
+      const inYangZone = onPlatformOpen && isPlayerCenterInZone(player, yangZone);
+      isNearWangNow = onPlatformOpen && distToWang < NEAR_PREVIEW_DIST;
+      const inWangZone = onPlatformOpen && isPlayerCenterInZone(player, wangZone);
+      // 竹工（新竹高工的塗鴉）：用 bbox 重疊，row 10 或 11 皆可觸發，預覽距離同
+      isNearZhugongNow = onPlatformOpen && distToZhugong < NEAR_PREVIEW_DIST;
+      const inZhugongZone = onPlatformOpen && isPlayerInZone(player, zhugongZone);
       isInZoneNow = inZone;
       if (inZone && !wasInZone) {
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetScrollZhou) bottomSheetScrollZhou.scrollTop = 0;
         popup.classList.remove('hidden');
         gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheet) bottomSheet.classList.add('open');
+          if (scrollProgressBarZhou) scrollProgressBarZhou.style.top = '0%';
         });
       } else if (!inZone && wasInZone) {
         if (bottomSheet) bottomSheet.classList.remove('open');
         gameState.inputLocked = false;
         setTimeout(function () { popup.classList.add('hidden'); }, 300);
       }
+      if (inHuangZone && !wasInHuangZone) {
+        popup.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetScrollHuang) bottomSheetScrollHuang.scrollTop = 0;
+        if (popupHuang) popupHuang.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetHuang) bottomSheetHuang.classList.add('open');
+          if (scrollProgressBarHuang) scrollProgressBarHuang.style.top = '0%';
+        });
+      } else if (!inHuangZone && wasInHuangZone) {
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupHuang) popupHuang.classList.add('hidden'); }, 300);
+      }
+      if (inDuZone && !wasInDuZone) {
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetScrollDu) bottomSheetScrollDu.scrollTop = 0;
+        if (popupDu) popupDu.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetDu) bottomSheetDu.classList.add('open');
+          if (scrollProgressBarDu) scrollProgressBarDu.style.top = '0%';
+        });
+      } else if (!inDuZone && wasInDuZone) {
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupDu) popupDu.classList.add('hidden'); }, 300);
+      }
+      if (inLiuZone && !wasInLiuZone) {
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetScrollLiu) bottomSheetScrollLiu.scrollTop = 0;
+        if (popupLiu) popupLiu.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetLiu) bottomSheetLiu.classList.add('open');
+          if (scrollProgressBarLiu) scrollProgressBarLiu.style.top = '0%';
+        });
+      } else if (!inLiuZone && wasInLiuZone) {
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupLiu) popupLiu.classList.add('hidden'); }, 300);
+      }
+      if (inYangZone && !wasInYangZone) {
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetScrollYang) bottomSheetScrollYang.scrollTop = 0;
+        if (popupYang) popupYang.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetYang) bottomSheetYang.classList.add('open');
+          if (scrollProgressBarYang) scrollProgressBarYang.style.top = '0%';
+        });
+      } else if (!inYangZone && wasInYangZone) {
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupYang) popupYang.classList.add('hidden'); }, 300);
+      }
+      if (inWangZone && !wasInWangZone) {
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetScrollWang) bottomSheetScrollWang.scrollTop = 0;
+        if (popupWang) popupWang.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetWang) bottomSheetWang.classList.add('open');
+          if (scrollProgressBarWang) scrollProgressBarWang.style.top = '0%';
+        });
+      } else if (!inWangZone && wasInWangZone) {
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupWang) popupWang.classList.add('hidden'); }, 300);
+      }
+      if (inZhugongZone && !wasInZhugongZone) {
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetScrollZhugong) bottomSheetScrollZhugong.scrollTop = 0;
+        if (popupZhugong) popupZhugong.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetZhugong) bottomSheetZhugong.classList.add('open');
+          if (scrollProgressBarZhugong) scrollProgressBarZhugong.style.top = '0%';
+        });
+      } else if (!inZhugongZone && wasInZhugongZone) {
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupZhugong) popupZhugong.classList.add('hidden'); }, 300);
+      }
       wasInZone = inZone;
+      wasInHuangZone = inHuangZone;
+      wasInDuZone = inDuZone;
+      wasInLiuZone = inLiuZone;
+      wasInYangZone = inYangZone;
+      wasInWangZone = inWangZone;
+      wasInZhugongZone = inZhugongZone;
     }
 
     var DEBUG_CAMERA = false;
@@ -1288,56 +2077,275 @@
       ctx.clip();
       ctx.translate(-camera.x, -camera.y);
 
-      if (bgImage.complete && bgImage.naturalWidth > 0) {
-        ctx.drawImage(bgImage, 0, 0, WORLD_WIDTH, WORLD_HEIGHT, 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+      const cur = mapImages[currentMapIndex];
+      const usePlatformOpen = currentMapIndex === 0 && platformCarriageOpen && cur.baseOpen && cur.baseOpen.complete && cur.baseOpen.naturalWidth > 0;
+      const drawBase = usePlatformOpen ? cur.baseOpen : cur.base;
+      const drawForeground = usePlatformOpen ? cur.foregroundOpen : cur.foreground;
+      if (drawBase.complete && drawBase.naturalWidth > 0) {
+        ctx.drawImage(drawBase, 0, 0, WORLD_WIDTH, WORLD_HEIGHT, 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
       } else {
         ctx.fillStyle = '#111';
         ctx.fillRect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
       }
 
-      var objX = interactionZone.x + interactionZone.width / 2;
-      var objY = interactionZone.y + interactionZone.height / 2;
-
-      if (isNearZoneNow || isInZoneNow) {
-        var t = Date.now() / 300;
-        var pulse = (Math.sin(t) + 1) / 2;
-        var baseRadius = isInZoneNow ? 30 : 22;
-        var extra = isInZoneNow ? 10 : 6;
-        var radius = baseRadius + extra * pulse;
-        var gradient = ctx.createRadialGradient(
-          objX, objY, 4,
-          objX, objY, radius
-        );
-        gradient.addColorStop(0, 'rgba(255, 255, 180, 0.9)');
-        gradient.addColorStop(1, 'rgba(255, 255, 180, 0)');
-
-        ctx.save();
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(objX, objY, radius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
+      if (debugPanel && !debugPanel.classList.contains('hidden') && blockedTiles.length > 0) {
+        ctx.fillStyle = 'rgba(255, 0, 0, 0.4)';
+        for (let row = 0; row < blockedTiles.length; row++) {
+          for (let col = 0; col < blockedTiles[row].length; col++) {
+            if (blockedTiles[row][col]) {
+              ctx.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+            }
+          }
+        }
       }
 
-      var cardWidth = 60;
-      var cardHeight = 60;
-      var useActive = isNearZoneNow || isInZoneNow;
-      var icon = useActive ? cardActiveImage : cardIdleImage;
-      if (icon.complete && icon.naturalWidth > 0) {
-        ctx.drawImage(
-          icon,
-          objX - cardWidth / 2,
-          objY - cardHeight / 2,
-          cardWidth,
-          cardHeight
-        );
-      } else {
-        ctx.save();
-        ctx.fillStyle = '#ff0000';
-        ctx.beginPath();
-        ctx.arc(objX, objY, 4, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
+      // DEBUG: green square = transmission point (teleport zone by col/row)
+      if (debugPanel && !debugPanel.classList.contains('hidden')) {
+        ctx.fillStyle = 'rgba(0, 255, 0, 0.5)';
+        if (currentMapIndex === 0) {
+          if (TRANSMISSION_ZONES.platform) {
+            TRANSMISSION_ZONES.platform.forEach(function (z) {
+              for (let col = z.col1; col <= z.col2; col++) {
+                for (let row = z.row1; row <= z.row2; row++) {
+                  ctx.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                }
+              }
+            });
+          }
+          if (TRANSMISSION_ZONES.platformClosedToCar2) {
+            TRANSMISSION_ZONES.platformClosedToCar2.forEach(function (z) {
+              for (let col = z.col1; col <= z.col2; col++) {
+                for (let row = z.row1; row <= z.row2; row++) {
+                  ctx.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                }
+              }
+            });
+          }
+        }
+        if (currentMapIndex === 1) {
+          if (TRANSMISSION_ZONES.car2ToPlatformOpen) {
+            TRANSMISSION_ZONES.car2ToPlatformOpen.forEach(function (z) {
+              for (let c = z.col1; c <= z.col2; c++) {
+                for (let r = z.row1; r <= z.row2; r++) {
+                  ctx.fillRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                }
+              }
+            });
+          }
+          if (TRANSMISSION_ZONES.car2ToCar3) {
+            TRANSMISSION_ZONES.car2ToCar3.forEach(function (z) {
+              for (let c = z.col1; c <= z.col2; c++) {
+                for (let r = z.row1; r <= z.row2; r++) {
+                  ctx.fillRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                }
+              }
+            });
+          }
+        }
+        if (currentMapIndex === 2 && TRANSMISSION_ZONES.car3ToCar2) {
+          TRANSMISSION_ZONES.car3ToCar2.forEach(function (z) {
+            for (let c = z.col1; c <= z.col2; c++) {
+              for (let r = z.row1; r <= z.row2; r++) {
+                ctx.fillRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+              }
+            }
+          });
+        }
+      }
+
+      if (currentMapIndex === 0 && platformCarriageOpen) {
+        // 周清月：與其他物件同高（row 10 上緣 y=320）
+        var objX = interactionZone.x + interactionZone.width / 2;
+        var zhouY = 10 * TILE_SIZE; // 320，與黃家母女等一致
+        if (isNearZoneNow || isInZoneNow) {
+          var t = Date.now() / 300;
+          var pulse = (Math.sin(t) + 1) / 2;
+          var baseRadius = isInZoneNow ? 30 : 22;
+          var extra = isInZoneNow ? 10 : 6;
+          var radius = baseRadius + extra * pulse;
+          var gradient = ctx.createRadialGradient(
+            objX, zhouY, 4,
+            objX, zhouY, radius
+          );
+          gradient.addColorStop(0, 'rgba(255, 255, 180, 0.9)');
+          gradient.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(objX, zhouY, radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        var maxCardSize = 120; // 放大 2 倍顯示圖示
+
+        // 周清月圖示
+        var useActive = isNearZoneNow || isInZoneNow;
+        var icon = useActive ? cardActiveImage : cardIdleImage;
+        if (icon.complete && icon.naturalWidth > 0) {
+          var nw = icon.naturalWidth;
+          var nh = icon.naturalHeight;
+          var scale = Math.min(maxCardSize / nw, maxCardSize / nh, 1);
+          var drawW = nw * scale;
+          var drawH = nh * scale;
+          ctx.drawImage(icon, objX - drawW / 2, zhouY - drawH / 2, drawW, drawH);
+        }
+
+        // 黃家母女圖示：位置固定在 col 23, row 10，往上半格
+        var huangX = 23 * TILE_SIZE + TILE_SIZE / 2;
+        var huangY = 10 * TILE_SIZE; // 320
+        if (isNearHuangNow) {
+          var tH = Date.now() / 300;
+          var pulseH = (Math.sin(tH) + 1) / 2;
+          var radiusH = 22 + 6 * pulseH;
+          var gradH = ctx.createRadialGradient(huangX, huangY, 4, huangX, huangY, radiusH);
+          gradH.addColorStop(0, 'rgba(255, 255, 180, 0.9)');
+          gradH.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradH;
+          ctx.beginPath();
+          ctx.arc(huangX, huangY, radiusH, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        var huangIcon = isNearHuangNow ? huangActiveImage : huangIdleImage;
+        if (huangIcon.complete && huangIcon.naturalWidth > 0) {
+          var hnw = huangIcon.naturalWidth;
+          var hnh = huangIcon.naturalHeight;
+          var hscale = Math.min(maxCardSize / hnw, maxCardSize / hnh, 1);
+          var hW = hnw * hscale;
+          var hH = hnh * hscale;
+          ctx.drawImage(huangIcon, huangX - hW / 2, huangY - hH / 2, hW, hH);
+        }
+        // 杜孝生圖示：位置 col 26, row 10
+        var duX = 26 * TILE_SIZE + TILE_SIZE / 2;
+        var duY = 10 * TILE_SIZE;
+        if (isNearDuNow) {
+          var tD = Date.now() / 300;
+          var pulseD = (Math.sin(tD) + 1) / 2;
+          var radiusD = 22 + 6 * pulseD;
+          var gradD = ctx.createRadialGradient(duX, duY, 4, duX, duY, radiusD);
+          gradD.addColorStop(0, 'rgba(255, 255, 180, 0.9)');
+          gradD.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradD;
+          ctx.beginPath();
+          ctx.arc(duX, duY, radiusD, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        var duIcon = isNearDuNow ? duActiveImage : duIdleImage;
+        if (duIcon.complete && duIcon.naturalWidth > 0) {
+          var dnw = duIcon.naturalWidth;
+          var dnh = duIcon.naturalHeight;
+          var dscale = Math.min(maxCardSize / dnw, maxCardSize / dnh, 1);
+          var dW = dnw * dscale;
+          var dH = dnh * dscale;
+          ctx.drawImage(duIcon, duX - dW / 2, duY - dH / 2, dW, dH);
+        }
+        // 劉永祥圖示：位置 col 29, row 10
+        var liuX = 29 * TILE_SIZE + TILE_SIZE / 2;
+        var liuY = 10 * TILE_SIZE;
+        if (isNearLiuNow) {
+          var tL = Date.now() / 300;
+          var pulseL = (Math.sin(tL) + 1) / 2;
+          var radiusL = 22 + 6 * pulseL;
+          var gradL = ctx.createRadialGradient(liuX, liuY, 4, liuX, liuY, radiusL);
+          gradL.addColorStop(0, 'rgba(255, 255, 180, 0.9)');
+          gradL.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradL;
+          ctx.beginPath();
+          ctx.arc(liuX, liuY, radiusL, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        var liuIcon = isNearLiuNow ? liuActiveImage : liuIdleImage;
+        if (liuIcon.complete && liuIcon.naturalWidth > 0) {
+          var lnw = liuIcon.naturalWidth;
+          var lnh = liuIcon.naturalHeight;
+          var lscale = Math.min(maxCardSize / lnw, maxCardSize / lnh, 1);
+          var lW = lnw * lscale;
+          var lH = lnh * lscale;
+          ctx.drawImage(liuIcon, liuX - lW / 2, liuY - lH / 2, lW, lH);
+        }
+        // 陽翰的情報報告：靠近圖 / 說明圖，位置 col 33, row 10
+        var yangX = 33 * TILE_SIZE + TILE_SIZE / 2;
+        var yangY = 10 * TILE_SIZE;
+        if (isNearYangNow) {
+          var tY = Date.now() / 300;
+          var pulseY = (Math.sin(tY) + 1) / 2;
+          var radiusY = 22 + 6 * pulseY;
+          var gradY = ctx.createRadialGradient(yangX, yangY, 4, yangX, yangY, radiusY);
+          gradY.addColorStop(0, 'rgba(255, 255, 180, 0.9)');
+          gradY.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradY;
+          ctx.beginPath();
+          ctx.arc(yangX, yangY, radiusY, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        var yangIcon = isNearYangNow ? yangActiveImage : yangIdleImage;
+        if (yangIcon.complete && yangIcon.naturalWidth > 0) {
+          var ynw = yangIcon.naturalWidth;
+          var ynh = yangIcon.naturalHeight;
+          var yscale = Math.min(maxCardSize / ynw, maxCardSize / ynh, 1);
+          var yW = ynw * yscale;
+          var yH = ynh * yscale;
+          ctx.drawImage(yangIcon, yangX - yW / 2, yangY - yH / 2, yW, yH);
+        }
+        // 王再傳的黨員手冊：位置 col 43, row 10
+        var wangX = 43 * TILE_SIZE + TILE_SIZE / 2;
+        var wangY = 10 * TILE_SIZE;
+        if (isNearWangNow) {
+          var tW = Date.now() / 300;
+          var pulseW = (Math.sin(tW) + 1) / 2;
+          var radiusW = 22 + 6 * pulseW;
+          var gradW = ctx.createRadialGradient(wangX, wangY, 4, wangX, wangY, radiusW);
+          gradW.addColorStop(0, 'rgba(255, 255, 180, 0.9)');
+          gradW.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradW;
+          ctx.beginPath();
+          ctx.arc(wangX, wangY, radiusW, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        var wangIcon = isNearWangNow ? wangActiveImage : wangIdleImage;
+        if (wangIcon.complete && wangIcon.naturalWidth > 0) {
+          var wnw = wangIcon.naturalWidth;
+          var wnh = wangIcon.naturalHeight;
+          var wscale = Math.min(maxCardSize / wnw, maxCardSize / wnh, 1);
+          var wW = wnw * wscale;
+          var wH = wnh * wscale;
+          ctx.drawImage(wangIcon, wangX - wW / 2, wangY - wH / 2, wW, wH);
+        }
+        // 竹工（新竹高工的塗鴉）：位置 col 45-46 row 10-11 中心
+        var zhugongX = 45 * TILE_SIZE + TILE_SIZE;
+        var zhugongY = 10 * TILE_SIZE + TILE_SIZE;
+        if (isNearZhugongNow) {
+          var tZg = Date.now() / 300;
+          var pulseZg = (Math.sin(tZg) + 1) / 2;
+          var radiusZg = 22 + 6 * pulseZg;
+          var gradZg = ctx.createRadialGradient(zhugongX, zhugongY, 4, zhugongX, zhugongY, radiusZg);
+          gradZg.addColorStop(0, 'rgba(255, 255, 180, 0.9)');
+          gradZg.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradZg;
+          ctx.beginPath();
+          ctx.arc(zhugongX, zhugongY, radiusZg, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        var zhugongIcon = isNearZhugongNow ? zhugongActiveImage : zhugongIdleImage;
+        if (zhugongIcon.complete && zhugongIcon.naturalWidth > 0) {
+          var zgnw = zhugongIcon.naturalWidth;
+          var zgnh = zhugongIcon.naturalHeight;
+          var zgscale = Math.min(maxCardSize / zgnw, maxCardSize / zgnh, 1);
+          var zgW = zgnw * zgscale;
+          var zgH = zgnh * zgscale;
+          ctx.drawImage(zhugongIcon, zhugongX - zgW / 2, zhugongY - zgH / 2, zgW, zgH);
+        }
       }
 
       drawPlayer({
@@ -1347,7 +2355,24 @@
         height: player.height
       });
 
+      if (drawForeground && drawForeground.complete && drawForeground.naturalWidth > 0) {
+        ctx.drawImage(drawForeground, 0, 0, WORLD_WIDTH, WORLD_HEIGHT, 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+      }
+
       ctx.restore();
+
+      if (debugPanel && debugPanelText && !debugPanel.classList.contains('hidden')) {
+        const col = Math.floor(player.x / TILE_SIZE);
+        const row = Math.floor(player.y / TILE_SIZE);
+        debugPanelText.textContent = [
+          '地圖: ' + (currentMapIndex + 1) + '/' + MAP_LIST.length + ' ' + (MAP_LIST[currentMapIndex] ? MAP_LIST[currentMapIndex].name : '?') + (currentMapIndex === 0 && platformCarriageOpen ? ' (車廂開)' : ''),
+          'player.x: ' + player.x.toFixed(1),
+          'player.y: ' + player.y.toFixed(1),
+          '格子 col: ' + col + ', row: ' + row,
+          '世界: ' + WORLD_WIDTH + ' x ' + WORLD_HEIGHT,
+          'camera: ' + camera.x.toFixed(0) + ', ' + camera.y.toFixed(0)
+        ].join('\n');
+      }
 
       if (DEBUG_CAMERA) {
         var mapH = WORLD_HEIGHT;
@@ -1427,6 +2452,12 @@
       );
     }
 
+    // 僅用玩家「中心點」是否在區內判定（觸發區 y 只含 row 10 時，row 11 自然在區外）
+    function isPlayerCenterInZone(p, zone) {
+      return p.x >= zone.x && p.x < zone.x + zone.width &&
+             p.y >= zone.y && p.y < zone.y + zone.height;
+    }
+
     // Start loop immediately; background will appear once loaded.
     loop();
 
@@ -1435,6 +2466,36 @@
       if (bottomSheet) bottomSheet.classList.remove('open');
       gameState.inputLocked = false;
       setTimeout(function () { popup.classList.add('hidden'); }, 300);
+    }
+    function closeModalHuang() {
+      if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupHuang) popupHuang.classList.add('hidden'); }, 300);
+    }
+    function closeModalDu() {
+      if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupDu) popupDu.classList.add('hidden'); }, 300);
+    }
+    function closeModalLiu() {
+      if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupLiu) popupLiu.classList.add('hidden'); }, 300);
+    }
+    function closeModalYang() {
+      if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupYang) popupYang.classList.add('hidden'); }, 300);
+    }
+    function closeModalWang() {
+      if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupWang) popupWang.classList.add('hidden'); }, 300);
+    }
+    function closeModalZhugong() {
+      if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupZhugong) popupZhugong.classList.add('hidden'); }, 300);
     }
 
     popup.addEventListener('click', function (e) {
@@ -1448,6 +2509,143 @@
       bottomSheet.addEventListener('click', function (e) { e.stopPropagation(); });
     }
 
+    // 捲動進度條（右側直條）：固定高度藍色區塊，隨捲動往下移動，點擊可跳轉
+    const SCROLL_THUMB_HEIGHT_PCT = 20; // 藍色區塊佔軌道高度比例
+    function updateScrollProgress(scrollEl, bar) {
+      if (!scrollEl || !bar) return;
+      const max = scrollEl.scrollHeight - scrollEl.clientHeight;
+      const pct = max <= 0 ? 0 : scrollEl.scrollTop / max;
+      const topPct = pct * (100 - SCROLL_THUMB_HEIGHT_PCT);
+      bar.style.top = topPct.toFixed(1) + '%';
+    }
+    function setupScrollProgress(scrollEl, wrap, bar) {
+      if (!scrollEl || !bar) return;
+      scrollEl.addEventListener('scroll', function () { updateScrollProgress(scrollEl, bar); });
+      if (wrap) {
+        wrap.addEventListener('click', function (e) {
+          const rect = wrap.getBoundingClientRect();
+          const yFromBottom = rect.bottom - e.clientY;
+          const pct = Math.max(0, Math.min(1, yFromBottom / rect.height));
+          const max = scrollEl.scrollHeight - scrollEl.clientHeight;
+          scrollEl.scrollTop = pct * max;
+          updateScrollProgress(scrollEl, bar);
+        });
+      }
+    }
+    const bottomSheetScrollZhou = document.getElementById('bottomSheetScrollZhou');
+    const scrollProgressBarZhou = document.getElementById('scrollProgressBarZhou');
+    const scrollProgressWrapZhou = document.getElementById('scrollProgressZhou');
+    const bottomSheetScrollHuang = document.getElementById('bottomSheetScrollHuang');
+    const scrollProgressBarHuang = document.getElementById('scrollProgressBarHuang');
+    const scrollProgressWrapHuang = document.getElementById('scrollProgressHuang');
+    const bottomSheetScrollDu = document.getElementById('bottomSheetScrollDu');
+    const scrollProgressBarDu = document.getElementById('scrollProgressBarDu');
+    const scrollProgressWrapDu = document.getElementById('scrollProgressDu');
+    const bottomSheetScrollLiu = document.getElementById('bottomSheetScrollLiu');
+    const scrollProgressBarLiu = document.getElementById('scrollProgressBarLiu');
+    const scrollProgressWrapLiu = document.getElementById('scrollProgressLiu');
+    const bottomSheetScrollYang = document.getElementById('bottomSheetScrollYang');
+    const scrollProgressBarYang = document.getElementById('scrollProgressBarYang');
+    const scrollProgressWrapYang = document.getElementById('scrollProgressYang');
+    const bottomSheetScrollWang = document.getElementById('bottomSheetScrollWang');
+    const scrollProgressBarWang = document.getElementById('scrollProgressBarWang');
+    const scrollProgressWrapWang = document.getElementById('scrollProgressWang');
+    const bottomSheetScrollZhugong = document.getElementById('bottomSheetScrollZhugong');
+    const scrollProgressBarZhugong = document.getElementById('scrollProgressBarZhugong');
+    const scrollProgressWrapZhugong = document.getElementById('scrollProgressZhugong');
+    setupScrollProgress(bottomSheetScrollZhou, scrollProgressWrapZhou, scrollProgressBarZhou);
+    setupScrollProgress(bottomSheetScrollHuang, scrollProgressWrapHuang, scrollProgressBarHuang);
+    setupScrollProgress(bottomSheetScrollDu, scrollProgressWrapDu, scrollProgressBarDu);
+    setupScrollProgress(bottomSheetScrollLiu, scrollProgressWrapLiu, scrollProgressBarLiu);
+    setupScrollProgress(bottomSheetScrollYang, scrollProgressWrapYang, scrollProgressBarYang);
+    setupScrollProgress(bottomSheetScrollWang, scrollProgressWrapWang, scrollProgressBarWang);
+    setupScrollProgress(bottomSheetScrollZhugong, scrollProgressWrapZhugong, scrollProgressBarZhugong);
+
+    if (popupHuang) {
+      popupHuang.addEventListener('click', function (e) {
+        if (e.target === popupHuang) closeModalHuang();
+      });
+    }
+    if (popupHuangClose) {
+      popupHuangClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalHuang();
+      });
+    }
+    if (bottomSheetHuang) {
+      bottomSheetHuang.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupDu) {
+      popupDu.addEventListener('click', function (e) {
+        if (e.target === popupDu) closeModalDu();
+      });
+    }
+    if (popupDuClose) {
+      popupDuClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalDu();
+      });
+    }
+    if (bottomSheetDu) {
+      bottomSheetDu.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupLiu) {
+      popupLiu.addEventListener('click', function (e) {
+        if (e.target === popupLiu) closeModalLiu();
+      });
+    }
+    if (popupLiuClose) {
+      popupLiuClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalLiu();
+      });
+    }
+    if (bottomSheetLiu) {
+      bottomSheetLiu.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupYang) {
+      popupYang.addEventListener('click', function (e) {
+        if (e.target === popupYang) closeModalYang();
+      });
+    }
+    if (popupYangClose) {
+      popupYangClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalYang();
+      });
+    }
+    if (bottomSheetYang) {
+      bottomSheetYang.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupWang) {
+      popupWang.addEventListener('click', function (e) {
+        if (e.target === popupWang) closeModalWang();
+      });
+    }
+    if (popupWangClose) {
+      popupWangClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalWang();
+      });
+    }
+    if (bottomSheetWang) {
+      bottomSheetWang.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupZhugong) {
+      popupZhugong.addEventListener('click', function (e) {
+        if (e.target === popupZhugong) closeModalZhugong();
+      });
+    }
+    if (popupZhugongClose) {
+      popupZhugongClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalZhugong();
+      });
+    }
+    if (bottomSheetZhugong) {
+      bottomSheetZhugong.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+
     // --- Help overlay behavior (desktop) ---
     helpButton.addEventListener('click', () => {
       helpOverlay.classList.remove('hidden');
@@ -1455,6 +2653,51 @@
     helpClose.addEventListener('click', () => {
       helpOverlay.classList.add('hidden');
     });
+
+    if (debugBtn && debugPanel) {
+      debugBtn.addEventListener('click', () => {
+        debugPanel.classList.toggle('hidden');
+      });
+    }
+    if (debugCopyBtn) {
+      debugCopyBtn.addEventListener('click', () => {
+        const col = Math.floor(player.x / TILE_SIZE);
+        const row = Math.floor(player.y / TILE_SIZE);
+        const text = [
+          '地圖: ' + (currentMapIndex + 1) + '/' + MAP_LIST.length + ' ' + (MAP_LIST[currentMapIndex] ? MAP_LIST[currentMapIndex].name : '?') + (currentMapIndex === 0 && platformCarriageOpen ? ' (車廂開)' : ''),
+          'player.x: ' + player.x.toFixed(1),
+          'player.y: ' + player.y.toFixed(1),
+          '格子 col: ' + col + ', row: ' + row,
+          '世界: ' + WORLD_WIDTH + ' x ' + WORLD_HEIGHT,
+          'camera: ' + camera.x.toFixed(0) + ', ' + camera.y.toFixed(0)
+        ].join('\n');
+        const done = () => {
+          debugCopyBtn.textContent = '已複製!';
+          setTimeout(() => { debugCopyBtn.textContent = '複製座標'; }, 1500);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(() => {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); done(); } catch (e) { debugCopyBtn.textContent = '複製失敗'; setTimeout(() => { debugCopyBtn.textContent = '複製座標'; }, 1500); }
+            document.body.removeChild(ta);
+          });
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); done(); } catch (e) { debugCopyBtn.textContent = '複製失敗'; setTimeout(() => { debugCopyBtn.textContent = '複製座標'; }, 1500); }
+          document.body.removeChild(ta);
+        }
+      });
+    }
     helpOverlay.addEventListener('click', () => {
       helpOverlay.classList.add('hidden');
     });
