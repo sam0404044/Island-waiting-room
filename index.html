@@ -278,7 +278,7 @@
       margin-bottom: 8px;
     }
 
-    /* Desktop-only help button on the right side */
+    /* Desktop-only help button on the right side；選單打開時隱藏 */
     .help-button-desktop {
       position: fixed;
       right: 16px;
@@ -297,6 +297,9 @@
       cursor: pointer;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
       z-index: 30;
+    }
+    .help-button-desktop.menu-open {
+      display: none !important;
     }
 
     /* DEBUG 模式按鈕與座標面板 */
@@ -357,26 +360,116 @@
       background: #444;
     }
 
+    /* 右側漢堡選單：滑入面板 */
     .help-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
       z-index: 29;
+      pointer-events: none;
     }
     .help-overlay.hidden {
       display: none;
     }
-    .help-content {
-      max-width: 480px;
-      max-height: 80vh;
-      padding: 16px 20px;
+    .help-overlay:not(.hidden) {
+      pointer-events: auto;
+    }
+    .menu-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .help-overlay:not(.hidden) .menu-backdrop {
+      opacity: 1;
+    }
+    .menu-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(90vw, 360px);
+      max-width: 360px;
+      height: 100vh;
+      height: 100dvh;
       background: #f4f4f4;
       color: #222;
-      border-radius: 6px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+      box-shadow: -4px 0 20px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.25s ease;
+      z-index: 30;
+    }
+    .help-overlay:not(.hidden) .menu-panel {
+      transform: translateX(0);
+    }
+    .menu-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid #ddd;
+      flex-shrink: 0;
+    }
+    .menu-panel-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0;
+    }
+    .menu-close {
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 8px;
+      background: #e0e0e0;
+      color: #333;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .menu-close:hover {
+      background: #ccc;
+    }
+    .menu-tabs {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      flex-shrink: 0;
+    }
+    .menu-tab {
+      flex: 1;
+      padding: 10px 12px;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      color: #555;
+      cursor: pointer;
+    }
+    .menu-tab.active {
+      color: #003366;
+      font-weight: 600;
+      border-bottom: 2px solid #003366;
+      margin-bottom: -1px;
+    }
+    .menu-tab-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      min-height: 0;
+    }
+    .menu-tab-content[data-tab="achievement"] { display: block; }
+    .menu-tab-content[data-tab="about"] { display: none; }
+    .menu-panel[data-active="about"] .menu-tab-content[data-tab="about"] { display: block; }
+    .menu-panel[data-active="about"] .menu-tab-content[data-tab="achievement"] { display: none; }
+    .menu-panel[data-active="achievement"] .menu-tab-content[data-tab="achievement"] { display: block; }
+    .menu-panel[data-active="achievement"] .menu-tab-content[data-tab="about"] { display: none; }
+
+    .help-content {
+      max-width: 100%;
+      padding: 0;
+      background: transparent;
       overflow-y: auto;
       font-size: 14px;
       line-height: 1.6;
@@ -384,7 +477,7 @@
     .help-content h3 {
       margin-top: 0;
       margin-bottom: 8px;
-      font-size: 18px;
+      font-size: 16px;
     }
     .help-close {
       margin-top: 12px;
@@ -395,6 +488,85 @@
       border-radius: 4px;
       cursor: pointer;
       font-size: 13px;
+    }
+
+    /* 成就：一排三個 */
+    .achievement-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .achievement-item {
+      aspect-ratio: 1;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #e8e4dc;
+      border: 2px solid #c2b59b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: pointer;
+    }
+    .achievement-item .achievement-name {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 6px 4px;
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      font-size: 11px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
+    .achievement-item:hover .achievement-name,
+    .achievement-item.show-name .achievement-name {
+      opacity: 1;
+    }
+    .achievement-item.unlocked .achievement-img {
+      display: block;
+    }
+    .achievement-item.unlocked .achievement-placeholder {
+      display: none;
+    }
+    .achievement-item .achievement-img {
+      display: none;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 6px;
+    }
+    .achievement-placeholder {
+      font-size: 2rem;
+      color: #888;
+      font-weight: 700;
+    }
+    .achievement-progress-wrap {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #ddd;
+      flex-shrink: 0;
+    }
+    .achievement-progress-label {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 6px;
+    }
+    .achievement-progress-bar {
+      height: 10px;
+      background: #e0e0e0;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .achievement-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #003366 0%, #00509e 100%);
+      border-radius: 5px;
+      transition: width 0.3s ease;
+      width: 0%;
     }
 
     /* Experience start screen */
@@ -620,9 +792,11 @@
         height: 32px;
       }
 
-      /* Mobile: hide help button (no hamburger / question mark on phone) */
+      /* 手機也顯示漢堡選單（可查看成就） */
       .help-button-desktop {
-        display: none;
+        display: flex;
+        right: max(12px, env(safe-area-inset-right, 0px) + 8px);
+        top: max(12px, env(safe-area-inset-top, 0px) + 8px);
       }
     }
     /* 桌機版：Canvas 依高度縮放，寬度自動計算，不做水平拉伸；方向鍵固定在右下角 */
@@ -758,9 +932,9 @@
         z-index: -1;
       }
 
-      /* Landscape mobile: hide help button */
+      /* 橫向手機也顯示漢堡選單 */
       .help-button-desktop {
-        display: none;
+        display: flex;
       }
     }
 
@@ -1014,6 +1188,33 @@
         </div>
       </div>
 
+      <!-- Popup: 許宗力的海外學人回國服務登記表 -->
+      <div id="popupXu" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetXu">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollXu">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">許宗力的海外學人回國服務登記表</h3>
+              <div class="popup-body">
+                <div class="popup-figure">
+                  <img src="車廂1物件/許宗力無人.png" alt="許宗力的海外學人回國服務登記表圖像" />
+                  <span>圖說：許宗力的海外學人回國服務登記表</span>
+                </div>
+                <p>海外歸國的學者，時常是被監控的對象，例如在德國攻讀法學博士學位的許宗力，畢業後想要返國執教，在民國75年2月，填了青輔會的「海外學人回國服務登記表」尋求推介。</p>
+                <p>情治機關在安全查核過程留下了這樣的紀錄：「許某於七十一年六月赴德進修迄今......平日專心研讀，甚少參加其他活動，在思想言行上未發現不良情事。」</p>
+                <p>可見得，即使身處海外，留學生的言行舉止都會列入審查，而且不僅是留學時的紀錄，情治機關還從軍中、校安等不同情治系統所留存的檔案中，調出許宗力過往種種的「不妥言行」。</p>
+                <p>例如他曾擔任台大「法言社」社長，撰寫〈從亡斧談起〉一文，被審查者認為「偏激」而遭修改或禁止。預官訓練期間於政戰學校，歷經兩個月的輔導與約談，仍拒絕加入國民黨，表示「法官是超然的，入黨對個人而言並無好處。」這些求學與服役的經歷，都被情治機關列為「涉嫌情形」，使他返國後無法進入國立大學任教。</p>
+                <p>許宗力其後多次爭取進入台大法律系，情治機關仍指示系主任「約束許員言行，並予疏導轉化」。即便開始任教後，對許宗力的監控仍未停止，情治機關留有他參加學術研討會、投書報刊、在課堂上與學生討論時事等紀錄，監控直到民國85年仍有數筆監控紀錄留於檔案中，監控時間至少長達十年。</p>
+              </div>
+            </div>
+          </div>
+          <div class="scroll-progress-wrap" id="scrollProgressXu" aria-label="閱讀進度">
+            <div class="scroll-progress-bar" id="scrollProgressBarXu"></div>
+          </div>
+          <button id="popupXuClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
       <!-- Popup: 新竹高工裡的塗鴉 -->
       <div id="popupZhugong" class="popup-overlay hidden">
         <div class="bottom-sheet" id="bottomSheetZhugong">
@@ -1083,20 +1284,82 @@
     <button type="button" class="debug-copy-btn" id="debugCopyBtn">複製座標</button>
   </div>
 
-  <!-- Desktop help button and overlay -->
-  <div class="help-button-desktop" id="helpButton">?</div>
+  <!-- 右側漢堡選單按鈕（桌機與手機皆顯示，可看成就） -->
+  <button type="button" class="help-button-desktop" id="helpButton" aria-label="選單">☰</button>
   <div class="help-overlay hidden" id="helpOverlay">
-    <div class="help-content">
-      <h3>關於本專案</h3>
-      <p><strong>轉型正義 Gather Town 線上展覽，促轉列車搶先試乘</strong></p>
-      <p>如果轉型正義，是一台通往民主未來的列車……</p>
-      <p>促轉會的核心理念之一，是將「轉型正義」的成果與社會共享。除了將三年以來的努力整理成詳細報告《任務推動及調查成果報告書》之外，更希望透過多元途徑，讓國人接觸、認識、進一步參與轉型正義。</p>
-      <p>因此促轉會透過 GatherTown，佈置線上展覽《島嶼候車室－開往民主的轉型正義列車》，將報告書的內容比喻成「虛擬火車站」，揭露壓迫體制輪廓、重述權威下受害者故事，以及描繪未來轉型正義工程願景。</p>
-      <p>🚇 現在只要留言「試乘」並分享此則貼文<br>
-         🚇 就有機會搶先參與體驗線上展覽<br>
-         🚇 還有機會獲得特製精美口罩</p>
-      <p>透過你的「見證」與「續寫」，讓我們一起成為後人記憶中的前行者！</p>
-      <div class="help-close" id="helpClose">關閉</div>
+    <div class="menu-backdrop" id="menuBackdrop"></div>
+    <div class="menu-panel" id="menuPanel" data-active="achievement">
+      <div class="menu-panel-header">
+        <h2 class="menu-panel-title">選單</h2>
+        <button type="button" class="menu-close" id="helpClose" aria-label="關閉">✕</button>
+      </div>
+      <div class="menu-tabs">
+        <button type="button" class="menu-tab active" data-tab="achievement">成就</button>
+        <button type="button" class="menu-tab" data-tab="about">關於本專案</button>
+      </div>
+      <div class="menu-tab-content" data-tab="achievement">
+        <div class="achievement-grid" id="achievementGrid">
+          <div class="achievement-item" data-id="zhou" data-name="周清月記者證">
+            <img class="achievement-img" src="車廂1物件/周清月無人.png" alt="周清月" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">周清月記者證</span>
+          </div>
+          <div class="achievement-item" data-id="huang" data-name="黃家母女">
+            <img class="achievement-img" src="車廂1物件/黃家母女無人.png" alt="黃家母女" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">黃家母女</span>
+          </div>
+          <div class="achievement-item" data-id="du" data-name="杜孝生">
+            <img class="achievement-img" src="車廂1物件/杜孝生無人.png" alt="杜孝生" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">杜孝生</span>
+          </div>
+          <div class="achievement-item" data-id="liu" data-name="劉永祥">
+            <img class="achievement-img" src="車廂1物件/劉永祥無人.png" alt="劉永祥" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">劉永祥</span>
+          </div>
+          <div class="achievement-item" data-id="yang" data-name="陽翰情報報告">
+            <img class="achievement-img" src="車廂1物件/陽翰無人.png" alt="陽翰" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">陽翰情報報告</span>
+          </div>
+          <div class="achievement-item" data-id="wang" data-name="王再傳的黨員手冊">
+            <img class="achievement-img" src="車廂1物件/王再傳無人.png" alt="王再傳" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">王再傳的黨員手冊</span>
+          </div>
+          <div class="achievement-item" data-id="xu" data-name="許宗力">
+            <img class="achievement-img" src="車廂1物件/許宗力無人.png" alt="許宗力" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">許宗力</span>
+          </div>
+          <div class="achievement-item" data-id="zhugong" data-name="新竹高工塗鴉">
+            <img class="achievement-img" src="車廂1物件/竹工無人.png" alt="竹工" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">新竹高工塗鴉</span>
+          </div>
+        </div>
+        <div class="achievement-progress-wrap">
+          <div class="achievement-progress-label" id="achievementProgressLabel">已互動 0 / 8</div>
+          <div class="achievement-progress-bar">
+            <div class="achievement-progress-fill" id="achievementProgressFill"></div>
+          </div>
+        </div>
+      </div>
+      <div class="menu-tab-content" data-tab="about">
+        <div class="help-content">
+          <h3>關於本專案</h3>
+          <p><strong>轉型正義 Gather Town 線上展覽，促轉列車搶先試乘</strong></p>
+          <p>如果轉型正義，是一台通往民主未來的列車……</p>
+          <p>促轉會的核心理念之一，是將「轉型正義」的成果與社會共享。除了將三年以來的努力整理成詳細報告《任務推動及調查成果報告書》之外，更希望透過多元途徑，讓國人接觸、認識、進一步參與轉型正義。</p>
+          <p>因此促轉會透過 GatherTown，佈置線上展覽《島嶼候車室－開往民主的轉型正義列車》，將報告書的內容比喻成「虛擬火車站」，揭露壓迫體制輪廓、重述權威下受害者故事，以及描繪未來轉型正義工程願景。</p>
+          <p>🚇 現在只要留言「試乘」並分享此則貼文<br>
+             🚇 就有機會搶先參與體驗線上展覽<br>
+             🚇 還有機會獲得特製精美口罩</p>
+          <p>透過你的「見證」與「續寫」，讓我們一起成為後人記憶中的前行者！</p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1122,6 +1385,9 @@
     const popupWang = document.getElementById('popupWang');
     const popupWangClose = document.getElementById('popupWangClose');
     const bottomSheetWang = popupWang ? popupWang.querySelector('.bottom-sheet') : null;
+    const popupXu = document.getElementById('popupXu');
+    const popupXuClose = document.getElementById('popupXuClose');
+    const bottomSheetXu = popupXu ? popupXu.querySelector('.bottom-sheet') : null;
     const popupZhugong = document.getElementById('popupZhugong');
     const popupZhugongClose = document.getElementById('popupZhugongClose');
     const bottomSheetZhugong = popupZhugong ? popupZhugong.querySelector('.bottom-sheet') : null;
@@ -1129,6 +1395,54 @@
     const helpButton = document.getElementById('helpButton');
     const helpOverlay = document.getElementById('helpOverlay');
     const helpClose = document.getElementById('helpClose');
+    const menuPanel = document.getElementById('menuPanel');
+    const menuBackdrop = document.getElementById('menuBackdrop');
+    const achievementGrid = document.getElementById('achievementGrid');
+    const achievementProgressLabel = document.getElementById('achievementProgressLabel');
+    const achievementProgressFill = document.getElementById('achievementProgressFill');
+
+    // 成就系統：可互動物件 id 與 localStorage
+    const ACHIEVEMENT_IDS = ['zhou', 'huang', 'du', 'liu', 'yang', 'wang', 'xu', 'zhugong'];
+    const ACHIEVEMENT_STORAGE_KEY = 'train_achievements';
+    function getAchievementState() {
+      try {
+        var raw = localStorage.getItem(ACHIEVEMENT_STORAGE_KEY);
+        if (raw) {
+          var o = JSON.parse(raw);
+          var out = {};
+          ACHIEVEMENT_IDS.forEach(function (id) { out[id] = !!o[id]; });
+          return out;
+        }
+      } catch (e) {}
+      return ACHIEVEMENT_IDS.reduce(function (acc, id) { acc[id] = false; return acc; }, {});
+    }
+    var achievementState = getAchievementState();
+    function saveAchievementState() {
+      try {
+        localStorage.setItem(ACHIEVEMENT_STORAGE_KEY, JSON.stringify(achievementState));
+      } catch (e) {}
+    }
+    function achievementUnlock(id) {
+      if (!achievementState[id]) {
+        achievementState[id] = true;
+        saveAchievementState();
+        if (achievementGrid) updateAchievementUI();
+      }
+    }
+    function updateAchievementUI() {
+      if (!achievementGrid) return;
+      var items = achievementGrid.querySelectorAll('.achievement-item');
+      items.forEach(function (el) {
+        var id = el.getAttribute('data-id');
+        if (achievementState[id]) el.classList.add('unlocked');
+        else el.classList.remove('unlocked');
+      });
+      var count = ACHIEVEMENT_IDS.filter(function (id) { return achievementState[id]; }).length;
+      var total = ACHIEVEMENT_IDS.length;
+      var pct = total ? Math.round((count / total) * 100) : 0;
+      if (achievementProgressLabel) achievementProgressLabel.textContent = '已互動 ' + count + ' / ' + total;
+      if (achievementProgressFill) achievementProgressFill.style.width = pct + '%';
+    }
     const startOverlay = document.getElementById('startOverlay');
     const startButton = document.getElementById('startButton');
     const debugBtn = document.getElementById('debugBtn');
@@ -1156,7 +1470,8 @@
       platform: [
         { col1: 27, col2: 28, row1: 12, row2: 13 },   // 月台 車廂關 → 車廂開 (entrance / open door)
         { col1: 27, col2: 28, row1: 14, row2: 14 },   // 月台 車廂開 → 車廂關 (col 27-28, row 14)
-        { col1: 51, col2: 51, row1: 10, row2: 11 }    // 月台 車廂開 → 車廂2
+        { col1: 51, col2: 51, row1: 10, row2: 11 },   // 月台 車廂開 → 車廂2
+        { col1: 28, col2: 28, row1: 40, row2: 40 }    // 月台 底部 col 28, row 40 → 直接傳送到車廂3
       ],
       platformClosedToCar2: [                          // 月台 車廂關 右側兩格 → 車廂2
         { col1: 50, col2: 50, row1: 10, row2: 11 },
@@ -1290,11 +1605,25 @@
     wangIdleImage.src = '車廂1物件/王再傳無人.png';
     wangActiveImage.src = '車廂1物件/王再傳.png';
 
+    // 許宗力的海外學人回國服務登記表：說明圖 許宗力無人.png，靠近圖 許宗力.png，觸發點 col 49 row 10
+    const xuIdleImage = new Image();
+    const xuActiveImage = new Image();
+    xuIdleImage.src = '車廂1物件/許宗力無人.png';
+    xuActiveImage.src = '車廂1物件/許宗力.png';
+
     // 竹工（新竹高工的塗鴉）：說明圖 竹工無人.png，靠近圖 竹工.png，觸發範圍 col 45-46 row 10-11
     const zhugongIdleImage = new Image();
     const zhugongActiveImage = new Image();
     zhugongIdleImage.src = '車廂1物件/竹工無人.png';
     zhugongActiveImage.src = '車廂1物件/竹工.png';
+
+    // 車廂3 標語2：col 24～49、row 17 橫跨
+    const biaoyu2Image = new Image();
+    biaoyu2Image.src = '車廂3物件/標語2.png';
+
+    // 車廂3 站牌：放在玩家提供的位置 (carriage 3 stop sign)
+    const car3StopSignImage = new Image();
+    car3StopSignImage.src = '車廂3物件/車廂3站牌.png';
 
     // Player directional sprites (32x32). Put these PNGs in the same folder.
     const playerSprites = {
@@ -1347,6 +1676,8 @@
     const yangZone = { x: 1052, y: 320, width: 40, height: 32 };
     // 王再傳的黨員手冊觸發點：月台 車廂開 col 43, row 10
     const wangZone = { x: 1372, y: 320, width: 40, height: 32 };
+    // 許宗力的海外學人回國服務登記表觸發點：月台 車廂開 col 49, row 10
+    const xuZone = { x: 1548, y: 320, width: 40, height: 32 };
     // 竹工（新竹高工的塗鴉）觸發範圍：月台 車廂開 col 45-46, row 10-11（2x2 格）
     const zhugongZone = { x: 1440, y: 320, width: 64, height: 64 };
 
@@ -1364,6 +1695,8 @@
     let wasInYangZone = false;
     let isNearWangNow = false;
     let wasInWangZone = false;
+    let isNearXuNow = false;
+    let wasInXuZone = false;
     let isNearZhugongNow = false;
     let wasInZhugongZone = false;
 
@@ -1710,6 +2043,7 @@
       const inZoneOpen = platformZones[0] && playerCol >= platformZones[0].col1 && playerCol <= platformZones[0].col2 && playerRow >= platformZones[0].row1 && playerRow <= platformZones[0].row2;
       const inZoneToClosed = platformZones[1] && playerCol >= platformZones[1].col1 && playerCol <= platformZones[1].col2 && playerRow >= platformZones[1].row1 && playerRow <= platformZones[1].row2;
       const inZoneCar2 = platformZones[2] && playerCol >= platformZones[2].col1 && playerCol <= platformZones[2].col2 && playerRow >= platformZones[2].row1 && playerRow <= platformZones[2].row2;
+      const inZonePlatformToCar3 = platformZones[3] && playerCol >= platformZones[3].col1 && playerCol <= platformZones[3].col2 && playerRow >= platformZones[3].row1 && playerRow <= platformZones[3].row2;
       const inZoneClosedToCar2 = closedToCar2Zones.some(function (z) {
         return playerCol >= z.col1 && playerCol <= z.col2 && playerRow >= z.row1 && playerRow <= z.row2;
       });
@@ -1745,6 +2079,14 @@
         player.y = CAR2_SPAWN.y;
         onMapSwitch();
         prepareCollisionMask(); // 切換到車廂2後，用該地圖的 MASK 更新禁止通行區域
+      } else if (currentMapIndex === 0 && inZonePlatformToCar3 && mapImages[2].width > 0 && mapImages[2].height > 0) {
+        // 月台底部 col 28, row 40 → 直接傳送到車廂3
+        currentMapIndex = 2;
+        applyWorldSizeFromMap(2);
+        player.x = CAR3_SPAWN.x;
+        player.y = CAR3_SPAWN.y;
+        onMapSwitch();
+        prepareCollisionMask(); // 切換到車廂3後，用該地圖的 MASK 更新禁止通行區域
       } else if (currentMapIndex === 1 && inZoneCar2ToPlatformOpen && mapImages[0].width > 0 && mapImages[0].height > 0) {
         currentMapIndex = 0;
         platformCarriageOpen = true; // 車廂一 = 月台 車廂開
@@ -1845,6 +2187,12 @@
       const dxWang = player.x - wangCenterX;
       const dyWang = player.y - wangCenterY;
       const distToWang = Math.hypot(dxWang, dyWang);
+      // 許宗力的海外學人回國服務登記表圖示位置：月台 車廂開 col 49, row 10
+      const xuCenterX = 49 * TILE_SIZE + TILE_SIZE / 2;
+      const xuCenterY = 10 * TILE_SIZE;
+      const dxXu = player.x - xuCenterX;
+      const dyXu = player.y - xuCenterY;
+      const distToXu = Math.hypot(dxXu, dyXu);
       // 竹工（新竹高工的塗鴉）圖示位置：col 45-46 row 10-11 中心 (1472, 352)
       const zhugongCenterX = 45 * TILE_SIZE + TILE_SIZE;  // 1472
       const zhugongCenterY = 10 * TILE_SIZE + TILE_SIZE;   // 352
@@ -1869,6 +2217,8 @@
       const inYangZone = onPlatformOpen && isPlayerCenterInZone(player, yangZone);
       isNearWangNow = onPlatformOpen && distToWang < NEAR_PREVIEW_DIST;
       const inWangZone = onPlatformOpen && isPlayerCenterInZone(player, wangZone);
+      isNearXuNow = onPlatformOpen && distToXu < NEAR_PREVIEW_DIST;
+      const inXuZone = onPlatformOpen && isPlayerCenterInZone(player, xuZone);
       // 竹工（新竹高工的塗鴉）：用 bbox 重疊，row 10 或 11 皆可觸發，預覽距離同
       isNearZhugongNow = onPlatformOpen && distToZhugong < NEAR_PREVIEW_DIST;
       const inZhugongZone = onPlatformOpen && isPlayerInZone(player, zhugongZone);
@@ -1879,15 +2229,18 @@
         if (popupLiu) popupLiu.classList.add('hidden');
         if (popupYang) popupYang.classList.add('hidden');
         if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
         if (popupZhugong) popupZhugong.classList.add('hidden');
         if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
         if (bottomSheetDu) bottomSheetDu.classList.remove('open');
         if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
         if (bottomSheetYang) bottomSheetYang.classList.remove('open');
         if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
         if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
         if (bottomSheetScrollZhou) bottomSheetScrollZhou.scrollTop = 0;
         popup.classList.remove('hidden');
+        achievementUnlock('zhou');
         gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheet) bottomSheet.classList.add('open');
@@ -1904,15 +2257,18 @@
         if (popupLiu) popupLiu.classList.add('hidden');
         if (popupYang) popupYang.classList.add('hidden');
         if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
         if (popupZhugong) popupZhugong.classList.add('hidden');
         if (bottomSheet) bottomSheet.classList.remove('open');
         if (bottomSheetDu) bottomSheetDu.classList.remove('open');
         if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
         if (bottomSheetYang) bottomSheetYang.classList.remove('open');
         if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
         if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
         if (bottomSheetScrollHuang) bottomSheetScrollHuang.scrollTop = 0;
         if (popupHuang) popupHuang.classList.remove('hidden');
+        achievementUnlock('huang');
         gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetHuang) bottomSheetHuang.classList.add('open');
@@ -1929,15 +2285,18 @@
         if (popupLiu) popupLiu.classList.add('hidden');
         if (popupYang) popupYang.classList.add('hidden');
         if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
         if (popupZhugong) popupZhugong.classList.add('hidden');
         if (bottomSheet) bottomSheet.classList.remove('open');
         if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
         if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
         if (bottomSheetYang) bottomSheetYang.classList.remove('open');
         if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
         if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
         if (bottomSheetScrollDu) bottomSheetScrollDu.scrollTop = 0;
         if (popupDu) popupDu.classList.remove('hidden');
+        achievementUnlock('du');
         gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetDu) bottomSheetDu.classList.add('open');
@@ -1954,15 +2313,18 @@
         if (popupDu) popupDu.classList.add('hidden');
         if (popupYang) popupYang.classList.add('hidden');
         if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
         if (popupZhugong) popupZhugong.classList.add('hidden');
         if (bottomSheet) bottomSheet.classList.remove('open');
         if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
         if (bottomSheetDu) bottomSheetDu.classList.remove('open');
         if (bottomSheetYang) bottomSheetYang.classList.remove('open');
         if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
         if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
         if (bottomSheetScrollLiu) bottomSheetScrollLiu.scrollTop = 0;
         if (popupLiu) popupLiu.classList.remove('hidden');
+        achievementUnlock('liu');
         gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetLiu) bottomSheetLiu.classList.add('open');
@@ -1979,15 +2341,18 @@
         if (popupDu) popupDu.classList.add('hidden');
         if (popupLiu) popupLiu.classList.add('hidden');
         if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
         if (popupZhugong) popupZhugong.classList.add('hidden');
         if (bottomSheet) bottomSheet.classList.remove('open');
         if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
         if (bottomSheetDu) bottomSheetDu.classList.remove('open');
         if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
         if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
         if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
         if (bottomSheetScrollYang) bottomSheetScrollYang.scrollTop = 0;
         if (popupYang) popupYang.classList.remove('hidden');
+        achievementUnlock('yang');
         gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetYang) bottomSheetYang.classList.add('open');
@@ -2004,15 +2369,18 @@
         if (popupDu) popupDu.classList.add('hidden');
         if (popupLiu) popupLiu.classList.add('hidden');
         if (popupYang) popupYang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
         if (popupZhugong) popupZhugong.classList.add('hidden');
         if (bottomSheet) bottomSheet.classList.remove('open');
         if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
         if (bottomSheetDu) bottomSheetDu.classList.remove('open');
         if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
         if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
         if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
         if (bottomSheetScrollWang) bottomSheetScrollWang.scrollTop = 0;
         if (popupWang) popupWang.classList.remove('hidden');
+        achievementUnlock('wang');
         gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetWang) bottomSheetWang.classList.add('open');
@@ -2023,6 +2391,34 @@
         gameState.inputLocked = false;
         setTimeout(function () { if (popupWang) popupWang.classList.add('hidden'); }, 300);
       }
+      if (inXuZone && !wasInXuZone) {
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetScrollXu) bottomSheetScrollXu.scrollTop = 0;
+        if (popupXu) popupXu.classList.remove('hidden');
+        achievementUnlock('xu');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetXu) bottomSheetXu.classList.add('open');
+          if (scrollProgressBarXu) scrollProgressBarXu.style.top = '0%';
+        });
+      } else if (!inXuZone && wasInXuZone) {
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupXu) popupXu.classList.add('hidden'); }, 300);
+      }
       if (inZhugongZone && !wasInZhugongZone) {
         popup.classList.add('hidden');
         if (popupHuang) popupHuang.classList.add('hidden');
@@ -2030,14 +2426,17 @@
         if (popupLiu) popupLiu.classList.add('hidden');
         if (popupYang) popupYang.classList.add('hidden');
         if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
         if (bottomSheet) bottomSheet.classList.remove('open');
         if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
         if (bottomSheetDu) bottomSheetDu.classList.remove('open');
         if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
         if (bottomSheetYang) bottomSheetYang.classList.remove('open');
         if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
         if (bottomSheetScrollZhugong) bottomSheetScrollZhugong.scrollTop = 0;
         if (popupZhugong) popupZhugong.classList.remove('hidden');
+        achievementUnlock('zhugong');
         gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetZhugong) bottomSheetZhugong.classList.add('open');
@@ -2054,6 +2453,7 @@
       wasInLiuZone = inLiuZone;
       wasInYangZone = inYangZone;
       wasInWangZone = inWangZone;
+      wasInXuZone = inXuZone;
       wasInZhugongZone = inZhugongZone;
     }
 
@@ -2320,6 +2720,32 @@
           var wH = wnh * wscale;
           ctx.drawImage(wangIcon, wangX - wW / 2, wangY - wH / 2, wW, wH);
         }
+        // 許宗力的海外學人回國服務登記表：位置 col 49, row 10
+        var xuX = 49 * TILE_SIZE + TILE_SIZE / 2;
+        var xuY = 10 * TILE_SIZE;
+        if (isNearXuNow) {
+          var tXu = Date.now() / 300;
+          var pulseXu = (Math.sin(tXu) + 1) / 2;
+          var radiusXu = 22 + 6 * pulseXu;
+          var gradXu = ctx.createRadialGradient(xuX, xuY, 4, xuX, xuY, radiusXu);
+          gradXu.addColorStop(0, 'rgba(255, 255, 180, 0.9)');
+          gradXu.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradXu;
+          ctx.beginPath();
+          ctx.arc(xuX, xuY, radiusXu, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        var xuIcon = isNearXuNow ? xuActiveImage : xuIdleImage;
+        if (xuIcon.complete && xuIcon.naturalWidth > 0) {
+          var xnw = xuIcon.naturalWidth;
+          var xnh = xuIcon.naturalHeight;
+          var xscale = Math.min(maxCardSize / xnw, maxCardSize / xnh, 1);
+          var xW = xnw * xscale;
+          var xH = xnh * xscale;
+          ctx.drawImage(xuIcon, xuX - xW / 2, xuY - xH / 2, xW, xH);
+        }
         // 竹工（新竹高工的塗鴉）：位置 col 45-46 row 10-11 中心
         var zhugongX = 45 * TILE_SIZE + TILE_SIZE;
         var zhugongY = 10 * TILE_SIZE + TILE_SIZE;
@@ -2346,6 +2772,35 @@
           var zgH = zgnh * zgscale;
           ctx.drawImage(zhugongIcon, zhugongX - zgW / 2, zhugongY - zgH / 2, zgW, zgH);
         }
+      }
+
+      // 車廂3 標語2：橫跨 col 24～49（26 格）、row 17 置中
+      if (currentMapIndex === 2 && biaoyu2Image.complete && biaoyu2Image.naturalWidth > 0) {
+        var biaoyu2Col1 = 24;
+        var biaoyu2Col2 = 49;
+        var biaoyu2W = (biaoyu2Col2 - biaoyu2Col1 + 1) * TILE_SIZE;
+        var biaoyu2CenterX = (biaoyu2Col1 + biaoyu2Col2) / 2 * TILE_SIZE + TILE_SIZE / 2;
+        var biaoyu2CenterY = 16 * TILE_SIZE + TILE_SIZE / 2;
+        var bnw = biaoyu2Image.naturalWidth;
+        var bnh = biaoyu2Image.naturalHeight;
+        var bW = biaoyu2W;
+        var bH = bnh * (biaoyu2W / bnw);
+        ctx.drawImage(biaoyu2Image, biaoyu2CenterX - bW / 2, biaoyu2CenterY - bH / 2, bW, bH);
+      }
+
+      // 車廂3 站牌：以玩家提供的位置為中心，放大到整張地圖寬度的 3/4
+      if (currentMapIndex === 2 && car3StopSignImage.complete && car3StopSignImage.naturalWidth > 0) {
+        // 中心點：player.x ≈ 1173, player.y ≈ 320（比原位置往左一格）
+        var stopX = 1173;
+        var stopY = 320;
+        var snw = car3StopSignImage.naturalWidth;
+        var snh = car3StopSignImage.naturalHeight;
+        // 將站牌圖寬度縮放為整張車廂3 地圖寬度的 3/4
+        var targetW = WORLD_WIDTH * 0.75;
+        var sScale = targetW / snw;
+        var sW = snw * sScale;
+        var sH = snh * sScale;
+        ctx.drawImage(car3StopSignImage, stopX - sW / 2, stopY - sH / 2, sW, sH);
       }
 
       drawPlayer({
@@ -2497,6 +2952,11 @@
       gameState.inputLocked = false;
       setTimeout(function () { if (popupZhugong) popupZhugong.classList.add('hidden'); }, 300);
     }
+    function closeModalXu() {
+      if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupXu) popupXu.classList.add('hidden'); }, 300);
+    }
 
     popup.addEventListener('click', function (e) {
       if (e.target === popup) closeModal();
@@ -2550,6 +3010,9 @@
     const bottomSheetScrollWang = document.getElementById('bottomSheetScrollWang');
     const scrollProgressBarWang = document.getElementById('scrollProgressBarWang');
     const scrollProgressWrapWang = document.getElementById('scrollProgressWang');
+    const bottomSheetScrollXu = document.getElementById('bottomSheetScrollXu');
+    const scrollProgressBarXu = document.getElementById('scrollProgressBarXu');
+    const scrollProgressWrapXu = document.getElementById('scrollProgressXu');
     const bottomSheetScrollZhugong = document.getElementById('bottomSheetScrollZhugong');
     const scrollProgressBarZhugong = document.getElementById('scrollProgressBarZhugong');
     const scrollProgressWrapZhugong = document.getElementById('scrollProgressZhugong');
@@ -2559,6 +3022,7 @@
     setupScrollProgress(bottomSheetScrollLiu, scrollProgressWrapLiu, scrollProgressBarLiu);
     setupScrollProgress(bottomSheetScrollYang, scrollProgressWrapYang, scrollProgressBarYang);
     setupScrollProgress(bottomSheetScrollWang, scrollProgressWrapWang, scrollProgressBarWang);
+    setupScrollProgress(bottomSheetScrollXu, scrollProgressWrapXu, scrollProgressBarXu);
     setupScrollProgress(bottomSheetScrollZhugong, scrollProgressWrapZhugong, scrollProgressBarZhugong);
 
     if (popupHuang) {
@@ -2631,6 +3095,20 @@
     if (bottomSheetWang) {
       bottomSheetWang.addEventListener('click', function (e) { e.stopPropagation(); });
     }
+    if (popupXu) {
+      popupXu.addEventListener('click', function (e) {
+        if (e.target === popupXu) closeModalXu();
+      });
+    }
+    if (popupXuClose) {
+      popupXuClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalXu();
+      });
+    }
+    if (bottomSheetXu) {
+      bottomSheetXu.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
     if (popupZhugong) {
       popupZhugong.addEventListener('click', function (e) {
         if (e.target === popupZhugong) closeModalZhugong();
@@ -2646,13 +3124,44 @@
       bottomSheetZhugong.addEventListener('click', function (e) { e.stopPropagation(); });
     }
 
-    // --- Help overlay behavior (desktop) ---
-    helpButton.addEventListener('click', () => {
+    // --- 右側漢堡選單：開啟、關閉、分頁、成就 UI ---
+    if (menuPanel) {
+      menuPanel.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    helpButton.addEventListener('click', function () {
       helpOverlay.classList.remove('hidden');
+      if (helpButton) helpButton.classList.add('menu-open');
+      updateAchievementUI();
     });
-    helpClose.addEventListener('click', () => {
+    function closeMenu() {
       helpOverlay.classList.add('hidden');
+      if (helpButton) helpButton.classList.remove('menu-open');
+    }
+    helpClose.addEventListener('click', closeMenu);
+    if (menuBackdrop) {
+      menuBackdrop.addEventListener('click', closeMenu);
+    }
+    document.querySelectorAll('.menu-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        var t = tab.getAttribute('data-tab');
+        if (!menuPanel || !t) return;
+        menuPanel.setAttribute('data-active', t);
+        document.querySelectorAll('.menu-tab').forEach(function (x) {
+          x.classList.toggle('active', x.getAttribute('data-tab') === t);
+        });
+      });
     });
+    if (achievementGrid) {
+      achievementGrid.querySelectorAll('.achievement-item').forEach(function (item) {
+        item.addEventListener('click', function () {
+          achievementGrid.querySelectorAll('.achievement-item').forEach(function (other) {
+            other.classList.remove('show-name');
+          });
+          item.classList.add('show-name');
+        });
+      });
+    }
+    updateAchievementUI();
 
     if (debugBtn && debugPanel) {
       debugBtn.addEventListener('click', () => {
@@ -2698,8 +3207,8 @@
         }
       });
     }
-    helpOverlay.addEventListener('click', () => {
-      helpOverlay.classList.add('hidden');
+    helpOverlay.addEventListener('click', function (e) {
+      if (e.target === helpOverlay) closeMenu();
     });
 
     // --- Start overlay behavior ---
