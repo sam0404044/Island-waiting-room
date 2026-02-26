@@ -187,6 +187,32 @@
     .popup-body p {
       margin: 0 0 10px 0;
     }
+    .popup-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 14px 0;
+      font-size: clamp(11px, 1.6vw, 14px);
+    }
+    .popup-table th,
+    .popup-table td {
+      border: 1px solid #999;
+      padding: 6px 8px;
+      text-align: left;
+    }
+    .popup-table th { background: #e8e8e8; font-weight: 700; }
+    .popup-table--compact td:first-child { font-weight: 500; }
+    .popup-subtitle { font-size: 1em; margin: 0 0 8px 0; color: #003366; }
+    .popup-next-wrap { margin-top: 12px; text-align: right; }
+    .popup-next-btn {
+      padding: 8px 14px;
+      background: #003366;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .popup-next-btn:hover { background: #004080; }
     .popup-figure {
       float: right;
       margin: 0 0 8px 12px;
@@ -358,6 +384,38 @@
     }
     .debug-copy-btn:hover {
       background: #444;
+    }
+
+    /* 主要行動按鈕（例如：複製遊戲連結） */
+    .primary-button {
+      -webkit-appearance: none;
+      appearance: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      margin-top: 12px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #1d72f2, #3ac7c9);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+    }
+    .primary-button:hover {
+      filter: brightness(1.05);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transform: translateY(-1px);
+    }
+    .primary-button:active {
+      filter: brightness(0.97);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+      transform: translateY(1px);
     }
 
     /* 右側漢堡選單：滑入面板 */
@@ -1242,6 +1300,608 @@
         </div>
       </div>
 
+      <!-- Popup: 月台 便當攤（終審判決結果，單頁全部呈現） -->
+      <div id="popupBento" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetBento">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollBento">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">終審判決結果</h3>
+              <div class="popup-body">
+                <p class="popup-broadcast">審判人員參與次數</p>
+                <table class="popup-table">
+                  <thead>
+                    <tr><th>排名</th><th>姓名</th><th>職稱</th><th>參與次數</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>1</td><td>蔣中正</td><td>總統</td><td>4,101 次</td></tr>
+                    <tr><td>2</td><td>殷敬文</td><td>軍法官</td><td>3,233 次</td></tr>
+                    <tr><td>3</td><td>周至柔</td><td>參謀總長</td><td>3,152 次</td></tr>
+                    <tr><td>4</td><td>周咸慶</td><td>軍法官</td><td>2,887 次</td></tr>
+                    <tr><td>5</td><td>邢炎初</td><td>軍法官</td><td>2,689 次</td></tr>
+                    <tr><td>6</td><td>范明</td><td>軍法官</td><td>2,675 次</td></tr>
+                    <tr><td>7</td><td>彭國壎</td><td>軍法官</td><td>2,161 次</td></tr>
+                    <tr><td>8</td><td>王名馴</td><td>總統府參軍長</td><td>2,160 次</td></tr>
+                    <tr><td>9</td><td>桂永清</td><td>總統府參軍長</td><td>1,993 次</td></tr>
+                    <tr><td>10</td><td>張羣</td><td>總統府秘書長</td><td>1,566 次</td></tr>
+                  </tbody>
+                </table>
+                <h4 class="popup-subtitle">終審判決為死刑的案件</h4>
+                <table class="popup-table popup-table--compact">
+                  <tr><td>終審判決為死刑的案件</td><td>1,151 件</td></tr>
+                  <tr><td>蔣中正經手過的死刑案件</td><td>970 件（佔死刑案件 84.27%）</td></tr>
+                  <tr><td>經蔣中正核覆後改判案件</td><td>790 件</td></tr>
+                  <tr><td>改判死刑</td><td>259 件（佔改判案件 32.78%）</td></tr>
+                </table>
+                <p>政治案件審判決策的參與次數最多的是蔣中正（總統），顯見其對審判過程的介入程度，其次除軍法官以外，參謀總長、總統府參軍長、總統府秘書長等參與程度亦高。</p>
+                <h4 class="popup-subtitle">終審判決引用法條</h4>
+                <table class="popup-table popup-table--compact">
+                  <tr><td>懲治叛亂防制條例第5條</td><td>1,860 次（14.67%）</td></tr>
+                  <tr><td>懲治叛亂防制條例第2條第1項</td><td>1,415 次（11.16%）</td></tr>
+                </table>
+                <p>而終審判決中引用次數最多的法條，刑度為無期徒刑或 10 年以上有期徒刑，以及處死刑，顯示多為重刑。</p>
+              </div>
+            </div>
+          </div>
+          <button id="popupBentoClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 月台 廁所（案件當事人性別 OCR） -->
+      <div id="popupToilet" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetToilet">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollToilet">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">案件當事人性別</h3>
+              <div class="popup-body">
+                <div class="popup-figure popup-figure--crop">
+                  <img src="月台區物件/廁所.png" alt="案件當事人性別圖像" />
+                  <span>圖說：案件當事人性別</span>
+                </div>
+                <table class="popup-table popup-table--compact">
+                  <tr><td>男性</td><td>96%</td></tr>
+                  <tr><td>女性</td><td>4%</td></tr>
+                </table>
+                <p>男女比例極為懸殊，反映出威權統治時期生命、自由權直接受到侵害的當事人以男性為主，但這也反映出另一個面向是，「獄外之囚」以女性為主的情形。</p>
+              </div>
+            </div>
+          </div>
+          <button id="popupToiletClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 月台 售票機（政治案件當事人年齡／遭判刑度 OCR） -->
+      <div id="popupTicket" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetTicket">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollTicket">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">政治案件當事人統計</h3>
+              <div class="popup-body">
+                <div class="popup-figure popup-figure--crop">
+                  <img src="月台區物件/售票機.png" alt="售票機圖像" />
+                  <span>圖說：售票機</span>
+                </div>
+                <h4 class="popup-subtitle">政治案件當事人年齡</h4>
+                <table class="popup-table">
+                  <thead>
+                    <tr><th>年齡層</th><th>人數</th><th>%</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>18歲含以下</td><td>383人</td><td>3.24%</td></tr>
+                    <tr><td>19-29歲</td><td>5,051人</td><td>42.67%</td></tr>
+                    <tr><td>30-39歲</td><td>3,488人</td><td>29.47%</td></tr>
+                    <tr><td>40-49歲</td><td>1,889人</td><td>15.96%</td></tr>
+                    <tr><td>50-59歲</td><td>807人</td><td>6.82%</td></tr>
+                    <tr><td>60-69歲</td><td>199人</td><td>1.68%</td></tr>
+                    <tr><td>70-79歲</td><td>16人</td><td>0.14%</td></tr>
+                    <tr><td>80歲以上</td><td>4人</td><td>0.08%</td></tr>
+                  </tbody>
+                </table>
+                <p>當事人主要年齡層集中在19至39歲之間（超過七成），顯示當時對青壯年的控制與壓迫。所有當事人當中，最小當事人被起訴時年齡僅11歲，最年長則為84歲，影響範圍廣大。</p>
+                <h4 class="popup-subtitle">案件當事人遭判刑度</h4>
+                <table class="popup-table">
+                  <thead>
+                    <tr><th>刑度</th><th>人數</th><th>%</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>死刑</td><td>1,153人</td><td>9.58%</td></tr>
+                    <tr><td>無期徒刑</td><td>169人</td><td>1.4%</td></tr>
+                    <tr><td>有期徒刑15年以上</td><td>425人</td><td>3.53%</td></tr>
+                    <tr><td>有期徒刑10年以上未滿15年</td><td>1,628人</td><td>13.53%</td></tr>
+                    <tr><td>有期徒刑5年以上未滿10年</td><td>1,498人</td><td>12.45%</td></tr>
+                    <tr><td>有期徒刑未滿5年</td><td>1,021人</td><td>8.48%</td></tr>
+                    <tr><td>感化（訓）教育</td><td>1,744人</td><td>14.49%</td></tr>
+                    <tr><td>無罪</td><td>726人</td><td>6.03%</td></tr>
+                    <tr><td>不起訴或不交付軍事審判</td><td>3,507人</td><td>29.14%</td></tr>
+                    <tr><td>其他</td><td>163人</td><td>1.35%</td></tr>
+                  </tbody>
+                </table>
+                <p>將近三成的當事人被判處10年以上的重刑，反映出白色恐怖時期政治案件量刑的嚴峻。</p>
+              </div>
+            </div>
+          </div>
+          <button id="popupTicketClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 月台 書架（案件當事人出生地 OCR） -->
+      <div id="popupBookshelf" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetBookshelf">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollBookshelf">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">案件當事人出生地</h3>
+              <div class="popup-body">
+                <div class="popup-figure popup-figure--crop">
+                  <img src="月台區物件/書架.png" alt="書架圖像" />
+                  <span>圖說：書架</span>
+                </div>
+                <table class="popup-table popup-table--compact">
+                  <tr><td>1. 臺南縣市</td><td>864人（11.44%）</td></tr>
+                  <tr><td>2. 高雄縣市</td><td>796人（10.54%）</td></tr>
+                  <tr><td>3. 臺北縣</td><td>760人（10.07%）</td></tr>
+                </table>
+                <p>政治案件當事人的出生地並不侷限於權力核心的首都，包括臺南市、高雄市、臺北縣、臺中市都各佔一成左右，顯示全臺各處都受到掌控與影響。</p>
+              </div>
+            </div>
+          </div>
+          <button id="popupBookshelfClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 月台 告示（政治案件高峰期 OCR） -->
+      <div id="popupNotice" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetNotice">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollNotice">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">政治案件高峰期</h3>
+              <div class="popup-body">
+                <div class="popup-figure popup-figure--crop">
+                  <img src="月台區物件/告示.png" alt="告示圖像" />
+                  <span>圖說：告示</span>
+                </div>
+                <p class="popup-broadcast">政治案件被判刑確定的年代</p>
+                <table class="popup-table">
+                  <thead>
+                    <tr><th>年代</th><th>件數</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>1940</td><td>198件（1.74%）</td></tr>
+                    <tr><td>1950</td><td>5,792件（50.82%）</td></tr>
+                    <tr><td>1960</td><td>1,232件（10.81%）</td></tr>
+                    <tr><td>1970</td><td>1,200件（10.52%）</td></tr>
+                    <tr><td>1980</td><td>2,857件（25.05%）</td></tr>
+                    <tr><td>1990-1993</td><td>129件（1.13%）</td></tr>
+                  </tbody>
+                </table>
+                <p>政治案件過半數產生於1950年代，反映出中華民國政府遷臺初期，為了鞏固統治及肅清潛在的反政府勢力，而大舉施行白色恐怖的歷史背景。此後，隨著統治基礎已然穩固，政治案件的數量逐漸下降。</p>
+              </div>
+            </div>
+          </div>
+          <button id="popupNoticeClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 月台 士農工商（政治案件當事人職業 OCR） -->
+      <div id="popupShinonggongshang" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetShinonggongshang">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollShinonggongshang">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">政治案件當事人職業</h3>
+              <div class="popup-body">
+                <div class="popup-figure popup-figure--crop">
+                  <img src="月台區物件/士農工商.png" alt="士農工商圖像" />
+                  <span>圖說：士農工商</span>
+                </div>
+                <table class="popup-table">
+                  <thead>
+                    <tr><th>職業</th><th>人數</th><th>百分比</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>管理階層與民意代表</td><td>676人</td><td>5.66%</td></tr>
+                    <tr><td>專業人員</td><td>981人</td><td>8.22%</td></tr>
+                    <tr><td>辦公室與服務業人員</td><td>2,493人</td><td>20.89%</td></tr>
+                    <tr><td>農林漁牧人員</td><td>1,825人</td><td>15.29%</td></tr>
+                    <tr><td>勞動工人</td><td>2,047人</td><td>17.15%</td></tr>
+                    <tr><td>軍警人員</td><td>1,756人</td><td>14.71%</td></tr>
+                    <tr><td>學生與家庭主婦</td><td>501人</td><td>4.19%</td></tr>
+                    <tr><td>失業與無業者</td><td>1,656人</td><td>13.87%</td></tr>
+                  </tbody>
+                </table>
+                <h4 class="popup-subtitle">案件當事人職業</h4>
+                <p>當事人的職業為辦公室或服務人員、勞動工人、失業及無業者、軍警人員，分別皆佔13-20%，顯示影響遍布社會各界。</p>
+              </div>
+            </div>
+          </div>
+          <button id="popupShinonggongshangClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 月台 站名牌（案件當事人省籍 OCR） -->
+      <div id="popupStationSign" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetStationSign">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollStationSign">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">案件當事人省籍</h3>
+              <div class="popup-body">
+                <div class="popup-figure popup-figure--crop">
+                  <img src="月台區物件/站名牌.png" alt="站名牌／省籍圖像" />
+                  <span>圖說：站名牌（省籍）</span>
+                </div>
+                <table class="popup-table popup-table--compact">
+                  <tbody>
+                    <tr><td>臺灣省</td><td>57%</td></tr>
+                    <tr><td>外省</td><td>43%</td></tr>
+                  </tbody>
+                </table>
+                <p>考量到外省籍在臺灣的人數遠少於臺灣省籍者，但政治案件當事人的比例兩者卻僅相差10多個百分點，反映出威權政府對於外省籍人士的壓迫並不少於臺灣省籍者。</p>
+              </div>
+            </div>
+          </div>
+          <button id="popupStationSignClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 月台 電子看板左（促轉會工作大事記） -->
+      <div id="popupElectronicBoardLeft" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetElectronicBoardLeft">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollElectronicBoardLeft">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">促轉會工作大事記</h3>
+              <div class="popup-body">
+                <div class="popup-figure popup-figure--crop">
+                  <img src="月台區物件/電子看板左.png" alt="電子看板左圖像" />
+                  <span>圖說：電子看板左</span>
+                </div>
+                <p class="popup-broadcast">開往：還原歷史真相、威權象徵處理、平復司法不法、重建社會信任</p>
+                <table class="popup-table">
+                  <thead>
+                    <tr><th>時間</th><th>事件</th><th>動作</th><th>質化成果</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>2018 05</td><td>掛牌成立</td><td>設立任務小組</td><td>設「還原歷史真相」、「威權象徵處理」、「平復司法不法」與「重建社會信任」四組</td></tr>
+                    <tr><td>2020 02 17</td><td>林義雄宅血案調查報告</td><td>公布調查報告</td><td>調查發現威權統治當局涉入本案的嫌疑不容排除</td></tr>
+                    <tr><td>2020 02 26</td><td>臺灣轉型正義資料庫</td><td>資料庫上線</td><td>以受裁判人為單位彙整裁判書等重要決定描繪威權時期軍審樣貌</td></tr>
+                    <tr><td>2020 05 04</td><td>陳文成案調查報告</td><td>公布調查報告</td><td>官方報告首次認定他殺高於意外或自殺，警總嫌疑不容排除</td></tr>
+                    <tr><td>2021 05 11</td><td>促進轉型正義條例 部分條文修正草案</td><td>提出法案函報行政院</td><td>擴大應平復範圍，代表國家承認過去不法侵害人權之事實</td></tr>
+                    <tr><td>2021 05 12</td><td>威權統治時期國家不法行為 被害者權利回復條例草案</td><td>提出法案函報行政院</td><td>確立權利遭國家不法侵害者依法申領賠償金之公民地位；亦就「沒收財產返還」提出方案</td></tr>
+                    <tr><td>2021 08</td><td>促進轉型正義基金 設置計畫書</td><td>獲行政院核定 同意辦理</td><td>依法規劃及運用收歸國有之不當黨產，從黨國還給全民</td></tr>
+                    <tr><td>2021 09 08</td><td>中正紀念堂轉型方案</td><td>提出方案構想</td><td>以「反省威權歷史公園」為整體園區轉型主軸，逐步收攏聚焦社會討論</td></tr>
+                  </tbody>
+                </table>
+                <p>請至右側觀看量化年表 →</p>
+              </div>
+            </div>
+          </div>
+          <button id="popupElectronicBoardLeftClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 月台 電子看板右（促轉會工作大事記／量化年表） -->
+      <div id="popupElectronicBoardRight" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetElectronicBoardRight">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollElectronicBoardRight">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">促轉會工作大事記（量化年表）</h3>
+              <div class="popup-body">
+                <div class="popup-figure popup-figure--crop">
+                  <img src="月台區物件/電子看板右.png" alt="電子看板右圖像" />
+                  <span>圖說：電子看板右</span>
+                </div>
+                <p class="popup-broadcast">開往：還原歷史真相、威權象徵處理、平復司法不法、重建社會信任</p>
+                <p class="popup-broadcast">列車即時資訊</p>
+                <table class="popup-table">
+                  <thead>
+                    <tr><th>時間</th><th>事件</th><th>動作</th><th>量化成果</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>2020 11 27</td><td>建議司法院大法官 檔案審定為政治檔案</td><td>提成審定建議</td><td>建議83案大法官解釋審定為政治檔案，作為威權形成與介入司法參考</td></tr>
+                    <tr><td>2021 03</td><td>審定不義遺址</td><td>確認侵害人權事件發生地</td><td>審定以二二八事件為主25處不義遺址；第二批待審定遺址以白色恐怖時期為主</td></tr>
+                    <tr><td>截至 2021 03</td><td>推動公共空間 威權象徵處置</td><td>追蹤、調查及協商</td><td>追蹤中央機關及地方縣市政府共1,553個/處威權象徵，其中26.79%已處置或已同意處置</td></tr>
+                    <tr><td>2021 05 30</td><td>統計政治案件 當事人數量</td><td>統計分析政治案件資料</td><td>初估威權統治時期政治案件當事人共21,257人（可能隨檔案出土修正）</td></tr>
+                    <tr><td>截至 2021 08 05</td><td>審定國民黨檔案 為政治檔案</td><td>作成審定處分</td><td>完成4批處分，共審定7,526筆政治檔案移歸檔案局提供各界應用</td></tr>
+                    <tr><td>截至 2021 10 12</td><td>政治受難者及家屬 照顧支持據點試辦計畫</td><td>政治暴力創傷療癒</td><td>共有台北、台中、台南、高雄試辦，至今服務101位個案，活動參與1,108人</td></tr>
+                    <tr><td>截至 2021 10 19</td><td>公告撤銷刑事有罪判決</td><td>依法予以平復</td><td>辦理7批撤銷公告，平復5,942件刑事有罪判決（另有已平復尚未公告案件9件）</td></tr>
+                  </tbody>
+                </table>
+                <p>請至左側觀看質化年表 ←</p>
+              </div>
+            </div>
+          </div>
+          <button id="popupElectronicBoardRightClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 車廂2 原住民轉型正義（文件1.png ORC 內容，單頁） -->
+      <div id="popupCar2Orc" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetCar2Orc">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollCar2Orc">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">原住民轉型正義</h3>
+              <div class="popup-body">
+                <div class="popup-figure popup-figure--crop">
+                  <img src="車廂2物件/文件1.png" alt="原住民轉型正義圖像" />
+                  <span>圖說：原住民轉型正義</span>
+                </div>
+                <p class="popup-broadcast"><strong>廣播：</strong>各位旅客您好，這裡是車掌廣播。接下來我將會為您介紹車廂內配置，首先是「原住民轉型正義」。</p>
+                <p><strong>廣播：</strong>原住民族受到的迫害，並非僅限於個人遭受司法不法的侵害，也涉及國家政策造成集體基本權利的不當侵害。</p>
+                <p><strong>Q1：</strong>為什麼討論轉型正義要特別將原住民議題獨立出來？</p>
+                <p><strong>A1：</strong>威權政府沿襲日治時期的蕃地警察制度，以國家安全、保護山地治安為理由，透過跨機關協力，建立山地警備系統進行實質控制，情治單位更以調查之名進行各項保防、情蒐，產生如樂信·瓦旦（林瑞昌）、吾雍·雅達烏猶卡那（高一生）等重大政治案件。</p>
+                <p>另一方面，威權政府的原住民政策，諸如禁說族語、強推漢名等，侵害了原住民族集體權利，涉及國際人權公約所規範的基本人權，包含教育文化、社會經濟發展等權利。正因原住民族與平地漢人有不一樣的受迫害面貌，使得原住民族的轉型正義具有獨特性。</p>
+                <p><strong>廣播：</strong>原住民族政治案件在不同年代有不同型態。</p>
+                <p><strong>Q2：</strong>原住民的政治案件有哪些？有什麼特殊性嗎？</p>
+                <p><strong>A2：</strong>第一階段從二二八事件到1950年代，匪案從國共對抗背景中產生，如林瑞昌、高一生等案例，導致一代原住民菁英的流失與國家暴力下的集體噤聲。第二階段為1960至1970年代，延續匪案脈絡、舊案重製，例如泰雅族臺中師範畢業生 Taru Pehuw（邱致明）案，1964至1972年間遭偵辦。同期，爭取原住民權益之路剛萌芽，發聲的青年受到情治單位嚴密的監控，而產生不少政治案件，其中以1974年臺灣山地獨立案最為代表，當時在臺北活動的原住民族知識青年幾乎都受到牽連。第三階段為1980年代之後，1984年臺灣原住民權利促進會正式成立，成立大會上通過以「原住民」取代過去「山胞」的稱呼，強調「我們是原來就住在台灣的民族」；這類原運的主張與行動被視為對政權的威脅，必須強加監控與壓制，也被刻意宣傳成「共匪」與「臺獨」組織，製造社會的恐懼與部落的排斥。</p>
+                <p><strong>廣播：</strong>威權政府對於原住民族的集體性迫害還有兩種不同的樣態。</p>
+                <p><strong>Q3：</strong>原住民在威權時期受到什麼樣的集體性迫害？</p>
+                <p><strong>A3：</strong>以威權政府對阿里山鄒族管控為例，情治單位並未因湯守仁、高一生等鄒族菁英被處刑而停止政治偵防。案發後，受難當事人的家屬，如湯守仁兒子湯進賢、高一生長女高菊花，長期受到監控；又如第一節車廂介紹的杜孝生，他在出獄後因備受族人排斥質疑，再加上情治人員持續的監視和騷擾，最終選擇帶家人離開嘉義縣阿里山鄉的部落。受難者與其子輩常因此中斷了與部落的連結，導致文化與身份認同的雙重困境，而使得政治創傷具有代間傳承的特質。</p>
+                <p>1952年臺灣警備總司令部蘭嶼指揮部設立，至1992年裁撤，歷經40年集體權利侵害，例如祖靈地國有化、傳統漁獵場域限制、傳統家屋拆遷與國宅（沙宅案）、以及後來的核廢料貯存場興建等，在威權體制下由軍警情治執行的這些作為，侵害原住民族文化權與財產權，屬轉型正義研究中尚未充分揭露的面向。</p>
+                <p><strong>廣播：</strong>是否能夠平復國家過去對整體原住民族造成的持續性傷害與權利剝奪，進而有能力建構一個更具族群平等精神的社會，不只是中央原住民事務主管機關的事。</p>
+                <p><strong>Q4：</strong>促轉會在推動原住民轉型正義上做了哪些努力？</p>
+                <p><strong>A4：</strong>除了持續平復司法不法與行政不法的相關案件之外，並協助原住民政治案件受難者布農族 Avali Islituan（伍保忠）移靈歸鄉，邁出族群和解的第一步；此外，透過培力原住民部落自組調查人才及研發原住民族轉型正義教材研究，期望建立以部落為場域的「原住民族轉型正義永續教育」；並以照顧作為媒介，創造療癒機會，提供原住民族政治受難者或家屬據點及密集照顧服務。</p>
+                <p>原住民族遭受的各類型權利侵害，尤其是發端於日治時期的理藩政策，及戰後為威權政府所援引的山地政策，往往涉及原住民族傳統領域、文化存續與發展等權利，尚有許多面向為現行促轉條例法定職權所不及之處。</p>
+              </div>
+            </div>
+          </div>
+          <div class="scroll-progress-wrap" id="scrollProgressCar2Orc" aria-label="閱讀進度">
+            <div class="scroll-progress-bar" id="scrollProgressBarCar2Orc"></div>
+          </div>
+          <button id="popupCar2OrcClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 車廂2 政治檔案開放（文件2 觸發內容，單頁） -->
+      <div id="popupCar2Doc2" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetCar2Doc2">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollCar2Doc2">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">政治檔案開放</h3>
+              <div class="popup-body">
+                <div class="popup-figure popup-figure--crop">
+                  <img src="車廂2物件/文件2.png" alt="政治檔案開放圖像" />
+                  <span>圖說：政治檔案開放</span>
+                </div>
+                <p class="popup-broadcast"><strong>廣播：</strong>現在，在您左手邊的是促轉會針對開放政治檔案上所做的努力。</p>
+                <p><strong>廣播：</strong>經認定為政治檔案後，由檔案管理局進行檔案徵集、整理、保存及開放應用。這對於威權統治時期真相與責任的釐清，會有相當大的助益。</p>
+                <p><strong>Q1：</strong>什麼是政治檔案？</p>
+                <p><strong>A1：</strong>《政治檔案條例》將政治檔案定義為：「政府機關（構）、政黨、附隨組織及黨營機構所保管，自中華民國三十四年八月十五日起至八十一年十一月六日止，與二二八事件、動員戡亂體制、戒嚴體制相關之檔案或各類紀錄及文件；已裁撤機關（構）之檔案亦適用之。」</p>
+                <p><strong>廣播：</strong>由於政治檔案與動員戡亂、戒嚴體制等很有關係，因此，威權統治時期的政府機關，大多與此有涉。</p>
+                <p><strong>Q2：</strong>哪些機關會有政治檔案？</p>
+                <p><strong>A2：</strong>像是國安局、國防部（當中又包含下屬單位像是政治作戰局、軍事情報局、憲兵指揮部等等）、調查局及警政署這些重要的情治警政機關，就會有相關檔案，而外交部、教育部因為涉及海外與校園監控的關係，也可能留有紀錄。依據政治檔案條例，在認定為政治檔案後，須移歸檔案局。又例如威權時期下萬年國會與軍事審判體制之形成，與大法官釋憲有相當大的關聯，而這些大法官的會議紀錄與檔案則是司法院的管轄範圍，依法司法院也必須將這類檔案移歸到檔案局。另外，由於威權統治時代是由國民黨以黨領政，因此國民黨檔案也相當重要。目前經過促轉會依法審定後，已有部分國民黨檔案移歸為國家檔案，但仍還有一些檔案沒有移歸。</p>
+                <p><strong>廣播：</strong>陳林兩案的調查工作，即使經過協調仍受國家情報工作法的限制，使部分內容遭到遮掩。</p>
+                <p><strong>Q3：</strong>徵集政治檔案的困難在於？</p>
+                <p><strong>A3：</strong>部分政府機關曾以「機密」方式保存所管有之政治檔案，許多真相因而無法為外界了解。例如國安局的檔案中有關林義雄宅血案及陳文成案的檔案為例，皆曾被列為永久保密，而未能移轉檔案局。</p>
+                <p><strong>廣播：</strong>臺灣威權統治時期所保留的政治檔案完整度為新興民主國家少有，但過去政府並未投注資源進行系統性整理，故促轉會建置「臺灣轉型正義資料庫」，奠定深化討論威權體制及轉型正義的基礎。</p>
+                <p><strong>Q4：</strong>政治檔案的運用有哪些成果呢？</p>
+                <p><strong>A4：</strong>資料庫以政治受裁判者為主體，整合政府依據補償條例發放補償金作業所累積的受裁判資料、二二八條例賠償資料、國防部身分簿與《戒嚴時期叛亂暨匪諜審判案件名冊》、受損權利回復條例賠償資料，及促轉會刑事有罪判決撤銷公告名單等政治案件當事人相關名單，經過爬梳比對，進行資料編碼及建檔作業。資料庫至2021年2月已收錄13,683人次之受裁判者資料，可提供資料分析功能，透過操作簡易、瀏覽便利之界面，促進政治檔案的近用性。另外促轉會邀請相關學者解讀檔案，出版相關的研究成果，希望對於日後轉型正義與民主發展有所助益。透過學者們的抽絲剝繭，有助於我們理解大法官在威權統治時期所扮演的角色，並且更立體地掌握政府機關不同部門的交互影響。更重要的是，我們將得以檢視與反省威權體制如何介入大法官解釋，共同思考大法官的歷史座標。同時將改寫臺灣憲法學與法律史研究，成為未來研究者入門的參考。</p>
+              </div>
+            </div>
+          </div>
+          <div class="scroll-progress-wrap" id="scrollProgressCar2Doc2" aria-label="閱讀進度">
+            <div class="scroll-progress-bar" id="scrollProgressBarCar2Doc2"></div>
+          </div>
+          <button id="popupCar2Doc2Close" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 車廂2 權利回復（文件3 觸發內容，單頁） -->
+      <div id="popupCar2Doc3" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetCar2Doc3">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollCar2Doc3">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">權利回復</h3>
+              <div class="popup-body">
+                <div class="popup-figure popup-figure--crop">
+                  <img src="車廂2物件/文件3.png" alt="權利回復圖像" />
+                  <span>圖說：權利回復</span>
+                </div>
+                <p class="popup-broadcast"><strong>廣播：</strong>最後，我們將駛離威權政府的不法侵害，來到權利回復的階段。</p>
+                <p><strong>廣播：</strong>過去立法院已分別針對二二八事件之被害者及白色恐怖之被害者訂定《二二八事件處理及補償條例》（後更名為《二二八事件處理及賠償條例》，象徵國家承認國家行使公權力不法侵害人民權利，而對於二二八事件受難者予以賠償）、《戒嚴時期人民受損權利回復條例》及《戒嚴時期不當叛亂暨匪諜審判案件補償條例》。</p>
+                <p><strong>Q1：</strong>現行機制的不足之處在於？</p>
+                <p><strong>A1：</strong>除了《二二八事件處理及賠償條例》之外，其餘的法律未能以國家立場承認威權統治時期「國家不法侵害人民權利」的事實，大多數政治受難者或其家屬，雖可獲得一定程度的金錢給付，但在犯罪者標籤未撕的情況下獲得賠（補）償，不僅未能撫平被害者或其家屬之創傷，反而帶給申請的受難者被迫沉默之屈辱感。</p>
+                <p><strong>廣播：</strong>促轉會研擬被害者權利回復條例草案，以「先平復國家不法，再行權利回復」概念規劃。</p>
+                <p><strong>Q2：</strong>未來的展望為何？權利回復的範圍包含哪些？</p>
+                <p><strong>A2：</strong>回復之權利範圍分為兩部分：一為生命、身體、人身自由、健康損害等賠償及名譽之回復，二為沒收財產之權利回復，並規劃於行政院下設「威權統治時期國家不法行為被害者權利回復基金會」（簡稱權利回復基金會），執掌這些業務。</p>
+                <p><strong>廣播：</strong>草案中對於賠償對象與賠償金計算方式皆有明確規範。</p>
+                <p><strong>Q3：</strong>賠償對象與賠償金如何計算？</p>
+                <p><strong>A3：</strong>本草案中，賠償對象是依促轉條例認定為不法之國家行為下之被害者。施行前已依既有三部法律受領賠（補）償之被害者，如果按本草案之標準計算，可獲得較過去為高之賠償金，將按其差額給付補足賠償金，讓被害者或其家屬能依新標準獲得應有的賠償。</p>
+                <p><strong>廣播：</strong>沒收財產之權利回復是另一大重點，以返還原物為原則。</p>
+                <p><strong>Q4：</strong>沒收財產如何權利回復？</p>
+                <p><strong>A4：</strong>在沒收財產權利回復之部分，以返還原物為原則，金錢賠償為例外。若原物已不存在或無法返還時，必須設計以金錢賠償的替代性措施，使被害者或其家屬得以實質回復其權利。權利回復基金會將負責審定、賠償金發放及沒收財產返還等相關業務，落實「先平復國家不法，再行權利回復」之目標。</p>
+              </div>
+            </div>
+          </div>
+          <div class="scroll-progress-wrap" id="scrollProgressCar2Doc3" aria-label="閱讀進度">
+            <div class="scroll-progress-bar" id="scrollProgressBarCar2Doc3"></div>
+          </div>
+          <button id="popupCar2Doc3Close" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 車廂2 行政不法（文件4 觸發內容，單頁） -->
+      <div id="popupCar2Doc4" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetCar2Doc4">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollCar2Doc4">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">行政不法</h3>
+              <div class="popup-body">
+                <div class="popup-figure popup-figure--crop">
+                  <img src="車廂2物件/文件4.png" alt="行政不法圖像" />
+                  <span>圖說：行政不法</span>
+                </div>
+                <p class="popup-broadcast"><strong>廣播：</strong>我們在前面提到檔案開放，開放後發現威權政府的許多行為是違反法治的，除了軍事長官的手伸進司法左右判決，還有許多雖然沒有「有罪判決」，還是遭到國家不法對待的情形──這些情形，我們稱之為「行政不法」。行政不法是指為了鞏固威權統治，政府機關或其公務人員在執行公務時，所做的處分或事實行為發生了侵害人民權利或利益的結果。</p>
+                <p><strong>廣播：</strong>這些行為，都是威權政府為鞏固統治所為。</p>
+                <p><strong>Q1：</strong>威權時期的行政不法有哪些樣貌？</p>
+                <p><strong>A1：</strong>像是被害者於二二八期間遭軍人射殺擊斃，或是被害者被判無罪後，不僅沒被釋放，反而被送往感訓。到了民國70年代，仍發生有黨外雜誌社遭臺灣警備總司令部以「淆亂視聽足以影響民心士氣」、「挑撥政府與人民情感」這兩項理由，扣押千本出版物的情況。</p>
+                <p><strong>廣播：</strong>另外，促轉會也同步提出「威權統治時期國家不法行為被害者權利回復條例草案」，此案若通過後，被害者或其家屬即能依此條例向國家請求賠償。</p>
+                <p><strong>Q2：</strong>面對這些行政不法將如何處置呢？</p>
+                <p><strong>A2：</strong>現行的《促進轉型正義條例》僅規範到平復司法不法，只能撤銷法院或軍事審判機關所做的「刑事有罪判決」，因此促轉會於2021年5月向行政院提出「促轉條例部分條文修正草案」，其中增訂平復「行政不法」之要件：「威權統治時期，政府機關或其執行職務之公務員為達成鞏固威權統治之目的，違反自由民主憲政秩序，所為侵害人民生命、身體、人身自由，或剝奪其所有權之處分或事實行為，促轉會依職權或申請確認不法，藉以平復行政不法。」</p>
+              </div>
+            </div>
+          </div>
+          <div class="scroll-progress-wrap" id="scrollProgressCar2Doc4" aria-label="閱讀進度">
+            <div class="scroll-progress-bar" id="scrollProgressBarCar2Doc4"></div>
+          </div>
+          <button id="popupCar2Doc4Close" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 車廂3 車窗與威權象徵處置影片 -->
+      <div id="popupCar3Window" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetCar3Window">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollCar3Window">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">威權象徵的處置</h3>
+              <div class="popup-body">
+                <video
+                  id="videoCar3Window"
+                  controls
+                  playsinline
+                  preload="metadata"
+                  style="width: 100%; max-height: 360px; margin-top: 12px; border-radius: 12px; background: #000;"
+                  poster="車廂3物件/車窗.png"
+                >
+                  <source src="車廂3物件/威權象徵處置.mp4" type="video/mp4" />
+                  您的瀏覽器不支援 HTML5 影片。
+                </video>
+              </div>
+            </div>
+          </div>
+          <div class="scroll-progress-wrap" id="scrollProgressCar3Window" aria-label="閱讀進度">
+            <div class="scroll-progress-bar" id="scrollProgressBarCar3Window"></div>
+          </div>
+          <button id="popupCar3WindowClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 車廂3 車窗與不當黨產影片 -->
+      <div id="popupCar3Window2" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetCar3Window2">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollCar3Window2">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">不當黨產的規劃應用</h3>
+              <div class="popup-body">
+                <video
+                  id="videoCar3Window2"
+                  controls
+                  playsinline
+                  preload="metadata"
+                  style="width: 100%; max-height: 360px; margin-top: 12px; border-radius: 12px; background: #000;"
+                  poster="車廂3物件/車窗.png"
+                >
+                  <source src="車廂3物件/不當黨產的規劃應用.mp4" type="video/mp4" />
+                  您的瀏覽器不支援 HTML5 影片。
+                </video>
+              </div>
+            </div>
+          </div>
+          <div class="scroll-progress-wrap" id="scrollProgressCar3Window2" aria-label="閱讀進度">
+            <div class="scroll-progress-bar" id="scrollProgressBarCar3Window2"></div>
+          </div>
+          <button id="popupCar3Window2Close" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 車廂3 車窗與「創傷修復」影片 -->
+      <div id="popupCar3Window3" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetCar3Window3">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollCar3Window3">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">創傷修復</h3>
+              <div class="popup-body">
+                <video
+                  id="videoCar3Window3"
+                  controls
+                  playsinline
+                  preload="metadata"
+                  style="width: 100%; max-height: 360px; margin-top: 12px; border-radius: 12px; background: #000;"
+                  poster="車廂3物件/車窗.png"
+                >
+                  <source src="車廂3物件/創傷修復.mp4" type="video/mp4" />
+                  您的瀏覽器不支援 HTML5 影片。
+                </video>
+              </div>
+            </div>
+          </div>
+          <div class="scroll-progress-wrap" id="scrollProgressCar3Window3" aria-label="閱讀進度">
+            <div class="scroll-progress-bar" id="scrollProgressBarCar3Window3"></div>
+          </div>
+          <button id="popupCar3Window3Close" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 車廂3 車門與「已抵達：民主站」影片 -->
+      <div id="popupCar3Door" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetCar3Door">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollCar3Door">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">已抵達：民主站</h3>
+              <div class="popup-body">
+                <video
+                  id="videoCar3Door"
+                  controls
+                  playsinline
+                  preload="metadata"
+                  style="width: 100%; max-height: 360px; margin-top: 12px; border-radius: 12px; background: #000;"
+                  poster="車廂3物件/車門.png"
+                >
+                  <source src="車廂3物件/已抵達：民主站.mp4" type="video/mp4" />
+                  您的瀏覽器不支援 HTML5 影片。
+                </video>
+              </div>
+            </div>
+          </div>
+          <div class="scroll-progress-wrap" id="scrollProgressCar3Door" aria-label="閱讀進度">
+            <div class="scroll-progress-bar" id="scrollProgressBarCar3Door"></div>
+          </div>
+          <button id="popupCar3DoorClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
+      <!-- Popup: 車廂3 餐車－分享本遊戲 -->
+      <div id="popupCar3Cart" class="popup-overlay hidden">
+        <div class="bottom-sheet" id="bottomSheetCar3Cart">
+          <div class="bottom-sheet-scroll" id="bottomSheetScrollCar3Cart">
+            <div class="drag-handle" aria-hidden="true"></div>
+            <div class="popup-content">
+              <h3 class="popup-title">分享本遊戲</h3>
+              <div class="popup-body">
+                <p>
+                  喜歡這款遊戲嗎？<br />
+                  把這班「民主列車」分享給更多人，<br />
+                  讓更多人看見這些不該被遺忘的故事。
+                </p>
+                <p style="margin-top: 12px; word-break: break-all;">
+                  <strong>遊戲連結：</strong>
+                  <span id="car3CartShareUrl"></span>
+                </p>
+                <button id="car3CartCopyButton" class="primary-button" type="button">
+                  複製遊戲連結
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="scroll-progress-wrap" id="scrollProgressCar3Cart" aria-label="閱讀進度">
+            <div class="scroll-progress-bar" id="scrollProgressBarCar3Cart"></div>
+          </div>
+          <button id="popupCar3CartClose" class="popup-close" aria-label="關閉">✕</button>
+        </div>
+      </div>
+
       <!-- Direction controls: 放在 layout-main 裡，方便直向時相對內容置中；icon 用 SVG 避免 iOS emoji 字型 -->
       <div class="controls" id="controls">
         <div></div>
@@ -1391,6 +2051,74 @@
     const popupZhugong = document.getElementById('popupZhugong');
     const popupZhugongClose = document.getElementById('popupZhugongClose');
     const bottomSheetZhugong = popupZhugong ? popupZhugong.querySelector('.bottom-sheet') : null;
+    const popupBento = document.getElementById('popupBento');
+    const popupBentoClose = document.getElementById('popupBentoClose');
+    const bottomSheetBento = popupBento ? popupBento.querySelector('.bottom-sheet') : null;
+    const popupToilet = document.getElementById('popupToilet');
+    const popupToiletClose = document.getElementById('popupToiletClose');
+    const bottomSheetToilet = popupToilet ? popupToilet.querySelector('.bottom-sheet') : null;
+    const bottomSheetScrollToilet = popupToilet ? popupToilet.querySelector('.bottom-sheet-scroll') : null;
+    const popupTicket = document.getElementById('popupTicket');
+    const popupTicketClose = document.getElementById('popupTicketClose');
+    const bottomSheetTicket = popupTicket ? popupTicket.querySelector('.bottom-sheet') : null;
+    const bottomSheetScrollTicket = popupTicket ? popupTicket.querySelector('.bottom-sheet-scroll') : null;
+    const popupBookshelf = document.getElementById('popupBookshelf');
+    const popupBookshelfClose = document.getElementById('popupBookshelfClose');
+    const bottomSheetBookshelf = popupBookshelf ? popupBookshelf.querySelector('.bottom-sheet') : null;
+    const bottomSheetScrollBookshelf = popupBookshelf ? popupBookshelf.querySelector('.bottom-sheet-scroll') : null;
+    const popupNotice = document.getElementById('popupNotice');
+    const popupNoticeClose = document.getElementById('popupNoticeClose');
+    const bottomSheetNotice = popupNotice ? popupNotice.querySelector('.bottom-sheet') : null;
+    const bottomSheetScrollNotice = popupNotice ? popupNotice.querySelector('.bottom-sheet-scroll') : null;
+    const popupShinonggongshang = document.getElementById('popupShinonggongshang');
+    const popupShinonggongshangClose = document.getElementById('popupShinonggongshangClose');
+    const bottomSheetShinonggongshang = popupShinonggongshang ? popupShinonggongshang.querySelector('.bottom-sheet') : null;
+    const bottomSheetScrollShinonggongshang = popupShinonggongshang ? popupShinonggongshang.querySelector('.bottom-sheet-scroll') : null;
+    const popupStationSign = document.getElementById('popupStationSign');
+    const popupStationSignClose = document.getElementById('popupStationSignClose');
+    const bottomSheetStationSign = popupStationSign ? popupStationSign.querySelector('.bottom-sheet') : null;
+    const bottomSheetScrollStationSign = popupStationSign ? popupStationSign.querySelector('.bottom-sheet-scroll') : null;
+    const popupElectronicBoardLeft = document.getElementById('popupElectronicBoardLeft');
+    const popupElectronicBoardLeftClose = document.getElementById('popupElectronicBoardLeftClose');
+    const bottomSheetElectronicBoardLeft = popupElectronicBoardLeft ? popupElectronicBoardLeft.querySelector('.bottom-sheet') : null;
+    const bottomSheetScrollElectronicBoardLeft = popupElectronicBoardLeft ? popupElectronicBoardLeft.querySelector('.bottom-sheet-scroll') : null;
+    const popupElectronicBoardRight = document.getElementById('popupElectronicBoardRight');
+    const popupElectronicBoardRightClose = document.getElementById('popupElectronicBoardRightClose');
+    const bottomSheetElectronicBoardRight = popupElectronicBoardRight ? popupElectronicBoardRight.querySelector('.bottom-sheet') : null;
+    const bottomSheetScrollElectronicBoardRight = popupElectronicBoardRight ? popupElectronicBoardRight.querySelector('.bottom-sheet-scroll') : null;
+    const popupCar2Orc = document.getElementById('popupCar2Orc');
+    const popupCar2OrcClose = document.getElementById('popupCar2OrcClose');
+    const bottomSheetCar2Orc = popupCar2Orc ? popupCar2Orc.querySelector('.bottom-sheet') : null;
+    const popupCar2Doc2 = document.getElementById('popupCar2Doc2');
+    const popupCar2Doc2Close = document.getElementById('popupCar2Doc2Close');
+    const bottomSheetCar2Doc2 = popupCar2Doc2 ? popupCar2Doc2.querySelector('.bottom-sheet') : null;
+    const popupCar2Doc3 = document.getElementById('popupCar2Doc3');
+    const popupCar2Doc3Close = document.getElementById('popupCar2Doc3Close');
+    const bottomSheetCar2Doc3 = popupCar2Doc3 ? popupCar2Doc3.querySelector('.bottom-sheet') : null;
+    const popupCar2Doc4 = document.getElementById('popupCar2Doc4');
+    const popupCar2Doc4Close = document.getElementById('popupCar2Doc4Close');
+    const bottomSheetCar2Doc4 = popupCar2Doc4 ? popupCar2Doc4.querySelector('.bottom-sheet') : null;
+    const popupCar3Window = document.getElementById('popupCar3Window');
+    const popupCar3WindowClose = document.getElementById('popupCar3WindowClose');
+    const bottomSheetCar3Window = popupCar3Window ? popupCar3Window.querySelector('.bottom-sheet') : null;
+    const videoCar3Window = document.getElementById('videoCar3Window');
+    const popupCar3Window2 = document.getElementById('popupCar3Window2');
+    const popupCar3Window2Close = document.getElementById('popupCar3Window2Close');
+    const bottomSheetCar3Window2 = popupCar3Window2 ? popupCar3Window2.querySelector('.bottom-sheet') : null;
+    const videoCar3Window2 = document.getElementById('videoCar3Window2');
+    const popupCar3Window3 = document.getElementById('popupCar3Window3');
+    const popupCar3Window3Close = document.getElementById('popupCar3Window3Close');
+    const bottomSheetCar3Window3 = popupCar3Window3 ? popupCar3Window3.querySelector('.bottom-sheet') : null;
+    const videoCar3Window3 = document.getElementById('videoCar3Window3');
+    const popupCar3Door = document.getElementById('popupCar3Door');
+    const popupCar3DoorClose = document.getElementById('popupCar3DoorClose');
+    const bottomSheetCar3Door = popupCar3Door ? popupCar3Door.querySelector('.bottom-sheet') : null;
+    const videoCar3Door = document.getElementById('videoCar3Door');
+    const popupCar3Cart = document.getElementById('popupCar3Cart');
+    const popupCar3CartClose = document.getElementById('popupCar3CartClose');
+    const bottomSheetCar3Cart = popupCar3Cart ? popupCar3Cart.querySelector('.bottom-sheet') : null;
+    const car3CartShareUrl = document.getElementById('car3CartShareUrl');
+    const car3CartCopyButton = document.getElementById('car3CartCopyButton');
     var gameState = { inputLocked: false };
     const helpButton = document.getElementById('helpButton');
     const helpOverlay = document.getElementById('helpOverlay');
@@ -1470,8 +2198,7 @@
       platform: [
         { col1: 27, col2: 28, row1: 12, row2: 13 },   // 月台 車廂關 → 車廂開 (entrance / open door)
         { col1: 27, col2: 28, row1: 14, row2: 14 },   // 月台 車廂開 → 車廂關 (col 27-28, row 14)
-        { col1: 51, col2: 51, row1: 10, row2: 11 },   // 月台 車廂開 → 車廂2
-        { col1: 28, col2: 28, row1: 40, row2: 40 }    // 月台 底部 col 28, row 40 → 直接傳送到車廂3
+        { col1: 51, col2: 51, row1: 10, row2: 11 }    // 月台 車廂開 → 車廂2
       ],
       platformClosedToCar2: [                          // 月台 車廂關 右側兩格 → 車廂2
         { col1: 50, col2: 50, row1: 10, row2: 11 },
@@ -1520,6 +2247,7 @@
 
     const maskCanvas = document.createElement('canvas');
     const maskCtx = maskCanvas.getContext('2d');
+    const COLLISION_ENABLED = true; // 切換是否啟用禁止通行（false = 全地圖暫時可通行）
     let blockedTiles = []; // blockedTiles[row][col] === true => cannot walk
 
     function applyWorldSizeFromMap(index) {
@@ -1625,6 +2353,62 @@
     const car3StopSignImage = new Image();
     car3StopSignImage.src = '車廂3物件/車廂3站牌.png';
 
+    // 車廂3 車窗：靠近時觸發影片
+    const car3WindowImage = new Image();
+    car3WindowImage.src = '車廂3物件/車窗.png';
+
+    // 車廂3 車門：靠近時觸發「已抵達：民主站」影片
+    const car3DoorImage = new Image();
+    car3DoorImage.src = '車廂3物件/車門.png';
+
+    // 車廂3 餐車：靠近時觸發分享本遊戲
+    const car3CartImage = new Image();
+    car3CartImage.src = '車廂3物件/餐車.png';
+
+    // 車廂2 文件：原住民轉型正義（文件1）與延伸內容（文件2），地圖上顯示
+    const car2Doc1Image = new Image();
+    car2Doc1Image.src = '車廂2物件/文件1.png';
+    const car2Doc2Image = new Image();
+    car2Doc2Image.src = '車廂2物件/文件2.png';
+    const car2Doc3Image = new Image();
+    car2Doc3Image.src = '車廂2物件/文件3.png';
+    const car2Doc4Image = new Image();
+    car2Doc4Image.src = '車廂2物件/文件4.png';
+
+    // 月台 便當攤：col 41, row 22 裝飾物件
+    const bentoStallImage = new Image();
+    bentoStallImage.src = '月台區物件/便當攤.png';
+    // 月台 廁所：col 13-14, row 22-23 裝飾與觸發 OCR
+    const toiletImage = new Image();
+    toiletImage.src = '月台區物件/廁所.png';
+    // 月台 售票機：col 17～23, row 22～23 之間（裝飾）
+    const ticketMachineImage = new Image();
+    ticketMachineImage.src = '月台區物件/售票機.png';
+    // 月台 告示：col 38, row 27（裝飾）
+    const noticeImage = new Image();
+    noticeImage.src = '月台區物件/告示.png';
+    // 月台 書架：col 31～38 之間再往右一格（中心 35.5 格）, row 21（往上一格）
+    const bookshelfImage = new Image();
+    bookshelfImage.src = '月台區物件/書架.png';
+    // 月台 士農工商：col 16～19 之間、row 16，再往右上各 16px（裝飾）
+    const shinonggongshangImage = new Image();
+    shinonggongshangImage.src = '月台區物件/士農工商.png';
+    // 月台 站名牌：col 34～35 之間、row 16，再往右上各 16px（裝飾，靠近觸發）
+    const stationSignImage = new Image();
+    stationSignImage.src = '月台區物件/站名牌.png';
+    // 月台 電子看板左：col 25～26 之間、row 27，再往右往上各 16px（裝飾）
+    const electronicBoardLeftImage = new Image();
+    electronicBoardLeftImage.src = '月台區物件/電子看板左.png';
+    // 月台 電子看板右：col 29～30 之間、row 27（裝飾，靠近觸發）
+    const electronicBoardRightImage = new Image();
+    electronicBoardRightImage.src = '月台區物件/電子看板右.png';
+    // 月台 服務亭：col 27～28 之間、row 28（裝飾）
+    const serviceKioskImage = new Image();
+    serviceKioskImage.src = '月台區物件/服務亭.png';
+    // 月台 盆栽：col 25 與 col 30, row 22（裝飾）
+    const potPlantImage = new Image();
+    potPlantImage.src = '月台區物件/盆栽.png';
+
     // Player directional sprites (32x32). Put these PNGs in the same folder.
     const playerSprites = {
       up: new Image(),
@@ -1678,8 +2462,32 @@
     const wangZone = { x: 1372, y: 320, width: 40, height: 32 };
     // 許宗力的海外學人回國服務登記表觸發點：月台 車廂開 col 49, row 10
     const xuZone = { x: 1548, y: 320, width: 40, height: 32 };
+    // 車廂2 ORC 文件觸發區：車廂2 col 26, row 10（往左上 5px、5px）
+    const car2OrcZone = { x: 26 * TILE_SIZE - 5, y: 320 - 10, width: 40, height: 32 };
     // 竹工（新竹高工的塗鴉）觸發範圍：月台 車廂開 col 45-46, row 10-11（2x2 格）
     const zhugongZone = { x: 1440, y: 320, width: 64, height: 64 };
+    // 便當攤觸發範圍：月台 col 42, row 22（2x2 格）
+    const bentoZone = { x: 42 * TILE_SIZE - 32, y: 22 * TILE_SIZE, width: 64, height: 64 };
+    // 廁所觸發範圍：月台 col 13-14, row 22（y 與便當對齊）, 往右 5px + 半格 - 再往左 5px
+    const toiletZone = { x: 13 * TILE_SIZE + TILE_SIZE + TILE_SIZE / 2 - 32, y: 22 * TILE_SIZE + TILE_SIZE / 2 - 32, width: 64, height: 64 };
+    // 售票機觸發範圍：月台 col 20, row 21（2x2 格）
+    const ticketZone = { x: 20 * TILE_SIZE + TILE_SIZE / 2 - 32, y: 21 * TILE_SIZE + TILE_SIZE / 2 - 32, width: 64, height: 64 };
+    // 書架觸發範圍：月台 col 35.5, row 21+8px（3x3 格，靠近即觸發）
+    const bookshelfCenterX0 = (31 + 38) / 2 * TILE_SIZE + TILE_SIZE;
+    const bookshelfCenterY0 = 21 * TILE_SIZE + TILE_SIZE / 2 + 8;
+    const bookshelfZone = { x: bookshelfCenterX0 - 48, y: bookshelfCenterY0 - 48, width: 96, height: 96 };
+    // 告示觸發範圍：月台 col 39 左緣、row 26，與車廂三同為 3x3 格（96x96）
+    const noticeZone = { x: (39 * TILE_SIZE) - 48, y: 26 * TILE_SIZE + TILE_SIZE / 2 - 48, width: 96, height: 96 };
+    // 車廂3 車窗互動區1：介於 col 24,25 且 row 8，改為 3x3 格（寬高 96）
+    const car3WindowZone = { x: 800 - 48, y: 273 - 48, width: 96, height: 96 };
+    // 車廂3 車窗互動區2：中心調整為 x=992, y=273（不當黨產），改為 3x3 格
+    const car3Window2Zone = { x: 992 - 48, y: 273 - 48, width: 96, height: 96 };
+    // 車廂3 車窗互動區3：中心 x=1280, y=273（創傷修復），改為 3x3 格
+    const car3Window3Zone = { x: 1280 - 48, y: 273 - 48, width: 96, height: 96 };
+    // 車廂3 車門互動區：玩家提供位置 (x=1183, y=288) 為中心做 3x3 格
+    const car3DoorZone = { x: 1183 - 48, y: 288 - 48, width: 96, height: 96 };
+    // 車廂3 餐車互動區：以玩家提供位置 (x=1461, y=320) 為中心做 3x3 格
+    const car3CartZone = { x: 1461 - 48, y: 320 - 48, width: 96, height: 96 };
 
     const keys = { up: false, down: false, left: false, right: false };
     let wasInZone = false;
@@ -1697,8 +2505,40 @@
     let wasInWangZone = false;
     let isNearXuNow = false;
     let wasInXuZone = false;
+    let isNearCar2OrcNow = false;
+    let wasInCar2OrcZone = false;
+    let isNearCar2Doc2Now = false;
+    let wasInCar2Doc2Zone = false;
+    let isNearCar2Doc3Now = false;
+    let wasInCar2Doc3Zone = false;
+    let isNearCar2Doc4Now = false;
+    let wasInCar2Doc4Zone = false;
     let isNearZhugongNow = false;
     let wasInZhugongZone = false;
+    let isNearBentoNow = false;
+    let wasInBentoZone = false;
+    let isNearToiletNow = false;
+    let wasInToiletZone = false;
+    let isNearTicketNow = false;
+    let wasInTicketZone = false;
+    let isNearBookshelfNow = false;
+    let wasInBookshelfZone = false;
+    let isNearNoticeNow = false;
+    let wasInNoticeZone = false;
+    let wasInShinonggongshangZone = false;
+    let wasInStationSignZone = false;
+    let wasInElectronicBoardLeftZone = false;
+    let wasInElectronicBoardRightZone = false;
+    let isNearCar3WindowNow = false;
+    let wasInCar3WindowZone = false;
+    let isNearCar3Window2Now = false;
+    let wasInCar3Window2Zone = false;
+    let isNearCar3Window3Now = false;
+    let wasInCar3Window3Zone = false;
+    let isNearCar3DoorNow = false;
+    let wasInCar3DoorZone = false;
+    let isNearCar3CartNow = false;
+    let wasInCar3CartZone = false;
 
     // Camera: 左上角世界座標；viewW/viewH 為實際可視範圍（cover 時 = screen/scale）
     const camera = { x: 0, y: 0, viewW: VIEW_WIDTH, viewH: VIEW_HEIGHT };
@@ -1777,6 +2617,10 @@
     // MASK 只適用於該地圖：切換地圖後必須呼叫本函式，以該地圖的 mask 重新建立禁止通行區域
     // 月台車廂關／車廂開都讀取 MASK（月台底圖_車廂_mask.png）
     function prepareCollisionMask() {
+      if (!COLLISION_ENABLED) {
+        blockedTiles = [];
+        return;
+      }
       const cur = mapImages[currentMapIndex];
       const usePlatformOpenMask = currentMapIndex === 0 && platformCarriageOpen && cur.maskOpen && cur.maskOpen.complete && cur.maskOpen.naturalWidth > 0;
       const maskImg = usePlatformOpenMask ? cur.maskOpen : cur.mask;
@@ -2043,7 +2887,6 @@
       const inZoneOpen = platformZones[0] && playerCol >= platformZones[0].col1 && playerCol <= platformZones[0].col2 && playerRow >= platformZones[0].row1 && playerRow <= platformZones[0].row2;
       const inZoneToClosed = platformZones[1] && playerCol >= platformZones[1].col1 && playerCol <= platformZones[1].col2 && playerRow >= platformZones[1].row1 && playerRow <= platformZones[1].row2;
       const inZoneCar2 = platformZones[2] && playerCol >= platformZones[2].col1 && playerCol <= platformZones[2].col2 && playerRow >= platformZones[2].row1 && playerRow <= platformZones[2].row2;
-      const inZonePlatformToCar3 = platformZones[3] && playerCol >= platformZones[3].col1 && playerCol <= platformZones[3].col2 && playerRow >= platformZones[3].row1 && playerRow <= platformZones[3].row2;
       const inZoneClosedToCar2 = closedToCar2Zones.some(function (z) {
         return playerCol >= z.col1 && playerCol <= z.col2 && playerRow >= z.row1 && playerRow <= z.row2;
       });
@@ -2079,14 +2922,6 @@
         player.y = CAR2_SPAWN.y;
         onMapSwitch();
         prepareCollisionMask(); // 切換到車廂2後，用該地圖的 MASK 更新禁止通行區域
-      } else if (currentMapIndex === 0 && inZonePlatformToCar3 && mapImages[2].width > 0 && mapImages[2].height > 0) {
-        // 月台底部 col 28, row 40 → 直接傳送到車廂3
-        currentMapIndex = 2;
-        applyWorldSizeFromMap(2);
-        player.x = CAR3_SPAWN.x;
-        player.y = CAR3_SPAWN.y;
-        onMapSwitch();
-        prepareCollisionMask(); // 切換到車廂3後，用該地圖的 MASK 更新禁止通行區域
       } else if (currentMapIndex === 1 && inZoneCar2ToPlatformOpen && mapImages[0].width > 0 && mapImages[0].height > 0) {
         currentMapIndex = 0;
         platformCarriageOpen = true; // 車廂一 = 月台 車廂開
@@ -2193,15 +3028,126 @@
       const dxXu = player.x - xuCenterX;
       const dyXu = player.y - xuCenterY;
       const distToXu = Math.hypot(dxXu, dyXu);
+      // 車廂2 ORC 文件圖示位置：車廂2 col 26, row 10（往左上 5px, 5px）
+      const car2OrcCenterX = 26 * TILE_SIZE + TILE_SIZE / 2 - 5;
+      const car2OrcCenterY = 10 * TILE_SIZE - 10;
+      const dxCar2Orc = player.x - car2OrcCenterX;
+      const dyCar2Orc = player.y - car2OrcCenterY;
+      const distToCar2Orc = Math.hypot(dxCar2Orc, dyCar2Orc);
+      // 車廂2 文件2 圖示位置：車廂2 col 32, row 10
+      const car2Doc2CenterX = 32 * TILE_SIZE + TILE_SIZE / 2;
+      const car2Doc2CenterY = 10 * TILE_SIZE - 10;
+      const dxCar2Doc2 = player.x - car2Doc2CenterX;
+      const dyCar2Doc2 = player.y - car2Doc2CenterY;
+      const distToCar2Doc2 = Math.hypot(dxCar2Doc2, dyCar2Doc2);
+      // 車廂2 文件3 圖示位置：車廂2 col 43, row 10（與其他文件同水平）
+      const car2Doc3CenterX = 43 * TILE_SIZE + TILE_SIZE / 2;
+      const car2Doc3CenterY = 10 * TILE_SIZE - 10;
+      const dxCar2Doc3 = player.x - car2Doc3CenterX;
+      const dyCar2Doc3 = player.y - car2Doc3CenterY;
+      const distToCar2Doc3 = Math.hypot(dxCar2Doc3, dyCar2Doc3);
+      // 車廂2 文件4 圖示位置：車廂2 col 47, row 10（與其他文件同水平）
+      const car2Doc4CenterX = 47 * TILE_SIZE + TILE_SIZE / 2;
+      const car2Doc4CenterY = 10 * TILE_SIZE - 10;
+      const dxCar2Doc4 = player.x - car2Doc4CenterX;
+      const dyCar2Doc4 = player.y - car2Doc4CenterY;
+      const distToCar2Doc4 = Math.hypot(dxCar2Doc4, dyCar2Doc4);
       // 竹工（新竹高工的塗鴉）圖示位置：col 45-46 row 10-11 中心 (1472, 352)
       const zhugongCenterX = 45 * TILE_SIZE + TILE_SIZE;  // 1472
       const zhugongCenterY = 10 * TILE_SIZE + TILE_SIZE;   // 352
       const dxZhugong = player.x - zhugongCenterX;
       const dyZhugong = player.y - zhugongCenterY;
       const distToZhugong = Math.hypot(dxZhugong, dyZhugong);
+      // 便當攤：月台 col 42, row 22
+      const bentoCenterX = 42 * TILE_SIZE;
+      const bentoCenterY = 22 * TILE_SIZE + TILE_SIZE / 2;
+      const dxBento = player.x - bentoCenterX;
+      const dyBento = player.y - bentoCenterY;
+      const distToBento = Math.hypot(dxBento, dyBento);
+      // 廁所：y 與便當對齊（row 22 格心），往右半格（再往左 5px）
+      const toiletCenterX = 13 * TILE_SIZE + TILE_SIZE + TILE_SIZE / 2;
+      const toiletCenterY = 22 * TILE_SIZE + TILE_SIZE / 2;
+      const dxToilet = player.x - toiletCenterX;
+      const dyToilet = player.y - toiletCenterY;
+      const distToToilet = Math.hypot(dxToilet, dyToilet);
+      // 售票機：月台 col 20, row 21
+      const ticketCenterX = 20 * TILE_SIZE + TILE_SIZE / 2;
+      const ticketCenterY = 21 * TILE_SIZE + TILE_SIZE / 2;
+      const dxTicket = player.x - ticketCenterX;
+      const dyTicket = player.y - ticketCenterY;
+      const distToTicket = Math.hypot(dxTicket, dyTicket);
+      // 書架：月台 col 35.5, row 21+8px
+      const bookshelfCenterX = (31 + 38) / 2 * TILE_SIZE + TILE_SIZE;
+      const bookshelfCenterY = 21 * TILE_SIZE + TILE_SIZE / 2 + 8;
+      const dxBookshelf = player.x - bookshelfCenterX;
+      const dyBookshelf = player.y - bookshelfCenterY;
+      const distToBookshelf = Math.hypot(dxBookshelf, dyBookshelf);
+      // 告示：月台 col 39 左緣、row 26（政治案件高峰期）
+      const noticeCenterX = 39 * TILE_SIZE;
+      const noticeCenterY = 26 * TILE_SIZE + TILE_SIZE / 2;
+      const dxNotice = player.x - noticeCenterX;
+      const dyNotice = player.y - noticeCenterY;
+      const distToNotice = Math.hypot(dxNotice, dyNotice);
+      // 士農工商：月台 col 16～19 之間、row 16，再往右上各 16px
+      const sngsCenterX = (16 + 19) / 2 * TILE_SIZE + 16;
+      const sngsCenterY = 16 * TILE_SIZE + TILE_SIZE / 2 - 16;
+      const dxSngs = player.x - sngsCenterX;
+      const dySngs = player.y - sngsCenterY;
+      const distToShinonggongshang = Math.hypot(dxSngs, dySngs);
+      // 站名牌：月台 col 34～35、row 16，再往右上各 16px
+      const signCenterX = (34 + 35) / 2 * TILE_SIZE + 16;
+      const signCenterY = 16 * TILE_SIZE + TILE_SIZE / 2 - 16;
+      const dxSign = player.x - signCenterX;
+      const dySign = player.y - signCenterY;
+      const distToStationSign = Math.hypot(dxSign, dySign);
+      // 電子看板左：月台 col 25～26、row 27，再往右往上各 16px
+      const eblCenterX = (25 + 26) / 2 * TILE_SIZE + 16;
+      const eblCenterY = 27 * TILE_SIZE + TILE_SIZE / 2 - 16;
+      const dxEbl = player.x - eblCenterX;
+      const dyEbl = player.y - eblCenterY;
+      const distToElectronicBoardLeft = Math.hypot(dxEbl, dyEbl);
+      // 電子看板右：月台 col 29～30、row 27，再往上 16px
+      const ebrCenterX = (29 + 30) / 2 * TILE_SIZE + TILE_SIZE / 2;
+      const ebrCenterY = 27 * TILE_SIZE + TILE_SIZE / 2 - 16;
+      const dxEbr = player.x - ebrCenterX;
+      const dyEbr = player.y - ebrCenterY;
+      const distToElectronicBoardRight = Math.hypot(dxEbr, dyEbr);
+
+      // 車廂3 車窗1：位於 col 24 與 25 之間、row 8（Y 微調 +1）
+      const car3WindowCenterX = 800;
+      const car3WindowCenterY = 273;
+      const dxCar3Window = player.x - car3WindowCenterX;
+      const dyCar3Window = player.y - car3WindowCenterY;
+      const distToCar3Window = Math.hypot(dxCar3Window, dyCar3Window);
+      // 車廂3 車窗2：中心調整為 x=992, y=273（不當黨產）
+      const car3Window2CenterX = 992;
+      const car3Window2CenterY = 273;
+      const dxCar3Window2 = player.x - car3Window2CenterX;
+      const dyCar3Window2 = player.y - car3Window2CenterY;
+      const distToCar3Window2 = Math.hypot(dxCar3Window2, dyCar3Window2);
+      // 車廂3 車窗3：中心 x=1280, y=273（創傷修復）
+      const car3Window3CenterX = 1280;
+      const car3Window3CenterY = 273;
+      const dxCar3Window3 = player.x - car3Window3CenterX;
+      const dyCar3Window3 = player.y - car3Window3CenterY;
+      const distToCar3Window3 = Math.hypot(dxCar3Window3, dyCar3Window3);
+      // 車廂3 車門：玩家提供位置 (x=1183, y=288)
+      const car3DoorCenterX = 1183;
+      const car3DoorCenterY = 288;
+      const dxCar3Door = player.x - car3DoorCenterX;
+      const dyCar3Door = player.y - car3DoorCenterY;
+      const distToCar3Door = Math.hypot(dxCar3Door, dyCar3Door);
+      // 車廂3 餐車：玩家提供位置 (x=1461, y=320)
+      const car3CartCenterX = 1461;
+      const car3CartCenterY = 320;
+      const dxCar3Cart = player.x - car3CartCenterX;
+      const dyCar3Cart = player.y - car3CartCenterY;
+      const distToCar3Cart = Math.hypot(dxCar3Cart, dyCar3Cart);
 
       // 周清月記者證互動僅在月台 車廂開（地圖 0 且 platformCarriageOpen）
       const onPlatformOpen = currentMapIndex === 0 && platformCarriageOpen;
+      const onCar2 = currentMapIndex === 1;
+      const onCar3 = currentMapIndex === 2;
       // 預覽（光暈+靠近圖）：距離放大，較遠即可看到
       const NEAR_PREVIEW_DIST = 96;
       // 六個物件：用「玩家中心點在區內」判定；觸發區 y 只含 row 10，故 row 11 自然不會觸發（測量距離達成）
@@ -2219,9 +3165,68 @@
       const inWangZone = onPlatformOpen && isPlayerCenterInZone(player, wangZone);
       isNearXuNow = onPlatformOpen && distToXu < NEAR_PREVIEW_DIST;
       const inXuZone = onPlatformOpen && isPlayerCenterInZone(player, xuZone);
+      // 車廂2 ORC 文件：僅在車廂2 內啟用
+      isNearCar2OrcNow = onCar2 && distToCar2Orc < NEAR_PREVIEW_DIST;
+      const inCar2OrcZone = onCar2 && isPlayerCenterInZone(player, car2OrcZone);
+      // 車廂2 文件2：僅在車廂2 內啟用（靠近時開啟「政治檔案開放」彈窗）
+      isNearCar2Doc2Now = onCar2 && distToCar2Doc2 < NEAR_PREVIEW_DIST;
+      const inCar2Doc2Zone = onCar2 && isPlayerCenterInZone(player, {
+        x: 32 * TILE_SIZE,
+        y: 320 - 10,
+        width: 40,
+        height: 32
+      });
+      // 車廂2 文件3：僅在車廂2 內啟用（與其他文件同水平）
+      isNearCar2Doc3Now = onCar2 && distToCar2Doc3 < NEAR_PREVIEW_DIST;
+      const inCar2Doc3Zone = onCar2 && isPlayerCenterInZone(player, {
+        x: 43 * TILE_SIZE,
+        y: 320 - 10,
+        width: 40,
+        height: 32
+      });
+      // 車廂2 文件4：僅在車廂2 內啟用（與其他文件同水平）
+      isNearCar2Doc4Now = onCar2 && distToCar2Doc4 < NEAR_PREVIEW_DIST;
+      const inCar2Doc4Zone = onCar2 && isPlayerCenterInZone(player, {
+        x: 47 * TILE_SIZE,
+        y: 320 - 10,
+        width: 40,
+        height: 32
+      });
       // 竹工（新竹高工的塗鴉）：用 bbox 重疊，row 10 或 11 皆可觸發，預覽距離同
       isNearZhugongNow = onPlatformOpen && distToZhugong < NEAR_PREVIEW_DIST;
       const inZhugongZone = onPlatformOpen && isPlayerInZone(player, zhugongZone);
+      // 便當攤：月台（車廂關/車廂開皆可）col 42, row 22
+      const onPlatform = currentMapIndex === 0;
+      isNearBentoNow = onPlatform && distToBento < NEAR_PREVIEW_DIST;
+      const inBentoZone = onPlatform && isPlayerCenterInZone(player, bentoZone);
+      isNearToiletNow = onPlatform && distToToilet < NEAR_PREVIEW_DIST;
+      const inToiletZone = onPlatform && isPlayerCenterInZone(player, toiletZone);
+      isNearTicketNow = onPlatform && distToTicket < NEAR_PREVIEW_DIST;
+      const inTicketZone = onPlatform && isPlayerCenterInZone(player, ticketZone);
+      isNearBookshelfNow = onPlatform && distToBookshelf < NEAR_PREVIEW_DIST;
+      const inBookshelfZone = onPlatform && isPlayerCenterInZone(player, bookshelfZone);
+      isNearNoticeNow = onPlatform && distToNotice < NEAR_PREVIEW_DIST;
+      const inNoticeZone = onPlatform && isPlayerCenterInZone(player, noticeZone);
+      const inShinonggongshangZone = onPlatform && distToShinonggongshang < NEAR_PREVIEW_DIST;
+      const inStationSignZone = onPlatform && distToStationSign < NEAR_PREVIEW_DIST;
+      const ELECTRONIC_BOARD_LEFT_TRIGGER_DIST = 64;
+      const inElectronicBoardLeftZone = onPlatform && distToElectronicBoardLeft < ELECTRONIC_BOARD_LEFT_TRIGGER_DIST;
+      const ELECTRONIC_BOARD_RIGHT_TRIGGER_DIST = 64;
+      const inElectronicBoardRightZone = onPlatform && distToElectronicBoardRight < ELECTRONIC_BOARD_RIGHT_TRIGGER_DIST;
+      // 車廂3 車窗：在車廂3 內，使用相同預覽距離
+      isNearCar3WindowNow = onCar3 && distToCar3Window < NEAR_PREVIEW_DIST;
+      const inCar3WindowZone = onCar3 && isPlayerCenterInZone(player, car3WindowZone);
+      isNearCar3Window2Now = onCar3 && distToCar3Window2 < NEAR_PREVIEW_DIST;
+      const inCar3Window2Zone = onCar3 && isPlayerCenterInZone(player, car3Window2Zone);
+      isNearCar3Window3Now = onCar3 && distToCar3Window3 < NEAR_PREVIEW_DIST;
+      const inCar3Window3Zone = onCar3 && isPlayerCenterInZone(player, car3Window3Zone);
+      // 車廂3 車門：在車廂3 內，使用相同預覽距離
+      isNearCar3DoorNow = onCar3 && distToCar3Door < NEAR_PREVIEW_DIST;
+      const inCar3DoorZone = onCar3 && isPlayerCenterInZone(player, car3DoorZone);
+      // 車廂3 餐車：在車廂3 內，使用相同預覽距離
+      isNearCar3CartNow = onCar3 && distToCar3Cart < NEAR_PREVIEW_DIST;
+      const inCar3CartZone = onCar3 && isPlayerCenterInZone(player, car3CartZone);
+
       isInZoneNow = inZone;
       if (inZone && !wasInZone) {
         if (popupHuang) popupHuang.classList.add('hidden');
@@ -2231,6 +3236,9 @@
         if (popupWang) popupWang.classList.add('hidden');
         if (popupXu) popupXu.classList.add('hidden');
         if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupBento) popupBento.classList.add('hidden');
+        if (popupToilet) popupToilet.classList.add('hidden');
+        if (popupTicket) popupTicket.classList.add('hidden');
         if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
         if (bottomSheetDu) bottomSheetDu.classList.remove('open');
         if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
@@ -2238,6 +3246,11 @@
         if (bottomSheetWang) bottomSheetWang.classList.remove('open');
         if (bottomSheetXu) bottomSheetXu.classList.remove('open');
         if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
+        if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
         if (bottomSheetScrollZhou) bottomSheetScrollZhou.scrollTop = 0;
         popup.classList.remove('hidden');
         achievementUnlock('zhou');
@@ -2259,6 +3272,11 @@
         if (popupWang) popupWang.classList.add('hidden');
         if (popupXu) popupXu.classList.add('hidden');
         if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupBento) popupBento.classList.add('hidden');
+        if (popupToilet) popupToilet.classList.add('hidden');
+        if (popupTicket) popupTicket.classList.add('hidden');
+        if (popupBookshelf) popupBookshelf.classList.add('hidden');
+        if (popupNotice) popupNotice.classList.add('hidden');
         if (bottomSheet) bottomSheet.classList.remove('open');
         if (bottomSheetDu) bottomSheetDu.classList.remove('open');
         if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
@@ -2266,6 +3284,11 @@
         if (bottomSheetWang) bottomSheetWang.classList.remove('open');
         if (bottomSheetXu) bottomSheetXu.classList.remove('open');
         if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
+        if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
         if (bottomSheetScrollHuang) bottomSheetScrollHuang.scrollTop = 0;
         if (popupHuang) popupHuang.classList.remove('hidden');
         achievementUnlock('huang');
@@ -2287,6 +3310,11 @@
         if (popupWang) popupWang.classList.add('hidden');
         if (popupXu) popupXu.classList.add('hidden');
         if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupBento) popupBento.classList.add('hidden');
+        if (popupToilet) popupToilet.classList.add('hidden');
+        if (popupTicket) popupTicket.classList.add('hidden');
+        if (popupBookshelf) popupBookshelf.classList.add('hidden');
+        if (popupNotice) popupNotice.classList.add('hidden');
         if (bottomSheet) bottomSheet.classList.remove('open');
         if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
         if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
@@ -2294,6 +3322,11 @@
         if (bottomSheetWang) bottomSheetWang.classList.remove('open');
         if (bottomSheetXu) bottomSheetXu.classList.remove('open');
         if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
+        if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
         if (bottomSheetScrollDu) bottomSheetScrollDu.scrollTop = 0;
         if (popupDu) popupDu.classList.remove('hidden');
         achievementUnlock('du');
@@ -2315,6 +3348,11 @@
         if (popupWang) popupWang.classList.add('hidden');
         if (popupXu) popupXu.classList.add('hidden');
         if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupBento) popupBento.classList.add('hidden');
+        if (popupToilet) popupToilet.classList.add('hidden');
+        if (popupTicket) popupTicket.classList.add('hidden');
+        if (popupBookshelf) popupBookshelf.classList.add('hidden');
+        if (popupNotice) popupNotice.classList.add('hidden');
         if (bottomSheet) bottomSheet.classList.remove('open');
         if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
         if (bottomSheetDu) bottomSheetDu.classList.remove('open');
@@ -2322,6 +3360,11 @@
         if (bottomSheetWang) bottomSheetWang.classList.remove('open');
         if (bottomSheetXu) bottomSheetXu.classList.remove('open');
         if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
+        if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
         if (bottomSheetScrollLiu) bottomSheetScrollLiu.scrollTop = 0;
         if (popupLiu) popupLiu.classList.remove('hidden');
         achievementUnlock('liu');
@@ -2343,6 +3386,11 @@
         if (popupWang) popupWang.classList.add('hidden');
         if (popupXu) popupXu.classList.add('hidden');
         if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupBento) popupBento.classList.add('hidden');
+        if (popupToilet) popupToilet.classList.add('hidden');
+        if (popupTicket) popupTicket.classList.add('hidden');
+        if (popupBookshelf) popupBookshelf.classList.add('hidden');
+        if (popupNotice) popupNotice.classList.add('hidden');
         if (bottomSheet) bottomSheet.classList.remove('open');
         if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
         if (bottomSheetDu) bottomSheetDu.classList.remove('open');
@@ -2350,6 +3398,11 @@
         if (bottomSheetWang) bottomSheetWang.classList.remove('open');
         if (bottomSheetXu) bottomSheetXu.classList.remove('open');
         if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
+        if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
         if (bottomSheetScrollYang) bottomSheetScrollYang.scrollTop = 0;
         if (popupYang) popupYang.classList.remove('hidden');
         achievementUnlock('yang');
@@ -2371,6 +3424,11 @@
         if (popupYang) popupYang.classList.add('hidden');
         if (popupXu) popupXu.classList.add('hidden');
         if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupBento) popupBento.classList.add('hidden');
+        if (popupToilet) popupToilet.classList.add('hidden');
+        if (popupTicket) popupTicket.classList.add('hidden');
+        if (popupBookshelf) popupBookshelf.classList.add('hidden');
+        if (popupNotice) popupNotice.classList.add('hidden');
         if (bottomSheet) bottomSheet.classList.remove('open');
         if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
         if (bottomSheetDu) bottomSheetDu.classList.remove('open');
@@ -2378,6 +3436,11 @@
         if (bottomSheetYang) bottomSheetYang.classList.remove('open');
         if (bottomSheetXu) bottomSheetXu.classList.remove('open');
         if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
+        if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
         if (bottomSheetScrollWang) bottomSheetScrollWang.scrollTop = 0;
         if (popupWang) popupWang.classList.remove('hidden');
         achievementUnlock('wang');
@@ -2399,6 +3462,11 @@
         if (popupYang) popupYang.classList.add('hidden');
         if (popupWang) popupWang.classList.add('hidden');
         if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupBento) popupBento.classList.add('hidden');
+        if (popupToilet) popupToilet.classList.add('hidden');
+        if (popupTicket) popupTicket.classList.add('hidden');
+        if (popupBookshelf) popupBookshelf.classList.add('hidden');
+        if (popupNotice) popupNotice.classList.add('hidden');
         if (bottomSheet) bottomSheet.classList.remove('open');
         if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
         if (bottomSheetDu) bottomSheetDu.classList.remove('open');
@@ -2406,6 +3474,11 @@
         if (bottomSheetYang) bottomSheetYang.classList.remove('open');
         if (bottomSheetWang) bottomSheetWang.classList.remove('open');
         if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
+        if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
         if (bottomSheetScrollXu) bottomSheetScrollXu.scrollTop = 0;
         if (popupXu) popupXu.classList.remove('hidden');
         achievementUnlock('xu');
@@ -2427,6 +3500,11 @@
         if (popupYang) popupYang.classList.add('hidden');
         if (popupWang) popupWang.classList.add('hidden');
         if (popupXu) popupXu.classList.add('hidden');
+        if (popupBento) popupBento.classList.add('hidden');
+        if (popupToilet) popupToilet.classList.add('hidden');
+        if (popupTicket) popupTicket.classList.add('hidden');
+        if (popupBookshelf) popupBookshelf.classList.add('hidden');
+        if (popupNotice) popupNotice.classList.add('hidden');
         if (bottomSheet) bottomSheet.classList.remove('open');
         if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
         if (bottomSheetDu) bottomSheetDu.classList.remove('open');
@@ -2434,6 +3512,11 @@
         if (bottomSheetYang) bottomSheetYang.classList.remove('open');
         if (bottomSheetWang) bottomSheetWang.classList.remove('open');
         if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
+        if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
         if (bottomSheetScrollZhugong) bottomSheetScrollZhugong.scrollTop = 0;
         if (popupZhugong) popupZhugong.classList.remove('hidden');
         achievementUnlock('zhugong');
@@ -2447,6 +3530,800 @@
         gameState.inputLocked = false;
         setTimeout(function () { if (popupZhugong) popupZhugong.classList.add('hidden'); }, 300);
       }
+      var platformPopupOpenedThisFrame = false;
+      if (inBentoZone && !wasInBentoZone && !platformPopupOpenedThisFrame) {
+        platformPopupOpenedThisFrame = true;
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        if (popupBento) popupBento.classList.remove('hidden');
+        if (popupToilet) popupToilet.classList.add('hidden');
+        if (popupTicket) popupTicket.classList.add('hidden');
+        if (popupBookshelf) popupBookshelf.classList.add('hidden');
+        if (popupNotice) popupNotice.classList.add('hidden');
+        if (popupShinonggongshang) popupShinonggongshang.classList.add('hidden');
+        if (popupStationSign) popupStationSign.classList.add('hidden');
+        if (popupElectronicBoardLeft) popupElectronicBoardLeft.classList.add('hidden');
+        if (popupElectronicBoardRight) popupElectronicBoardRight.classList.add('hidden');
+        if (bottomSheetShinonggongshang) bottomSheetShinonggongshang.classList.remove('open');
+        if (bottomSheetStationSign) bottomSheetStationSign.classList.remove('open');
+        if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.remove('open');
+        if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetBento) bottomSheetBento.classList.add('open');
+        });
+      } else if (!inBentoZone && wasInBentoZone) {
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupBento) popupBento.classList.add('hidden'); }, 300);
+      }
+      if (inToiletZone && !wasInToiletZone && !platformPopupOpenedThisFrame) {
+        platformPopupOpenedThisFrame = true;
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupBento) popupBento.classList.add('hidden');
+        if (popupTicket) popupTicket.classList.add('hidden');
+        if (popupBookshelf) popupBookshelf.classList.add('hidden');
+        if (popupNotice) popupNotice.classList.add('hidden');
+        if (popupShinonggongshang) popupShinonggongshang.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
+        if (bottomSheetShinonggongshang) bottomSheetShinonggongshang.classList.remove('open');
+        if (bottomSheetStationSign) bottomSheetStationSign.classList.remove('open');
+        if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.remove('open');
+        if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
+        if (bottomSheetScrollToilet) bottomSheetScrollToilet.scrollTop = 0;
+        if (popupToilet) popupToilet.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetToilet) bottomSheetToilet.classList.add('open');
+        });
+      } else if (!inToiletZone && wasInToiletZone) {
+        if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupToilet) popupToilet.classList.add('hidden'); }, 300);
+      }
+      if (inTicketZone && !wasInTicketZone && !platformPopupOpenedThisFrame) {
+        platformPopupOpenedThisFrame = true;
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupBento) popupBento.classList.add('hidden');
+        if (popupToilet) popupToilet.classList.add('hidden');
+        if (popupTicket) popupTicket.classList.add('hidden');
+        if (popupBookshelf) popupBookshelf.classList.add('hidden');
+        if (popupNotice) popupNotice.classList.add('hidden');
+        if (popupShinonggongshang) popupShinonggongshang.classList.add('hidden');
+        if (popupStationSign) popupStationSign.classList.add('hidden');
+        if (popupElectronicBoardLeft) popupElectronicBoardLeft.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
+        if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
+        if (bottomSheetShinonggongshang) bottomSheetShinonggongshang.classList.remove('open');
+        if (bottomSheetStationSign) bottomSheetStationSign.classList.remove('open');
+        if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.remove('open');
+        if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
+        if (bottomSheetScrollTicket) bottomSheetScrollTicket.scrollTop = 0;
+        if (popupTicket) popupTicket.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetTicket) bottomSheetTicket.classList.add('open');
+        });
+      } else if (!inTicketZone && wasInTicketZone) {
+        if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupTicket) popupTicket.classList.add('hidden'); }, 300);
+      }
+      if (inBookshelfZone && !wasInBookshelfZone && !platformPopupOpenedThisFrame) {
+        platformPopupOpenedThisFrame = true;
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupBento) popupBento.classList.add('hidden');
+        if (popupToilet) popupToilet.classList.add('hidden');
+        if (popupTicket) popupTicket.classList.add('hidden');
+        if (popupBookshelf) popupBookshelf.classList.add('hidden');
+        if (popupNotice) popupNotice.classList.add('hidden');
+        if (popupShinonggongshang) popupShinonggongshang.classList.add('hidden');
+        if (popupStationSign) popupStationSign.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
+        if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
+        if (bottomSheetShinonggongshang) bottomSheetShinonggongshang.classList.remove('open');
+        if (bottomSheetStationSign) bottomSheetStationSign.classList.remove('open');
+        if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.remove('open');
+        if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
+        if (bottomSheetScrollBookshelf) bottomSheetScrollBookshelf.scrollTop = 0;
+        if (popupBookshelf) popupBookshelf.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetBookshelf) bottomSheetBookshelf.classList.add('open');
+        });
+      } else if (!inBookshelfZone && wasInBookshelfZone) {
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupBookshelf) popupBookshelf.classList.add('hidden'); }, 300);
+      }
+      if (inNoticeZone && !wasInNoticeZone && !platformPopupOpenedThisFrame) {
+        platformPopupOpenedThisFrame = true;
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupBento) popupBento.classList.add('hidden');
+        if (popupToilet) popupToilet.classList.add('hidden');
+        if (popupTicket) popupTicket.classList.add('hidden');
+        if (popupBookshelf) popupBookshelf.classList.add('hidden');
+        if (popupNotice) popupNotice.classList.add('hidden');
+        if (popupShinonggongshang) popupShinonggongshang.classList.add('hidden');
+        if (popupStationSign) popupStationSign.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
+        if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
+        if (bottomSheetShinonggongshang) bottomSheetShinonggongshang.classList.remove('open');
+        if (bottomSheetStationSign) bottomSheetStationSign.classList.remove('open');
+        if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.remove('open');
+        if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
+        if (bottomSheetScrollNotice) bottomSheetScrollNotice.scrollTop = 0;
+        if (popupNotice) popupNotice.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetNotice) bottomSheetNotice.classList.add('open');
+        });
+      } else if (!inNoticeZone && wasInNoticeZone) {
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupNotice) popupNotice.classList.add('hidden'); }, 300);
+      }
+      if (inShinonggongshangZone && !wasInShinonggongshangZone && !platformPopupOpenedThisFrame) {
+        platformPopupOpenedThisFrame = true;
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupBento) popupBento.classList.add('hidden');
+        if (popupToilet) popupToilet.classList.add('hidden');
+        if (popupTicket) popupTicket.classList.add('hidden');
+        if (popupBookshelf) popupBookshelf.classList.add('hidden');
+        if (popupNotice) popupNotice.classList.add('hidden');
+        if (popupShinonggongshang) popupShinonggongshang.classList.add('hidden');
+        if (popupStationSign) popupStationSign.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
+        if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
+        if (bottomSheetShinonggongshang) bottomSheetShinonggongshang.classList.remove('open');
+        if (bottomSheetStationSign) bottomSheetStationSign.classList.remove('open');
+        if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.remove('open');
+        if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
+        if (bottomSheetScrollShinonggongshang) bottomSheetScrollShinonggongshang.scrollTop = 0;
+        if (popupShinonggongshang) popupShinonggongshang.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetShinonggongshang) bottomSheetShinonggongshang.classList.add('open');
+        });
+      } else if (!inShinonggongshangZone && wasInShinonggongshangZone) {
+        if (bottomSheetShinonggongshang) bottomSheetShinonggongshang.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupShinonggongshang) popupShinonggongshang.classList.add('hidden'); }, 300);
+      }
+      if (inStationSignZone && !wasInStationSignZone && !platformPopupOpenedThisFrame) {
+        platformPopupOpenedThisFrame = true;
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupBento) popupBento.classList.add('hidden');
+        if (popupToilet) popupToilet.classList.add('hidden');
+        if (popupTicket) popupTicket.classList.add('hidden');
+        if (popupBookshelf) popupBookshelf.classList.add('hidden');
+        if (popupNotice) popupNotice.classList.add('hidden');
+        if (popupShinonggongshang) popupShinonggongshang.classList.add('hidden');
+        if (popupStationSign) popupStationSign.classList.add('hidden');
+        if (popupElectronicBoardLeft) popupElectronicBoardLeft.classList.add('hidden');
+        if (popupElectronicBoardRight) popupElectronicBoardRight.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
+        if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
+        if (bottomSheetShinonggongshang) bottomSheetShinonggongshang.classList.remove('open');
+        if (bottomSheetStationSign) bottomSheetStationSign.classList.remove('open');
+        if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.remove('open');
+        if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
+        if (bottomSheetScrollStationSign) bottomSheetScrollStationSign.scrollTop = 0;
+        if (popupStationSign) popupStationSign.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetStationSign) bottomSheetStationSign.classList.add('open');
+        });
+      } else if (!inStationSignZone && wasInStationSignZone) {
+        if (bottomSheetStationSign) bottomSheetStationSign.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupStationSign) popupStationSign.classList.add('hidden'); }, 300);
+      }
+      if (inElectronicBoardLeftZone && !wasInElectronicBoardLeftZone && !platformPopupOpenedThisFrame) {
+        platformPopupOpenedThisFrame = true;
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupBento) popupBento.classList.add('hidden');
+        if (popupToilet) popupToilet.classList.add('hidden');
+        if (popupTicket) popupTicket.classList.add('hidden');
+        if (popupBookshelf) popupBookshelf.classList.add('hidden');
+        if (popupNotice) popupNotice.classList.add('hidden');
+        if (popupShinonggongshang) popupShinonggongshang.classList.add('hidden');
+        if (popupStationSign) popupStationSign.classList.add('hidden');
+        if (popupElectronicBoardLeft) popupElectronicBoardLeft.classList.add('hidden');
+        if (popupElectronicBoardRight) popupElectronicBoardRight.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
+        if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
+        if (bottomSheetShinonggongshang) bottomSheetShinonggongshang.classList.remove('open');
+        if (bottomSheetStationSign) bottomSheetStationSign.classList.remove('open');
+        if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.remove('open');
+        if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
+        if (bottomSheetScrollElectronicBoardLeft) bottomSheetScrollElectronicBoardLeft.scrollTop = 0;
+        if (popupElectronicBoardLeft) popupElectronicBoardLeft.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.add('open');
+        });
+      } else if (!inElectronicBoardLeftZone && wasInElectronicBoardLeftZone) {
+        if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupElectronicBoardLeft) popupElectronicBoardLeft.classList.add('hidden'); }, 300);
+      }
+      if (inElectronicBoardRightZone && !wasInElectronicBoardRightZone && !platformPopupOpenedThisFrame) {
+        platformPopupOpenedThisFrame = true;
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupBento) popupBento.classList.add('hidden');
+        if (popupToilet) popupToilet.classList.add('hidden');
+        if (popupTicket) popupTicket.classList.add('hidden');
+        if (popupBookshelf) popupBookshelf.classList.add('hidden');
+        if (popupNotice) popupNotice.classList.add('hidden');
+        if (popupShinonggongshang) popupShinonggongshang.classList.add('hidden');
+        if (popupStationSign) popupStationSign.classList.add('hidden');
+        if (popupElectronicBoardLeft) popupElectronicBoardLeft.classList.add('hidden');
+        if (popupElectronicBoardRight) popupElectronicBoardRight.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+        if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
+        if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+        if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+        if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
+        if (bottomSheetShinonggongshang) bottomSheetShinonggongshang.classList.remove('open');
+        if (bottomSheetStationSign) bottomSheetStationSign.classList.remove('open');
+        if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.remove('open');
+        if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
+        if (bottomSheetScrollElectronicBoardRight) bottomSheetScrollElectronicBoardRight.scrollTop = 0;
+        if (popupElectronicBoardRight) popupElectronicBoardRight.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.add('open');
+        });
+      } else if (!inElectronicBoardRightZone && wasInElectronicBoardRightZone) {
+        if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupElectronicBoardRight) popupElectronicBoardRight.classList.add('hidden'); }, 300);
+      }
+
+      // 車廂3 車窗1：靠近時開啟「威權象徵的處置」影片對話框
+      if (inCar3WindowZone && !wasInCar3WindowZone) {
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.remove('open');
+        if (popupCar3Window) popupCar3Window.classList.remove('hidden');
+        if (popupCar3Window2) popupCar3Window2.classList.add('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetCar3Window) bottomSheetCar3Window.classList.add('open');
+          if (videoCar3Window) {
+            try {
+              videoCar3Window.currentTime = 0;
+              videoCar3Window.play();
+            } catch (e) {}
+          }
+        });
+      } else if (!inCar3WindowZone && wasInCar3WindowZone) {
+        if (bottomSheetCar3Window) bottomSheetCar3Window.classList.remove('open');
+        if (videoCar3Window) {
+          try {
+            videoCar3Window.pause();
+            videoCar3Window.currentTime = 0;
+          } catch (e) {}
+        }
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupCar3Window) popupCar3Window.classList.add('hidden'); }, 300);
+      }
+
+      // 車廂3 車窗2：靠近時開啟「不當黨產的規劃應用」影片對話框
+      if (inCar3Window2Zone && !wasInCar3Window2Zone) {
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupCar3Window) popupCar3Window.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetCar3Window) bottomSheetCar3Window.classList.remove('open');
+        if (popupCar3Window2) popupCar3Window2.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.add('open');
+          if (videoCar3Window2) {
+            try {
+              videoCar3Window2.currentTime = 0;
+              videoCar3Window2.play();
+            } catch (e) {}
+          }
+        });
+      } else if (!inCar3Window2Zone && wasInCar3Window2Zone) {
+        if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.remove('open');
+        if (videoCar3Window2) {
+          try {
+            videoCar3Window2.pause();
+            videoCar3Window2.currentTime = 0;
+          } catch (e) {}
+        }
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupCar3Window2) popupCar3Window2.classList.add('hidden'); }, 300);
+      }
+
+      // 車廂2 ORC 文件：靠近時開啟圖片對話框
+      if (inCar2OrcZone && !wasInCar2OrcZone) {
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupCar2Doc2) popupCar2Doc2.classList.add('hidden');
+        if (popupCar2Doc3) popupCar2Doc3.classList.add('hidden');
+        if (popupCar2Doc4) popupCar2Doc4.classList.add('hidden');
+        if (popupCar3Window) popupCar3Window.classList.add('hidden');
+        if (popupCar3Window2) popupCar3Window2.classList.add('hidden');
+        if (popupCar3Window3) popupCar3Window3.classList.add('hidden');
+        if (popupCar3Door) popupCar3Door.classList.add('hidden');
+        if (popupCar3Cart) popupCar3Cart.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetCar2Doc2) bottomSheetCar2Doc2.classList.remove('open');
+        if (bottomSheetCar2Doc3) bottomSheetCar2Doc3.classList.remove('open');
+        if (bottomSheetCar2Doc4) bottomSheetCar2Doc4.classList.remove('open');
+        if (bottomSheetCar3Window) bottomSheetCar3Window.classList.remove('open');
+        if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.remove('open');
+        if (bottomSheetCar3Window3) bottomSheetCar3Window3.classList.remove('open');
+        if (bottomSheetCar3Door) bottomSheetCar3Door.classList.remove('open');
+        if (bottomSheetCar3Cart) bottomSheetCar3Cart.classList.remove('open');
+        if (bottomSheetScrollCar2Orc) bottomSheetScrollCar2Orc.scrollTop = 0;
+        if (scrollProgressBarCar2Orc) scrollProgressBarCar2Orc.style.top = '0%';
+        if (popupCar2Orc) popupCar2Orc.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetCar2Orc) bottomSheetCar2Orc.classList.add('open');
+        });
+      } else if (!inCar2OrcZone && wasInCar2OrcZone) {
+        if (bottomSheetCar2Orc) bottomSheetCar2Orc.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupCar2Orc) popupCar2Orc.classList.add('hidden'); }, 300);
+      }
+
+      // 車廂2 文件2：靠近時開啟「政治檔案開放」對話框
+      if (inCar2Doc2Zone && !wasInCar2Doc2Zone) {
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupCar2Orc) popupCar2Orc.classList.add('hidden');
+        if (popupCar2Doc3) popupCar2Doc3.classList.add('hidden');
+        if (popupCar2Doc4) popupCar2Doc4.classList.add('hidden');
+        if (popupCar3Window) popupCar3Window.classList.add('hidden');
+        if (popupCar3Window2) popupCar3Window2.classList.add('hidden');
+        if (popupCar3Window3) popupCar3Window3.classList.add('hidden');
+        if (popupCar3Door) popupCar3Door.classList.add('hidden');
+        if (popupCar3Cart) popupCar3Cart.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetCar2Orc) bottomSheetCar2Orc.classList.remove('open');
+        if (bottomSheetCar2Doc3) bottomSheetCar2Doc3.classList.remove('open');
+        if (bottomSheetCar2Doc4) bottomSheetCar2Doc4.classList.remove('open');
+        if (bottomSheetCar3Window) bottomSheetCar3Window.classList.remove('open');
+        if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.remove('open');
+        if (bottomSheetCar3Window3) bottomSheetCar3Window3.classList.remove('open');
+        if (bottomSheetCar3Door) bottomSheetCar3Door.classList.remove('open');
+        if (bottomSheetCar3Cart) bottomSheetCar3Cart.classList.remove('open');
+        if (bottomSheetScrollCar2Doc2) bottomSheetScrollCar2Doc2.scrollTop = 0;
+        if (scrollProgressBarCar2Doc2) scrollProgressBarCar2Doc2.style.top = '0%';
+        if (popupCar2Doc2) popupCar2Doc2.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetCar2Doc2) bottomSheetCar2Doc2.classList.add('open');
+        });
+      } else if (!inCar2Doc2Zone && wasInCar2Doc2Zone) {
+        if (bottomSheetCar2Doc2) bottomSheetCar2Doc2.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupCar2Doc2) popupCar2Doc2.classList.add('hidden'); }, 300);
+      }
+
+      // 車廂2 文件3：靠近時開啟「權利回復」對話框
+      if (inCar2Doc3Zone && !wasInCar2Doc3Zone) {
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupCar2Orc) popupCar2Orc.classList.add('hidden');
+        if (popupCar2Doc2) popupCar2Doc2.classList.add('hidden');
+        if (popupCar2Doc4) popupCar2Doc4.classList.add('hidden');
+        if (popupCar3Window) popupCar3Window.classList.add('hidden');
+        if (popupCar3Window2) popupCar3Window2.classList.add('hidden');
+        if (popupCar3Window3) popupCar3Window3.classList.add('hidden');
+        if (popupCar3Door) popupCar3Door.classList.add('hidden');
+        if (popupCar3Cart) popupCar3Cart.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetCar2Orc) bottomSheetCar2Orc.classList.remove('open');
+        if (bottomSheetCar2Doc2) bottomSheetCar2Doc2.classList.remove('open');
+        if (bottomSheetCar2Doc4) bottomSheetCar2Doc4.classList.remove('open');
+        if (bottomSheetCar3Window) bottomSheetCar3Window.classList.remove('open');
+        if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.remove('open');
+        if (bottomSheetCar3Window3) bottomSheetCar3Window3.classList.remove('open');
+        if (bottomSheetCar3Door) bottomSheetCar3Door.classList.remove('open');
+        if (bottomSheetCar3Cart) bottomSheetCar3Cart.classList.remove('open');
+        if (bottomSheetScrollCar2Doc3) bottomSheetScrollCar2Doc3.scrollTop = 0;
+        if (scrollProgressBarCar2Doc3) scrollProgressBarCar2Doc3.style.top = '0%';
+        if (popupCar2Doc3) popupCar2Doc3.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetCar2Doc3) bottomSheetCar2Doc3.classList.add('open');
+        });
+      } else if (!inCar2Doc3Zone && wasInCar2Doc3Zone) {
+        if (bottomSheetCar2Doc3) bottomSheetCar2Doc3.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupCar2Doc3) popupCar2Doc3.classList.add('hidden'); }, 300);
+      }
+
+      // 車廂2 文件4：靠近時開啟「行政不法」對話框
+      if (inCar2Doc4Zone && !wasInCar2Doc4Zone) {
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupCar2Orc) popupCar2Orc.classList.add('hidden');
+        if (popupCar2Doc2) popupCar2Doc2.classList.add('hidden');
+        if (popupCar2Doc3) popupCar2Doc3.classList.add('hidden');
+        if (popupCar3Window) popupCar3Window.classList.add('hidden');
+        if (popupCar3Window2) popupCar3Window2.classList.add('hidden');
+        if (popupCar3Window3) popupCar3Window3.classList.add('hidden');
+        if (popupCar3Door) popupCar3Door.classList.add('hidden');
+        if (popupCar3Cart) popupCar3Cart.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetCar2Orc) bottomSheetCar2Orc.classList.remove('open');
+        if (bottomSheetCar2Doc2) bottomSheetCar2Doc2.classList.remove('open');
+        if (bottomSheetCar2Doc3) bottomSheetCar2Doc3.classList.remove('open');
+        if (bottomSheetCar3Window) bottomSheetCar3Window.classList.remove('open');
+        if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.remove('open');
+        if (bottomSheetCar3Window3) bottomSheetCar3Window3.classList.remove('open');
+        if (bottomSheetCar3Door) bottomSheetCar3Door.classList.remove('open');
+        if (bottomSheetCar3Cart) bottomSheetCar3Cart.classList.remove('open');
+        if (bottomSheetScrollCar2Doc4) bottomSheetScrollCar2Doc4.scrollTop = 0;
+        if (scrollProgressBarCar2Doc4) scrollProgressBarCar2Doc4.style.top = '0%';
+        if (popupCar2Doc4) popupCar2Doc4.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetCar2Doc4) bottomSheetCar2Doc4.classList.add('open');
+        });
+      } else if (!inCar2Doc4Zone && wasInCar2Doc4Zone) {
+        if (bottomSheetCar2Doc4) bottomSheetCar2Doc4.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupCar2Doc4) popupCar2Doc4.classList.add('hidden'); }, 300);
+      }
+
+      // 車廂3 車窗3：靠近時開啟「創傷修復」影片對話框
+      if (inCar3Window3Zone && !wasInCar3Window3Zone) {
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupCar3Window) popupCar3Window.classList.add('hidden');
+        if (popupCar3Window2) popupCar3Window2.classList.add('hidden');
+        if (popupCar3Door) popupCar3Door.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetCar3Window) bottomSheetCar3Window.classList.remove('open');
+        if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.remove('open');
+        if (bottomSheetCar3Door) bottomSheetCar3Door.classList.remove('open');
+        if (popupCar3Window3) popupCar3Window3.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetCar3Window3) bottomSheetCar3Window3.classList.add('open');
+          if (videoCar3Window3) {
+            try {
+              videoCar3Window3.currentTime = 0;
+              videoCar3Window3.play();
+            } catch (e) {}
+          }
+        });
+      } else if (!inCar3Window3Zone && wasInCar3Window3Zone) {
+        if (bottomSheetCar3Window3) bottomSheetCar3Window3.classList.remove('open');
+        if (videoCar3Window3) {
+          try {
+            videoCar3Window3.pause();
+            videoCar3Window3.currentTime = 0;
+          } catch (e) {}
+        }
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupCar3Window3) popupCar3Window3.classList.add('hidden'); }, 300);
+      }
+
+      // 車廂3 車門：靠近時開啟「已抵達：民主站」影片對話框
+      if (inCar3DoorZone && !wasInCar3DoorZone) {
+        popup.classList.add('hidden');
+        if (popupHuang) popupHuang.classList.add('hidden');
+        if (popupDu) popupDu.classList.add('hidden');
+        if (popupLiu) popupLiu.classList.add('hidden');
+        if (popupYang) popupYang.classList.add('hidden');
+        if (popupWang) popupWang.classList.add('hidden');
+        if (popupXu) popupXu.classList.add('hidden');
+        if (popupZhugong) popupZhugong.classList.add('hidden');
+        if (popupCar3Window) popupCar3Window.classList.add('hidden');
+        if (popupCar3Window2) popupCar3Window2.classList.add('hidden');
+        if (bottomSheet) bottomSheet.classList.remove('open');
+        if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
+        if (bottomSheetDu) bottomSheetDu.classList.remove('open');
+        if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
+        if (bottomSheetYang) bottomSheetYang.classList.remove('open');
+        if (bottomSheetWang) bottomSheetWang.classList.remove('open');
+        if (bottomSheetXu) bottomSheetXu.classList.remove('open');
+        if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
+        if (bottomSheetCar3Window) bottomSheetCar3Window.classList.remove('open');
+        if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.remove('open');
+        if (popupCar3Door) popupCar3Door.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetCar3Door) bottomSheetCar3Door.classList.add('open');
+          if (videoCar3Door) {
+            try {
+              videoCar3Door.currentTime = 0;
+              videoCar3Door.play();
+            } catch (e) {}
+          }
+        });
+      } else if (!inCar3DoorZone && wasInCar3DoorZone) {
+        if (bottomSheetCar3Door) bottomSheetCar3Door.classList.remove('open');
+        if (videoCar3Door) {
+          try {
+            videoCar3Door.pause();
+            videoCar3Door.currentTime = 0;
+          } catch (e) {}
+        }
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupCar3Door) popupCar3Door.classList.add('hidden'); }, 300);
+      }
+
+      // 車廂3 餐車：靠近時開啟「分享本遊戲」對話框
+      if (inCar3CartZone && !wasInCar3CartZone) {
+        try {
+          var shareUrl = window.location.href;
+          if (car3CartShareUrl) {
+            car3CartShareUrl.textContent = shareUrl;
+          }
+        } catch (e) {}
+        if (popupCar3Cart) popupCar3Cart.classList.remove('hidden');
+        gameState.inputLocked = true;
+        requestAnimationFrame(function () {
+          if (bottomSheetCar3Cart) bottomSheetCar3Cart.classList.add('open');
+        });
+      } else if (!inCar3CartZone && wasInCar3CartZone) {
+        if (bottomSheetCar3Cart) bottomSheetCar3Cart.classList.remove('open');
+        gameState.inputLocked = false;
+        setTimeout(function () { if (popupCar3Cart) popupCar3Cart.classList.add('hidden'); }, 300);
+      }
+
       wasInZone = inZone;
       wasInHuangZone = inHuangZone;
       wasInDuZone = inDuZone;
@@ -2454,7 +4331,25 @@
       wasInYangZone = inYangZone;
       wasInWangZone = inWangZone;
       wasInXuZone = inXuZone;
+      wasInCar2OrcZone = inCar2OrcZone;
+      wasInCar2Doc2Zone = inCar2Doc2Zone;
+      wasInCar2Doc3Zone = inCar2Doc3Zone;
+      wasInCar2Doc4Zone = inCar2Doc4Zone;
       wasInZhugongZone = inZhugongZone;
+      wasInBentoZone = inBentoZone;
+      wasInToiletZone = inToiletZone;
+      wasInTicketZone = inTicketZone;
+      wasInBookshelfZone = inBookshelfZone;
+      wasInNoticeZone = inNoticeZone;
+      wasInShinonggongshangZone = inShinonggongshangZone;
+      wasInStationSignZone = inStationSignZone;
+      wasInElectronicBoardLeftZone = inElectronicBoardLeftZone;
+      wasInElectronicBoardRightZone = inElectronicBoardRightZone;
+      wasInCar3Window2Zone = inCar3Window2Zone;
+      wasInCar3WindowZone = inCar3WindowZone;
+       wasInCar3Window3Zone = inCar3Window3Zone;
+      wasInCar3CartZone = inCar3CartZone;
+      wasInCar3DoorZone = inCar3DoorZone;
     }
 
     var DEBUG_CAMERA = false;
@@ -2774,6 +4669,141 @@
         }
       }
 
+      // 月台 便當攤：再往左 1/4 格（42 格左緣）, row 22（裝飾，靠近時發光較大）
+      if (currentMapIndex === 0 && bentoStallImage.complete && bentoStallImage.naturalWidth > 0) {
+        var bentoCenterX = 42 * TILE_SIZE;
+        var bentoCenterY = 22 * TILE_SIZE + TILE_SIZE / 2;
+        if (isNearBentoNow) {
+          var tBento = Date.now() / 300;
+          var pulseBento = (Math.sin(tBento) + 1) / 2;
+          var radiusBento = 48 + 16 * pulseBento;
+          var gradBento = ctx.createRadialGradient(bentoCenterX, bentoCenterY, 8, bentoCenterX, bentoCenterY, radiusBento);
+          gradBento.addColorStop(0, 'rgba(255, 255, 200, 0.95)');
+          gradBento.addColorStop(0.4, 'rgba(255, 255, 180, 0.6)');
+          gradBento.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradBento;
+          ctx.beginPath();
+          ctx.arc(bentoCenterX, bentoCenterY, radiusBento, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        var bentoMax = 96;
+        var bnw = bentoStallImage.naturalWidth;
+        var bnh = bentoStallImage.naturalHeight;
+        var bscale = Math.min(bentoMax / bnw, bentoMax / bnh, 1);
+        var bW = bnw * bscale;
+        var bH = bnh * bscale;
+        ctx.drawImage(bentoStallImage, bentoCenterX - bW / 2, bentoCenterY - bH / 2, bW, bH);
+      }
+
+      // 月台 廁所：y 與便當對齊，往右半格再往左 5px（裝飾，靠近時發光）
+      if (currentMapIndex === 0 && toiletImage.complete && toiletImage.naturalWidth > 0) {
+        var toiletCenterX = 13 * TILE_SIZE + TILE_SIZE + TILE_SIZE / 2;
+        var toiletCenterY = 22 * TILE_SIZE + TILE_SIZE / 2;
+        if (isNearToiletNow) {
+          var tToilet = Date.now() / 300;
+          var pulseToilet = (Math.sin(tToilet) + 1) / 2;
+          var radiusToilet = 40 + 12 * pulseToilet;
+          var gradToilet = ctx.createRadialGradient(toiletCenterX, toiletCenterY, 6, toiletCenterX, toiletCenterY, radiusToilet);
+          gradToilet.addColorStop(0, 'rgba(255, 255, 200, 0.9)');
+          gradToilet.addColorStop(0.5, 'rgba(255, 255, 180, 0.5)');
+          gradToilet.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradToilet;
+          ctx.beginPath();
+          ctx.arc(toiletCenterX, toiletCenterY, radiusToilet, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        var tW = toiletImage.naturalWidth;
+        var tH = toiletImage.naturalHeight;
+        ctx.drawImage(toiletImage, toiletCenterX - tW / 2, toiletCenterY - tH / 2, tW, tH);
+      }
+
+      // 月台 售票機：col 17～23、row 21～22 之間（中心 col 20, row 21 格心，往上一格）
+      if (currentMapIndex === 0 && ticketMachineImage.complete && ticketMachineImage.naturalWidth > 0) {
+        var ticketCenterX = 20 * TILE_SIZE + TILE_SIZE / 2;
+        var ticketCenterY = 21 * TILE_SIZE + TILE_SIZE / 2;
+        var tickW = ticketMachineImage.naturalWidth;
+        var tickH = ticketMachineImage.naturalHeight;
+        ctx.drawImage(ticketMachineImage, ticketCenterX - tickW / 2, ticketCenterY - tickH / 2, tickW, tickH);
+      }
+
+      // 月台 書架：col 31～38 之間再往右一格、往上一格、再往下 16px、往上 8px，原始尺寸
+      if (currentMapIndex === 0 && bookshelfImage.complete && bookshelfImage.naturalWidth > 0) {
+        var bookshelfCenterX = (31 + 38) / 2 * TILE_SIZE + TILE_SIZE;
+        var bookshelfCenterY = 21 * TILE_SIZE + TILE_SIZE / 2 + 8;
+        var bookW = bookshelfImage.naturalWidth;
+        var bookH = bookshelfImage.naturalHeight;
+        ctx.drawImage(bookshelfImage, bookshelfCenterX - bookW / 2, bookshelfCenterY - bookH / 2, bookW, bookH);
+      }
+
+      // 月台 告示：col 39 左緣、row 26（政治案件高峰期，裝飾）
+      if (currentMapIndex === 0 && noticeImage.complete && noticeImage.naturalWidth > 0) {
+        var noticeCenterX = 39 * TILE_SIZE;
+        var noticeCenterY = 26 * TILE_SIZE + TILE_SIZE / 2;
+        var noticeW = noticeImage.naturalWidth;
+        var noticeH = noticeImage.naturalHeight;
+        ctx.drawImage(noticeImage, noticeCenterX - noticeW / 2, noticeCenterY - noticeH / 2, noticeW, noticeH);
+      }
+
+      // 月台 士農工商：col 16～19 之間、row 16，再往右上各 16px（裝飾）
+      if (currentMapIndex === 0 && shinonggongshangImage.complete && shinonggongshangImage.naturalWidth > 0) {
+        var sngsCenterX = (16 + 19) / 2 * TILE_SIZE + 16;
+        var sngsCenterY = 16 * TILE_SIZE + TILE_SIZE / 2 - 16;
+        var sngsW = shinonggongshangImage.naturalWidth;
+        var sngsH = shinonggongshangImage.naturalHeight;
+        ctx.drawImage(shinonggongshangImage, sngsCenterX - sngsW / 2, sngsCenterY - sngsH / 2, sngsW, sngsH);
+      }
+
+      // 月台 站名牌：col 34～35 之間、row 16，再往右上各 16px（裝飾）
+      if (currentMapIndex === 0 && stationSignImage.complete && stationSignImage.naturalWidth > 0) {
+        var signCenterX = (34 + 35) / 2 * TILE_SIZE + 16;
+        var signCenterY = 16 * TILE_SIZE + TILE_SIZE / 2 - 16;
+        var signW = stationSignImage.naturalWidth;
+        var signH = stationSignImage.naturalHeight;
+        ctx.drawImage(stationSignImage, signCenterX - signW / 2, signCenterY - signH / 2, signW, signH);
+      }
+
+      // 月台 電子看板左：col 25～26 之間、row 27，再往右往上各 16px（裝飾）
+      if (currentMapIndex === 0 && electronicBoardLeftImage.complete && electronicBoardLeftImage.naturalWidth > 0) {
+        var eblCenterX = (25 + 26) / 2 * TILE_SIZE + 16;
+        var eblCenterY = 27 * TILE_SIZE + TILE_SIZE / 2 - 16;
+        var eblW = electronicBoardLeftImage.naturalWidth;
+        var eblH = electronicBoardLeftImage.naturalHeight;
+        ctx.drawImage(electronicBoardLeftImage, eblCenterX - eblW / 2, eblCenterY - eblH / 2, eblW, eblH);
+      }
+
+      // 月台 電子看板右：col 29～30 之間、row 27，再往上 16px（裝飾）
+      if (currentMapIndex === 0 && electronicBoardRightImage.complete && electronicBoardRightImage.naturalWidth > 0) {
+        var ebrCenterX = (29 + 30) / 2 * TILE_SIZE + TILE_SIZE / 2;
+        var ebrCenterY = 27 * TILE_SIZE + TILE_SIZE / 2 - 16;
+        var ebrW = electronicBoardRightImage.naturalWidth;
+        var ebrH = electronicBoardRightImage.naturalHeight;
+        ctx.drawImage(electronicBoardRightImage, ebrCenterX - ebrW / 2, ebrCenterY - ebrH / 2, ebrW, ebrH);
+      }
+
+      // 月台 服務亭：col 27～28 之間、row 28（裝飾）
+      if (currentMapIndex === 0 && serviceKioskImage.complete && serviceKioskImage.naturalWidth > 0) {
+        var kioskCenterX = (27 + 28) / 2 * TILE_SIZE + TILE_SIZE / 2;
+        var kioskCenterY = 28 * TILE_SIZE + TILE_SIZE / 2;
+        var kioskW = serviceKioskImage.naturalWidth;
+        var kioskH = serviceKioskImage.naturalHeight;
+        ctx.drawImage(serviceKioskImage, kioskCenterX - kioskW / 2, kioskCenterY - kioskH / 2, kioskW, kioskH);
+      }
+
+      // 月台 盆栽：col 25 與 col 30, row 22（裝飾）
+      if (currentMapIndex === 0 && potPlantImage.complete && potPlantImage.naturalWidth > 0) {
+        var potW = potPlantImage.naturalWidth;
+        var potH = potPlantImage.naturalHeight;
+        var potY = 22 * TILE_SIZE + TILE_SIZE / 2;
+        var potX1 = 25 * TILE_SIZE + TILE_SIZE / 2;
+        var potX2 = 30 * TILE_SIZE + TILE_SIZE / 2;
+        ctx.drawImage(potPlantImage, potX1 - potW / 2, potY - potH / 2, potW, potH);
+        ctx.drawImage(potPlantImage, potX2 - potW / 2, potY - potH / 2, potW, potH);
+      }
+
       // 車廂3 標語2：橫跨 col 24～49（26 格）、row 17 置中
       if (currentMapIndex === 2 && biaoyu2Image.complete && biaoyu2Image.naturalWidth > 0) {
         var biaoyu2Col1 = 24;
@@ -2801,6 +4831,213 @@
         var sW = snw * sScale;
         var sH = snh * sScale;
         ctx.drawImage(car3StopSignImage, stopX - sW / 2, stopY - sH / 2, sW, sH);
+      }
+
+      // 車廂3 車窗：三扇窗，靠近時加上更明顯的光暈（縮小為約 2 格寬）
+      if (currentMapIndex === 2 && car3WindowImage.complete && car3WindowImage.naturalWidth > 0) {
+        var winCenterX = 800;
+        var winCenterY = 273;
+        if (isNearCar3WindowNow) {
+          var tWin = Date.now() / 300;
+          var pulseWin = (Math.sin(tWin) + 1) / 2;
+          var radiusWin = 32 + 12 * pulseWin;
+          var gradWin = ctx.createRadialGradient(winCenterX, winCenterY, 4, winCenterX, winCenterY, radiusWin);
+          gradWin.addColorStop(0, 'rgba(255, 255, 220, 1.0)');
+          gradWin.addColorStop(0.4, 'rgba(255, 255, 200, 0.6)');
+          gradWin.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradWin;
+          ctx.beginPath();
+          ctx.arc(winCenterX, winCenterY, radiusWin, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        var wnw = car3WindowImage.naturalWidth;
+        var wnh = car3WindowImage.naturalHeight;
+        var targetW2 = TILE_SIZE * 2; // 約 2 格寬
+        var wScale = targetW2 / wnw;
+        var wW = wnw * wScale;
+        var wH = wnh * wScale;
+        // 車窗1
+        ctx.drawImage(car3WindowImage, winCenterX - wW / 2, winCenterY - wH / 2, wW, wH);
+        // 車窗2（同樣大小，中心 x=992, y=273）
+        var win2CenterX = 992;
+        var win2CenterY = 273;
+        if (isNearCar3Window2Now) {
+          var tWin2 = Date.now() / 300;
+          var pulseWin2 = (Math.sin(tWin2) + 1) / 2;
+          var radiusWin2 = 32 + 12 * pulseWin2;
+          var gradWin2 = ctx.createRadialGradient(win2CenterX, win2CenterY, 4, win2CenterX, win2CenterY, radiusWin2);
+          gradWin2.addColorStop(0, 'rgba(255, 255, 220, 1.0)');
+          gradWin2.addColorStop(0.4, 'rgba(255, 255, 200, 0.6)');
+          gradWin2.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradWin2;
+          ctx.beginPath();
+          ctx.arc(win2CenterX, win2CenterY, radiusWin2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        ctx.drawImage(car3WindowImage, win2CenterX - wW / 2, win2CenterY - wH / 2, wW, wH);
+        // 車窗3（創傷修復，中心 x=1280, y=273）
+        var win3CenterX = 1280;
+        var win3CenterY = 273;
+        if (isNearCar3Window3Now) {
+          var tWin3 = Date.now() / 300;
+          var pulseWin3 = (Math.sin(tWin3) + 1) / 2;
+          var radiusWin3 = 32 + 12 * pulseWin3;
+          var gradWin3 = ctx.createRadialGradient(win3CenterX, win3CenterY, 4, win3CenterX, win3CenterY, radiusWin3);
+          gradWin3.addColorStop(0, 'rgba(255, 255, 220, 1.0)');
+          gradWin3.addColorStop(0.4, 'rgba(255, 255, 200, 0.6)');
+          gradWin3.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradWin3;
+          ctx.beginPath();
+          ctx.arc(win3CenterX, win3CenterY, radiusWin3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        ctx.drawImage(car3WindowImage, win3CenterX - wW / 2, win3CenterY - wH / 2, wW, wH);
+      }
+
+      // 車廂2 文件1：col 26, row 10（整體往左上 5px, 5px），靠近時光暈
+      if (currentMapIndex === 1 && car2Doc1Image.complete && car2Doc1Image.naturalWidth > 0) {
+        var doc1CenterX = 26 * TILE_SIZE + TILE_SIZE / 2 - 5;
+        var doc1CenterY = 10 * TILE_SIZE - 10;
+        if (isNearCar2OrcNow) {
+          var tDoc1 = Date.now() / 300;
+          var pulseDoc1 = (Math.sin(tDoc1) + 1) / 2;
+          var radiusDoc1 = 28 + 10 * pulseDoc1;
+          var gradDoc1 = ctx.createRadialGradient(doc1CenterX, doc1CenterY, 4, doc1CenterX, doc1CenterY, radiusDoc1);
+          gradDoc1.addColorStop(0, 'rgba(255, 255, 220, 0.9)');
+          gradDoc1.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradDoc1;
+          ctx.beginPath();
+          ctx.arc(doc1CenterX, doc1CenterY, radiusDoc1, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        var doc1nw = car2Doc1Image.naturalWidth;
+        var doc1nh = car2Doc1Image.naturalHeight;
+        ctx.drawImage(car2Doc1Image, doc1CenterX - doc1nw / 2, doc1CenterY - doc1nh / 2, doc1nw, doc1nh);
+      }
+
+      // 車廂2 文件2：col 32, row 10（與文件1 同一水平高度），靠近時光暈
+      if (currentMapIndex === 1 && car2Doc2Image.complete && car2Doc2Image.naturalWidth > 0) {
+        var doc2CenterX = 32 * TILE_SIZE + TILE_SIZE / 2;
+        var doc2CenterY = 10 * TILE_SIZE - 10;
+        if (isNearCar2Doc2Now) {
+          var tDoc2 = Date.now() / 300;
+          var pulseDoc2 = (Math.sin(tDoc2) + 1) / 2;
+          var radiusDoc2 = 28 + 10 * pulseDoc2;
+          var gradDoc2 = ctx.createRadialGradient(doc2CenterX, doc2CenterY, 4, doc2CenterX, doc2CenterY, radiusDoc2);
+          gradDoc2.addColorStop(0, 'rgba(255, 255, 220, 0.9)');
+          gradDoc2.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradDoc2;
+          ctx.beginPath();
+          ctx.arc(doc2CenterX, doc2CenterY, radiusDoc2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        var doc2nw = car2Doc2Image.naturalWidth;
+        var doc2nh = car2Doc2Image.naturalHeight;
+        ctx.drawImage(car2Doc2Image, doc2CenterX - doc2nw / 2, doc2CenterY - doc2nh / 2, doc2nw, doc2nh);
+      }
+
+      // 車廂2 文件3：col 43, row 10（與其他文件同水平），靠近時光暈
+      if (currentMapIndex === 1 && car2Doc3Image.complete && car2Doc3Image.naturalWidth > 0) {
+        var doc3CenterX = 43 * TILE_SIZE + TILE_SIZE / 2;
+        var doc3CenterY = 10 * TILE_SIZE - 10;
+        if (isNearCar2Doc3Now) {
+          var tDoc3 = Date.now() / 300;
+          var pulseDoc3 = (Math.sin(tDoc3) + 1) / 2;
+          var radiusDoc3 = 28 + 10 * pulseDoc3;
+          var gradDoc3 = ctx.createRadialGradient(doc3CenterX, doc3CenterY, 4, doc3CenterX, doc3CenterY, radiusDoc3);
+          gradDoc3.addColorStop(0, 'rgba(255, 255, 220, 0.9)');
+          gradDoc3.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradDoc3;
+          ctx.beginPath();
+          ctx.arc(doc3CenterX, doc3CenterY, radiusDoc3, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        var doc3nw = car2Doc3Image.naturalWidth;
+        var doc3nh = car2Doc3Image.naturalHeight;
+        ctx.drawImage(car2Doc3Image, doc3CenterX - doc3nw / 2, doc3CenterY - doc3nh / 2, doc3nw, doc3nh);
+      }
+
+      // 車廂2 文件4：col 47, row 10（與其他文件同水平），靠近時光暈
+      if (currentMapIndex === 1 && car2Doc4Image.complete && car2Doc4Image.naturalWidth > 0) {
+        var doc4CenterX = 47 * TILE_SIZE + TILE_SIZE / 2;
+        var doc4CenterY = 10 * TILE_SIZE - 10;
+        if (isNearCar2Doc4Now) {
+          var tDoc4 = Date.now() / 300;
+          var pulseDoc4 = (Math.sin(tDoc4) + 1) / 2;
+          var radiusDoc4 = 28 + 10 * pulseDoc4;
+          var gradDoc4 = ctx.createRadialGradient(doc4CenterX, doc4CenterY, 4, doc4CenterX, doc4CenterY, radiusDoc4);
+          gradDoc4.addColorStop(0, 'rgba(255, 255, 220, 0.9)');
+          gradDoc4.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradDoc4;
+          ctx.beginPath();
+          ctx.arc(doc4CenterX, doc4CenterY, radiusDoc4, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        var doc4nw = car2Doc4Image.naturalWidth;
+        var doc4nh = car2Doc4Image.naturalHeight;
+        ctx.drawImage(car2Doc4Image, doc4CenterX - doc4nw / 2, doc4CenterY - doc4nh / 2, doc4nw, doc4nh);
+      }
+
+      // 車廂3 車門：玩家提供位置 (x=1183, y=288)，強烈光暈
+      if (currentMapIndex === 2 && car3DoorImage.complete && car3DoorImage.naturalWidth > 0) {
+        var doorCenterX = 1183;
+        var doorCenterY = 288;
+        if (isNearCar3DoorNow) {
+          var tDoor = Date.now() / 300;
+          var pulseDoor = (Math.sin(tDoor) + 1) / 2;
+          var radiusDoor = 36 + 14 * pulseDoor;
+          var gradDoor = ctx.createRadialGradient(doorCenterX, doorCenterY, 4, doorCenterX, doorCenterY, radiusDoor);
+          gradDoor.addColorStop(0, 'rgba(255, 255, 230, 1.0)');
+          gradDoor.addColorStop(0.4, 'rgba(255, 255, 210, 0.7)');
+          gradDoor.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradDoor;
+          ctx.beginPath();
+          ctx.arc(doorCenterX, doorCenterY, radiusDoor, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        var dnw = car3DoorImage.naturalWidth;
+        var dnh = car3DoorImage.naturalHeight;
+        ctx.drawImage(car3DoorImage, doorCenterX - dnw / 2, doorCenterY - dnh / 2, dnw, dnh);
+      }
+
+      // 車廂3 餐車：玩家提供位置 (x=1461, y=320)
+      if (currentMapIndex === 2 && car3CartImage.complete && car3CartImage.naturalWidth > 0) {
+        var cartCenterX = 1461;
+        var cartCenterY = 320;
+        if (isNearCar3CartNow) {
+          var tCart = Date.now() / 300;
+          var pulseCart = (Math.sin(tCart) + 1) / 2;
+          var radiusCart = 22 + 6 * pulseCart;
+          var gradCart = ctx.createRadialGradient(cartCenterX, cartCenterY, 4, cartCenterX, cartCenterY, radiusCart);
+          gradCart.addColorStop(0, 'rgba(255, 255, 180, 0.9)');
+          gradCart.addColorStop(1, 'rgba(255, 255, 180, 0)');
+          ctx.save();
+          ctx.fillStyle = gradCart;
+          ctx.beginPath();
+          ctx.arc(cartCenterX, cartCenterY, radiusCart, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        var cnw = car3CartImage.naturalWidth;
+        var cnh = car3CartImage.naturalHeight;
+        // 維持原始圖片尺寸
+        ctx.drawImage(car3CartImage, cartCenterX - cnw / 2, cartCenterY - cnh / 2, cnw, cnh);
       }
 
       drawPlayer({
@@ -2952,10 +5189,127 @@
       gameState.inputLocked = false;
       setTimeout(function () { if (popupZhugong) popupZhugong.classList.add('hidden'); }, 300);
     }
+    function closeModalBento() {
+      if (bottomSheetBento) bottomSheetBento.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupBento) popupBento.classList.add('hidden'); }, 300);
+    }
+    function closeModalToilet() {
+      if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupToilet) popupToilet.classList.add('hidden'); }, 300);
+    }
+    function closeModalTicket() {
+      if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupTicket) popupTicket.classList.add('hidden'); }, 300);
+    }
+    function closeModalBookshelf() {
+      if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupBookshelf) popupBookshelf.classList.add('hidden'); }, 300);
+    }
+    function closeModalNotice() {
+      if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupNotice) popupNotice.classList.add('hidden'); }, 300);
+    }
+    function closeModalStationSign() {
+      if (bottomSheetStationSign) bottomSheetStationSign.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupStationSign) popupStationSign.classList.add('hidden'); }, 300);
+    }
+    function closeModalElectronicBoardLeft() {
+      if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupElectronicBoardLeft) popupElectronicBoardLeft.classList.add('hidden'); }, 300);
+    }
+    function closeModalElectronicBoardRight() {
+      if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupElectronicBoardRight) popupElectronicBoardRight.classList.add('hidden'); }, 300);
+    }
+    function closeModalShinonggongshang() {
+      if (bottomSheetShinonggongshang) bottomSheetShinonggongshang.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupShinonggongshang) popupShinonggongshang.classList.add('hidden'); }, 300);
+    }
     function closeModalXu() {
       if (bottomSheetXu) bottomSheetXu.classList.remove('open');
       gameState.inputLocked = false;
       setTimeout(function () { if (popupXu) popupXu.classList.add('hidden'); }, 300);
+    }
+    function closeModalCar2Orc() {
+      if (bottomSheetCar2Orc) bottomSheetCar2Orc.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupCar2Orc) popupCar2Orc.classList.add('hidden'); }, 300);
+    }
+    function closeModalCar2Doc2() {
+      if (bottomSheetCar2Doc2) bottomSheetCar2Doc2.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupCar2Doc2) popupCar2Doc2.classList.add('hidden'); }, 300);
+    }
+    function closeModalCar2Doc3() {
+      if (bottomSheetCar2Doc3) bottomSheetCar2Doc3.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupCar2Doc3) popupCar2Doc3.classList.add('hidden'); }, 300);
+    }
+    function closeModalCar2Doc4() {
+      if (bottomSheetCar2Doc4) bottomSheetCar2Doc4.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupCar2Doc4) popupCar2Doc4.classList.add('hidden'); }, 300);
+    }
+    function closeModalCar3Window() {
+      if (bottomSheetCar3Window) bottomSheetCar3Window.classList.remove('open');
+      if (videoCar3Window) {
+        try {
+          videoCar3Window.pause();
+          videoCar3Window.currentTime = 0;
+        } catch (e) {}
+      }
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupCar3Window) popupCar3Window.classList.add('hidden'); }, 300);
+    }
+    function closeModalCar3Window2() {
+      if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.remove('open');
+      if (videoCar3Window2) {
+        try {
+          videoCar3Window2.pause();
+          videoCar3Window2.currentTime = 0;
+        } catch (e) {}
+      }
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupCar3Window2) popupCar3Window2.classList.add('hidden'); }, 300);
+    }
+
+    function closeModalCar3Window3() {
+      if (bottomSheetCar3Window3) bottomSheetCar3Window3.classList.remove('open');
+      if (videoCar3Window3) {
+        try {
+          videoCar3Window3.pause();
+          videoCar3Window3.currentTime = 0;
+        } catch (e) {}
+      }
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupCar3Window3) popupCar3Window3.classList.add('hidden'); }, 300);
+    }
+
+    function closeModalCar3Door() {
+      if (bottomSheetCar3Door) bottomSheetCar3Door.classList.remove('open');
+      if (videoCar3Door) {
+        try {
+          videoCar3Door.pause();
+          videoCar3Door.currentTime = 0;
+        } catch (e) {}
+      }
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupCar3Door) popupCar3Door.classList.add('hidden'); }, 300);
+    }
+
+    function closeModalCar3Cart() {
+      if (bottomSheetCar3Cart) bottomSheetCar3Cart.classList.remove('open');
+      gameState.inputLocked = false;
+      setTimeout(function () { if (popupCar3Cart) popupCar3Cart.classList.add('hidden'); }, 300);
     }
 
     popup.addEventListener('click', function (e) {
@@ -3016,6 +5370,30 @@
     const bottomSheetScrollZhugong = document.getElementById('bottomSheetScrollZhugong');
     const scrollProgressBarZhugong = document.getElementById('scrollProgressBarZhugong');
     const scrollProgressWrapZhugong = document.getElementById('scrollProgressZhugong');
+    const bottomSheetScrollCar3Window = document.getElementById('bottomSheetScrollCar3Window');
+    const scrollProgressBarCar3Window = document.getElementById('scrollProgressBarCar3Window');
+    const scrollProgressWrapCar3Window = document.getElementById('scrollProgressCar3Window');
+    const bottomSheetScrollCar3Window2 = document.getElementById('bottomSheetScrollCar3Window2');
+    const scrollProgressBarCar3Window2 = document.getElementById('scrollProgressBarCar3Window2');
+    const scrollProgressWrapCar3Window2 = document.getElementById('scrollProgressCar3Window2');
+    const bottomSheetScrollCar3Window3 = document.getElementById('bottomSheetScrollCar3Window3');
+    const scrollProgressBarCar3Window3 = document.getElementById('scrollProgressBarCar3Window3');
+    const scrollProgressWrapCar3Window3 = document.getElementById('scrollProgressCar3Window3');
+    const bottomSheetScrollCar3Door = document.getElementById('bottomSheetScrollCar3Door');
+    const scrollProgressBarCar3Door = document.getElementById('scrollProgressBarCar3Door');
+    const scrollProgressWrapCar3Door = document.getElementById('scrollProgressCar3Door');
+    const bottomSheetScrollCar2Orc = document.getElementById('bottomSheetScrollCar2Orc');
+    const scrollProgressBarCar2Orc = document.getElementById('scrollProgressBarCar2Orc');
+    const scrollProgressWrapCar2Orc = document.getElementById('scrollProgressCar2Orc');
+    const bottomSheetScrollCar2Doc2 = document.getElementById('bottomSheetScrollCar2Doc2');
+    const scrollProgressBarCar2Doc2 = document.getElementById('scrollProgressBarCar2Doc2');
+    const scrollProgressWrapCar2Doc2 = document.getElementById('scrollProgressCar2Doc2');
+    const bottomSheetScrollCar2Doc3 = document.getElementById('bottomSheetScrollCar2Doc3');
+    const scrollProgressBarCar2Doc3 = document.getElementById('scrollProgressBarCar2Doc3');
+    const scrollProgressWrapCar2Doc3 = document.getElementById('scrollProgressCar2Doc3');
+    const bottomSheetScrollCar2Doc4 = document.getElementById('bottomSheetScrollCar2Doc4');
+    const scrollProgressBarCar2Doc4 = document.getElementById('scrollProgressBarCar2Doc4');
+    const scrollProgressWrapCar2Doc4 = document.getElementById('scrollProgressCar2Doc4');
     setupScrollProgress(bottomSheetScrollZhou, scrollProgressWrapZhou, scrollProgressBarZhou);
     setupScrollProgress(bottomSheetScrollHuang, scrollProgressWrapHuang, scrollProgressBarHuang);
     setupScrollProgress(bottomSheetScrollDu, scrollProgressWrapDu, scrollProgressBarDu);
@@ -3024,6 +5402,14 @@
     setupScrollProgress(bottomSheetScrollWang, scrollProgressWrapWang, scrollProgressBarWang);
     setupScrollProgress(bottomSheetScrollXu, scrollProgressWrapXu, scrollProgressBarXu);
     setupScrollProgress(bottomSheetScrollZhugong, scrollProgressWrapZhugong, scrollProgressBarZhugong);
+    setupScrollProgress(bottomSheetScrollCar2Orc, scrollProgressWrapCar2Orc, scrollProgressBarCar2Orc);
+    setupScrollProgress(bottomSheetScrollCar2Doc2, scrollProgressWrapCar2Doc2, scrollProgressBarCar2Doc2);
+    setupScrollProgress(bottomSheetScrollCar2Doc3, scrollProgressWrapCar2Doc3, scrollProgressBarCar2Doc3);
+    setupScrollProgress(bottomSheetScrollCar2Doc4, scrollProgressWrapCar2Doc4, scrollProgressBarCar2Doc4);
+    setupScrollProgress(bottomSheetScrollCar3Window, scrollProgressWrapCar3Window, scrollProgressBarCar3Window);
+    setupScrollProgress(bottomSheetScrollCar3Window2, scrollProgressWrapCar3Window2, scrollProgressBarCar3Window2);
+    setupScrollProgress(bottomSheetScrollCar3Window3, scrollProgressWrapCar3Window3, scrollProgressBarCar3Window3);
+    setupScrollProgress(bottomSheetScrollCar3Door, scrollProgressWrapCar3Door, scrollProgressBarCar3Door);
 
     if (popupHuang) {
       popupHuang.addEventListener('click', function (e) {
@@ -3122,6 +5508,265 @@
     }
     if (bottomSheetZhugong) {
       bottomSheetZhugong.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupBento) {
+      popupBento.addEventListener('click', function (e) {
+        if (e.target === popupBento) closeModalBento();
+      });
+    }
+    if (popupBentoClose) {
+      popupBentoClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalBento();
+      });
+    }
+    if (bottomSheetBento) {
+      bottomSheetBento.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupToilet) {
+      popupToilet.addEventListener('click', function (e) {
+        if (e.target === popupToilet) closeModalToilet();
+      });
+    }
+    if (popupToiletClose) {
+      popupToiletClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalToilet();
+      });
+    }
+    if (bottomSheetToilet) {
+      bottomSheetToilet.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupTicket) {
+      popupTicket.addEventListener('click', function (e) {
+        if (e.target === popupTicket) closeModalTicket();
+      });
+    }
+    if (popupTicketClose) {
+      popupTicketClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalTicket();
+      });
+    }
+    if (bottomSheetTicket) {
+      bottomSheetTicket.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupBookshelf) {
+      popupBookshelf.addEventListener('click', function (e) {
+        if (e.target === popupBookshelf) closeModalBookshelf();
+      });
+    }
+    if (popupBookshelfClose) {
+      popupBookshelfClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalBookshelf();
+      });
+    }
+    if (bottomSheetBookshelf) {
+      bottomSheetBookshelf.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupNotice) {
+      popupNotice.addEventListener('click', function (e) {
+        if (e.target === popupNotice) closeModalNotice();
+      });
+    }
+    if (popupNoticeClose) {
+      popupNoticeClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalNotice();
+      });
+    }
+    if (bottomSheetNotice) {
+      bottomSheetNotice.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupStationSign) {
+      popupStationSign.addEventListener('click', function (e) {
+        if (e.target === popupStationSign) closeModalStationSign();
+      });
+    }
+    if (popupStationSignClose) {
+      popupStationSignClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalStationSign();
+      });
+    }
+    if (bottomSheetStationSign) {
+      bottomSheetStationSign.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupElectronicBoardLeft) {
+      popupElectronicBoardLeft.addEventListener('click', function (e) {
+        if (e.target === popupElectronicBoardLeft) closeModalElectronicBoardLeft();
+      });
+    }
+    if (popupElectronicBoardLeftClose) {
+      popupElectronicBoardLeftClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalElectronicBoardLeft();
+      });
+    }
+    if (bottomSheetElectronicBoardLeft) {
+      bottomSheetElectronicBoardLeft.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupElectronicBoardRight) {
+      popupElectronicBoardRight.addEventListener('click', function (e) {
+        if (e.target === popupElectronicBoardRight) closeModalElectronicBoardRight();
+      });
+    }
+    if (popupElectronicBoardRightClose) {
+      popupElectronicBoardRightClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalElectronicBoardRight();
+      });
+    }
+    if (bottomSheetElectronicBoardRight) {
+      bottomSheetElectronicBoardRight.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupShinonggongshang) {
+      popupShinonggongshang.addEventListener('click', function (e) {
+        if (e.target === popupShinonggongshang) closeModalShinonggongshang();
+      });
+    }
+    if (popupShinonggongshangClose) {
+      popupShinonggongshangClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalShinonggongshang();
+      });
+    }
+    if (bottomSheetShinonggongshang) {
+      bottomSheetShinonggongshang.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupCar2Orc) {
+      popupCar2Orc.addEventListener('click', function (e) {
+        if (e.target === popupCar2Orc) closeModalCar2Orc();
+      });
+    }
+    if (popupCar2OrcClose) {
+      popupCar2OrcClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalCar2Orc();
+      });
+    }
+    if (bottomSheetCar2Orc) {
+      bottomSheetCar2Orc.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupCar2Doc2) {
+      popupCar2Doc2.addEventListener('click', function (e) {
+        if (e.target === popupCar2Doc2) closeModalCar2Doc2();
+      });
+    }
+    if (popupCar2Doc2Close) {
+      popupCar2Doc2Close.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalCar2Doc2();
+      });
+    }
+    if (bottomSheetCar2Doc2) {
+      bottomSheetCar2Doc2.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupCar2Doc3) {
+      popupCar2Doc3.addEventListener('click', function (e) {
+        if (e.target === popupCar2Doc3) closeModalCar2Doc3();
+      });
+    }
+    if (popupCar2Doc3Close) {
+      popupCar2Doc3Close.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalCar2Doc3();
+      });
+    }
+    if (bottomSheetCar2Doc3) {
+      bottomSheetCar2Doc3.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupCar2Doc4) {
+      popupCar2Doc4.addEventListener('click', function (e) {
+        if (e.target === popupCar2Doc4) closeModalCar2Doc4();
+      });
+    }
+    if (popupCar2Doc4Close) {
+      popupCar2Doc4Close.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalCar2Doc4();
+      });
+    }
+    if (bottomSheetCar2Doc4) {
+      bottomSheetCar2Doc4.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupCar3Window) {
+      popupCar3Window.addEventListener('click', function (e) {
+        if (e.target === popupCar3Window) closeModalCar3Window();
+      });
+    }
+    if (popupCar3WindowClose) {
+      popupCar3WindowClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalCar3Window();
+      });
+    }
+    if (bottomSheetCar3Window) {
+      bottomSheetCar3Window.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupCar3Window2) {
+      popupCar3Window2.addEventListener('click', function (e) {
+        if (e.target === popupCar3Window2) closeModalCar3Window2();
+      });
+    }
+    if (popupCar3Window2Close) {
+      popupCar3Window2Close.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalCar3Window2();
+      });
+    }
+    if (bottomSheetCar3Window2) {
+      bottomSheetCar3Window2.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupCar3Window3) {
+      popupCar3Window3.addEventListener('click', function (e) {
+        if (e.target === popupCar3Window3) closeModalCar3Window3();
+      });
+    }
+    if (popupCar3Window3Close) {
+      popupCar3Window3Close.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalCar3Window3();
+      });
+    }
+    if (bottomSheetCar3Window3) {
+      bottomSheetCar3Window3.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupCar3Door) {
+      popupCar3Door.addEventListener('click', function (e) {
+        if (e.target === popupCar3Door) closeModalCar3Door();
+      });
+    }
+    if (popupCar3DoorClose) {
+      popupCar3DoorClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalCar3Door();
+      });
+    }
+    if (bottomSheetCar3Door) {
+      bottomSheetCar3Door.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (popupCar3Cart) {
+      popupCar3Cart.addEventListener('click', function (e) {
+        if (e.target === popupCar3Cart) closeModalCar3Cart();
+      });
+    }
+    if (popupCar3CartClose) {
+      popupCar3CartClose.addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeModalCar3Cart();
+      });
+    }
+    if (bottomSheetCar3Cart) {
+      bottomSheetCar3Cart.addEventListener('click', function (e) { e.stopPropagation(); });
+    }
+    if (car3CartCopyButton && navigator.clipboard && navigator.clipboard.writeText) {
+      car3CartCopyButton.addEventListener('click', function () {
+        if (car3CartShareUrl && car3CartShareUrl.textContent) {
+          navigator.clipboard.writeText(car3CartShareUrl.textContent).catch(function () {});
+        }
+      });
     }
 
     // --- 右側漢堡選單：開啟、關閉、分頁、成就 UI ---
