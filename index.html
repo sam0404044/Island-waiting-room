@@ -165,6 +165,10 @@
     .scroll-progress-wrap:hover {
       background: rgba(0, 51, 102, 0.18);
     }
+    /* 內容不足以捲動時隱藏拉條 */
+    .scroll-progress-wrap.no-scroll {
+      display: none;
+    }
     .popup-content {
       position: relative;
       padding: 8px 20px 20px;
@@ -294,14 +298,12 @@
     .controls {
       position: relative;
       margin-top: 8px;
-      display: grid;
-      grid-template-columns: 52px 52px 52px;
-      grid-template-rows: 52px 52px 52px;
-      gap: 6px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       touch-action: none;
       user-select: none;
-      justify-content: center;
-      margin-bottom: 8px;
     }
 
     /* Desktop-only help button on the right side；選單打開時隱藏 */
@@ -699,6 +701,78 @@
       transform: translateY(1px);
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
       background: #777;
+    }
+
+    /* Joystick-style on-screen control */
+    .joystick-area {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      touch-action: none;
+    }
+    .joystick-knob {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.4);
+      transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, 0px)));
+      transition: transform 0.08s ease;
+    }
+    .joystick-knob::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .joystick-area.active .joystick-knob {
+      transition: none;
+    }
+    .joystick-arrow {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .joystick-arrow .arrow-icon {
+      width: 22px;
+      height: 22px;
+    }
+    .joystick-arrow-up {
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .joystick-arrow-down {
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .joystick-arrow-left {
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .joystick-arrow-right {
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
     }
 
     /* Global soft fade-in animation */
@@ -1565,14 +1639,14 @@
                     <tr><th>時間</th><th>事件</th><th>動作</th><th>質化成果</th></tr>
                   </thead>
                   <tbody>
-                    <tr><td>2018 05</td><td>掛牌成立</td><td>設立任務小組</td><td>設「還原歷史真相」、「威權象徵處理」、「平復司法不法」與「重建社會信任」四組</td></tr>
-                    <tr><td>2020 02 17</td><td>林義雄宅血案調查報告</td><td>公布調查報告</td><td>調查發現威權統治當局涉入本案的嫌疑不容排除</td></tr>
-                    <tr><td>2020 02 26</td><td>臺灣轉型正義資料庫</td><td>資料庫上線</td><td>以受裁判人為單位彙整裁判書等重要決定描繪威權時期軍審樣貌</td></tr>
-                    <tr><td>2020 05 04</td><td>陳文成案調查報告</td><td>公布調查報告</td><td>官方報告首次認定他殺高於意外或自殺，警總嫌疑不容排除</td></tr>
-                    <tr><td>2021 05 11</td><td>促進轉型正義條例 部分條文修正草案</td><td>提出法案函報行政院</td><td>擴大應平復範圍，代表國家承認過去不法侵害人權之事實</td></tr>
-                    <tr><td>2021 05 12</td><td>威權統治時期國家不法行為 被害者權利回復條例草案</td><td>提出法案函報行政院</td><td>確立權利遭國家不法侵害者依法申領賠償金之公民地位；亦就「沒收財產返還」提出方案</td></tr>
-                    <tr><td>2021 08</td><td>促進轉型正義基金 設置計畫書</td><td>獲行政院核定 同意辦理</td><td>依法規劃及運用收歸國有之不當黨產，從黨國還給全民</td></tr>
-                    <tr><td>2021 09 08</td><td>中正紀念堂轉型方案</td><td>提出方案構想</td><td>以「反省威權歷史公園」為整體園區轉型主軸，逐步收攏聚焦社會討論</td></tr>
+                    <tr><td>2018/05</td><td>掛牌成立</td><td>設立任務小組</td><td>設「還原歷史真相」、「威權象徵處理」、「平復司法不法」與「重建社會信任」四組</td></tr>
+                    <tr><td>2020/02/17</td><td>林義雄宅血案調查報告</td><td>公布調查報告</td><td>調查發現威權統治當局涉入本案的嫌疑不容排除</td></tr>
+                    <tr><td>2020/02/26</td><td>臺灣轉型正義資料庫</td><td>資料庫上線</td><td>以受裁判人為單位彙整裁判書等重要決定描繪威權時期軍審樣貌</td></tr>
+                    <tr><td>2020/05/04</td><td>陳文成案調查報告</td><td>公布調查報告</td><td>官方報告首次認定他殺高於意外或自殺，警總嫌疑不容排除</td></tr>
+                    <tr><td>2021/05/11</td><td>促進轉型正義條例 部分條文修正草案</td><td>提出法案函報行政院</td><td>擴大應平復範圍，代表國家承認過去不法侵害人權之事實</td></tr>
+                    <tr><td>2021/05/12</td><td>威權統治時期國家不法行為 被害者權利回復條例草案</td><td>提出法案函報行政院</td><td>確立權利遭國家不法侵害者依法申領賠償金之公民地位；亦就「沒收財產返還」提出方案</td></tr>
+                    <tr><td>2021/08</td><td>促進轉型正義基金 設置計畫書</td><td>獲行政院核定 同意辦理</td><td>依法規劃及運用收歸國有之不當黨產，從黨國還給全民</td></tr>
+                    <tr><td>2021/09/08</td><td>中正紀念堂轉型方案</td><td>提出方案構想</td><td>以「反省威權歷史公園」為整體園區轉型主軸，逐步收攏聚焦社會討論</td></tr>
                   </tbody>
                 </table>
                 <p>請至右側觀看量化年表 →</p>
@@ -1602,13 +1676,13 @@
                     <tr><th>時間</th><th>事件</th><th>動作</th><th>量化成果</th></tr>
                   </thead>
                   <tbody>
-                    <tr><td>2020 11 27</td><td>建議司法院大法官 檔案審定為政治檔案</td><td>提成審定建議</td><td>建議83案大法官解釋審定為政治檔案，作為威權形成與介入司法參考</td></tr>
-                    <tr><td>2021 03</td><td>審定不義遺址</td><td>確認侵害人權事件發生地</td><td>審定以二二八事件為主25處不義遺址；第二批待審定遺址以白色恐怖時期為主</td></tr>
-                    <tr><td>截至 2021 03</td><td>推動公共空間 威權象徵處置</td><td>追蹤、調查及協商</td><td>追蹤中央機關及地方縣市政府共1,553個/處威權象徵，其中26.79%已處置或已同意處置</td></tr>
-                    <tr><td>2021 05 30</td><td>統計政治案件 當事人數量</td><td>統計分析政治案件資料</td><td>初估威權統治時期政治案件當事人共21,257人（可能隨檔案出土修正）</td></tr>
-                    <tr><td>截至 2021 08 05</td><td>審定國民黨檔案 為政治檔案</td><td>作成審定處分</td><td>完成4批處分，共審定7,526筆政治檔案移歸檔案局提供各界應用</td></tr>
-                    <tr><td>截至 2021 10 12</td><td>政治受難者及家屬 照顧支持據點試辦計畫</td><td>政治暴力創傷療癒</td><td>共有台北、台中、台南、高雄試辦，至今服務101位個案，活動參與1,108人</td></tr>
-                    <tr><td>截至 2021 10 19</td><td>公告撤銷刑事有罪判決</td><td>依法予以平復</td><td>辦理7批撤銷公告，平復5,942件刑事有罪判決（另有已平復尚未公告案件9件）</td></tr>
+                    <tr><td>2020/11/27</td><td>建議司法院大法官 檔案審定為政治檔案</td><td>提成審定建議</td><td>建議83案大法官解釋審定為政治檔案，作為威權形成與介入司法參考</td></tr>
+                    <tr><td>2021/03</td><td>審定不義遺址</td><td>確認侵害人權事件發生地</td><td>審定以二二八事件為主25處不義遺址；第二批待審定遺址以白色恐怖時期為主</td></tr>
+                    <tr><td>截至 2021/03</td><td>推動公共空間 威權象徵處置</td><td>追蹤、調查及協商</td><td>追蹤中央機關及地方縣市政府共1,553個/處威權象徵，其中26.79%已處置或已同意處置</td></tr>
+                    <tr><td>2021/05/30</td><td>統計政治案件 當事人數量</td><td>統計分析政治案件資料</td><td>初估威權統治時期政治案件當事人共21,257人（可能隨檔案出土修正）</td></tr>
+                    <tr><td>截至 2021/08/05</td><td>審定國民黨檔案 為政治檔案</td><td>作成審定處分</td><td>完成4批處分，共審定7,526筆政治檔案移歸檔案局提供各界應用</td></tr>
+                    <tr><td>截至 2021/10/12</td><td>政治受難者及家屬 照顧支持據點試辦計畫</td><td>政治暴力創傷療癒</td><td>共有台北、台中、台南、高雄試辦，至今服務101位個案，活動參與1,108人</td></tr>
+                    <tr><td>截至 2021/10/19</td><td>公告撤銷刑事有罪判決</td><td>依法予以平復</td><td>辦理7批撤銷公告，平復5,942件刑事有罪判決（另有已平復尚未公告案件9件）</td></tr>
                   </tbody>
                 </table>
                 <p>請至左側觀看質化年表 ←</p>
@@ -1902,27 +1976,31 @@
         </div>
       </div>
 
-      <!-- Direction controls: 放在 layout-main 裡，方便直向時相對內容置中；icon 用 SVG 避免 iOS emoji 字型 -->
+      <!-- Direction controls: 圓形滑桿 + 小型方向鍵指示 -->
       <div class="controls" id="controls">
-        <div></div>
-        <div class="btn" data-dir="up" aria-label="上">
-          <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,6 18,18 6,18" fill="currentColor"/></svg>
+        <div class="joystick-area" id="joystickArea" aria-label="方向控制區域">
+          <div class="joystick-knob" id="joystickKnob"></div>
+          <div class="joystick-arrow joystick-arrow-up">
+            <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <polygon points="12,6 18,18 6,18" fill="currentColor" />
+            </svg>
+          </div>
+          <div class="joystick-arrow joystick-arrow-left">
+            <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <polygon points="6,12 18,6 18,18" fill="currentColor" />
+            </svg>
+          </div>
+          <div class="joystick-arrow joystick-arrow-right">
+            <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <polygon points="6,6 6,18 18,12" fill="currentColor" />
+            </svg>
+          </div>
+          <div class="joystick-arrow joystick-arrow-down">
+            <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <polygon points="6,6 18,6 12,18" fill="currentColor" />
+            </svg>
+          </div>
         </div>
-        <div></div>
-
-        <div class="btn" data-dir="left" aria-label="左">
-          <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="6,12 18,6 18,18" fill="currentColor"/></svg>
-        </div>
-        <div></div>
-        <div class="btn" data-dir="right" aria-label="右">
-          <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="6,6 6,18 18,12" fill="currentColor"/></svg>
-        </div>
-
-        <div></div>
-        <div class="btn" data-dir="down" aria-label="下">
-          <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><polygon points="6,6 18,6 12,18" fill="currentColor"/></svg>
-        </div>
-        <div></div>
       </div>
     </div>
   </div>
@@ -1999,9 +2077,99 @@
             <span class="achievement-placeholder">?</span>
             <span class="achievement-name">新竹高工塗鴉</span>
           </div>
+          <div class="achievement-item" data-id="bento" data-name="便當攤">
+            <img class="achievement-img" src="月台區物件/便當攤.png" alt="便當攤" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">便當攤</span>
+          </div>
+          <div class="achievement-item" data-id="toilet" data-name="廁所">
+            <img class="achievement-img" src="月台區物件/廁所.png" alt="廁所" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">廁所</span>
+          </div>
+          <div class="achievement-item" data-id="ticket" data-name="售票機">
+            <img class="achievement-img" src="月台區物件/售票機.png" alt="售票機" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">售票機</span>
+          </div>
+          <div class="achievement-item" data-id="bookshelf" data-name="書架">
+            <img class="achievement-img" src="月台區物件/書架.png" alt="書架" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">書架</span>
+          </div>
+          <div class="achievement-item" data-id="notice" data-name="告示">
+            <img class="achievement-img" src="月台區物件/告示.png" alt="告示" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">告示</span>
+          </div>
+          <div class="achievement-item" data-id="shinonggongshang" data-name="士農工商">
+            <img class="achievement-img" src="月台區物件/士農工商.png" alt="士農工商" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">士農工商</span>
+          </div>
+          <div class="achievement-item" data-id="stationSign" data-name="站名牌">
+            <img class="achievement-img" src="月台區物件/站名牌.png" alt="站名牌" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">站名牌</span>
+          </div>
+          <div class="achievement-item" data-id="electronicBoardLeft" data-name="電子看板左">
+            <img class="achievement-img" src="月台區物件/電子看板左.png" alt="電子看板左" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">電子看板左</span>
+          </div>
+          <div class="achievement-item" data-id="electronicBoardRight" data-name="電子看板右">
+            <img class="achievement-img" src="月台區物件/電子看板右.png" alt="電子看板右" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">電子看板右</span>
+          </div>
+          <div class="achievement-item" data-id="car2Orc" data-name="原住民轉型正義">
+            <img class="achievement-img" src="車廂2物件/文件1.png" alt="原住民轉型正義" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">原住民轉型正義</span>
+          </div>
+          <div class="achievement-item" data-id="car2Doc2" data-name="政治檔案開放">
+            <img class="achievement-img" src="車廂2物件/文件2.png" alt="政治檔案開放" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">政治檔案開放</span>
+          </div>
+          <div class="achievement-item" data-id="car2Doc3" data-name="權利回復">
+            <img class="achievement-img" src="車廂2物件/文件3.png" alt="權利回復" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">權利回復</span>
+          </div>
+          <div class="achievement-item" data-id="car2Doc4" data-name="行政不法">
+            <img class="achievement-img" src="車廂2物件/文件4.png" alt="行政不法" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">行政不法</span>
+          </div>
+          <div class="achievement-item" data-id="car3Window" data-name="威權象徵的處置">
+            <img class="achievement-img" src="車廂3物件/車窗.png" alt="威權象徵的處置" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">威權象徵的處置</span>
+          </div>
+          <div class="achievement-item" data-id="car3Window2" data-name="不當黨產的規劃應用">
+            <img class="achievement-img" src="車廂3物件/車窗.png" alt="不當黨產" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">不當黨產的規劃應用</span>
+          </div>
+          <div class="achievement-item" data-id="car3Window3" data-name="創傷修復">
+            <img class="achievement-img" src="車廂3物件/車窗.png" alt="創傷修復" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">創傷修復</span>
+          </div>
+          <div class="achievement-item" data-id="car3Door" data-name="已抵達民主站">
+            <img class="achievement-img" src="車廂3物件/車門.png" alt="已抵達民主站" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">已抵達：民主站</span>
+          </div>
+          <div class="achievement-item" data-id="car3Cart" data-name="分享本遊戲">
+            <img class="achievement-img" src="車廂3物件/餐車.png" alt="分享本遊戲" />
+            <span class="achievement-placeholder">?</span>
+            <span class="achievement-name">分享本遊戲</span>
+          </div>
         </div>
         <div class="achievement-progress-wrap">
-          <div class="achievement-progress-label" id="achievementProgressLabel">已互動 0 / 8</div>
+          <div class="achievement-progress-label" id="achievementProgressLabel">已互動 0 / 27</div>
           <div class="achievement-progress-bar">
             <div class="achievement-progress-fill" id="achievementProgressFill"></div>
           </div>
@@ -2010,14 +2178,18 @@
       <div class="menu-tab-content" data-tab="about">
         <div class="help-content">
           <h3>關於本專案</h3>
-          <p><strong>轉型正義 Gather Town 線上展覽，促轉列車搶先試乘</strong></p>
-          <p>如果轉型正義，是一台通往民主未來的列車……</p>
-          <p>促轉會的核心理念之一，是將「轉型正義」的成果與社會共享。除了將三年以來的努力整理成詳細報告《任務推動及調查成果報告書》之外，更希望透過多元途徑，讓國人接觸、認識、進一步參與轉型正義。</p>
-          <p>因此促轉會透過 GatherTown，佈置線上展覽《島嶼候車室－開往民主的轉型正義列車》，將報告書的內容比喻成「虛擬火車站」，揭露壓迫體制輪廓、重述權威下受害者故事，以及描繪未來轉型正義工程願景。</p>
-          <p>🚇 現在只要留言「試乘」並分享此則貼文<br>
-             🚇 就有機會搶先參與體驗線上展覽<br>
-             🚇 還有機會獲得特製精美口罩</p>
-          <p>透過你的「見證」與「續寫」，讓我們一起成為後人記憶中的前行者！</p>
+          <h4>從 Gather Town 到網頁：延續島嶼的記憶</h4>
+          <p>您現在看到的內容，完整復刻自 2021 年由促轉會委託開發的 Gather Town 互動展。這裡的每一段文字，皆改編自促轉會調查報告，並經過專業研究員的嚴謹撰寫與審閱。</p>
+          <p>雖然促轉會已完成階段性任務解散，但我們相信這些故事值得被更多人看見。因此，我們將其轉製為網頁版，讓這張「民主快車」的車票，能繼續遞交到每一位島民的手中。</p>
+          <hr>
+          <h4>版權與內容說明</h4>
+          <p>本網站內容復刻自 2021 年「島嶼候車室」 Gather Town 互動展區。所有資訊皆改編自促進轉型正義委員會（下稱促轉會）之調查報告，並由原促轉會研究員參與撰寫與審閱。</p>
+          <p>在促轉會解散後，由 Relanding Design 號召原始參與人員，自費進行網頁版轉置與數位保存，旨在延續轉型正義社會溝通與教育意義，確保歷史記憶與調查成果不因平台更迭而消失。</p>
+          <hr>
+          <h4>Credit</h4>
+          <p><strong>展場總策畫：</strong><a href="https://www.relanding.design/" target="_blank" rel="noopener noreferrer">Relanding Design</a></p>
+          <p><strong>視覺設計：</strong><span>曾元濃</span></p>
+          <p><strong>網站架設：</strong><a href="https://eclectic-babka-772a72.netlify.app/" target="_blank" rel="noopener noreferrer">陳冠宏</a></p>
         </div>
       </div>
     </div>
@@ -2130,7 +2302,7 @@
     const achievementProgressFill = document.getElementById('achievementProgressFill');
 
     // 成就系統：可互動物件 id 與 localStorage
-    const ACHIEVEMENT_IDS = ['zhou', 'huang', 'du', 'liu', 'yang', 'wang', 'xu', 'zhugong'];
+    const ACHIEVEMENT_IDS = ['zhou', 'huang', 'du', 'liu', 'yang', 'wang', 'xu', 'zhugong', 'bento', 'toilet', 'ticket', 'bookshelf', 'notice', 'shinonggongshang', 'stationSign', 'electronicBoardLeft', 'electronicBoardRight', 'car2Orc', 'car2Doc2', 'car2Doc3', 'car2Doc4', 'car3Window', 'car3Window2', 'car3Window3', 'car3Door', 'car3Cart'];
     const ACHIEVEMENT_STORAGE_KEY = 'train_achievements';
     function getAchievementState() {
       try {
@@ -2766,19 +2938,29 @@
         case 'ArrowUp':
         case 'w':
         case 'W':
+          if (gameState.inputLocked) closeAllInfoPopups();
           keys.up = true; break;
         case 'ArrowDown':
         case 's':
         case 'S':
+          if (gameState.inputLocked) closeAllInfoPopups();
           keys.down = true; break;
         case 'ArrowLeft':
         case 'a':
         case 'A':
+          if (gameState.inputLocked) closeAllInfoPopups();
           keys.left = true; break;
         case 'ArrowRight':
         case 'd':
         case 'D':
+          if (gameState.inputLocked) closeAllInfoPopups();
           keys.right = true; break;
+        case 'Escape':
+          if (gameState.inputLocked) {
+            e.preventDefault();
+            closeAllInfoPopups();
+          }
+          break;
       }
     });
 
@@ -2804,31 +2986,84 @@
     });
 
     const controls = document.getElementById('controls');
+    const joystickArea = document.getElementById('joystickArea');
+    const joystickKnob = document.getElementById('joystickKnob');
+    let joystickActive = false;
 
-    // Touch / mouse buttons: hold to keep moving in that direction（唯一一組方向鍵：HTML .controls）
-    if (controls) {
-      controls.querySelectorAll('.btn').forEach(btn => {
-        const dir = btn.dataset.dir;
+    // 圓形滑桿：拖曳時依位移方向決定上下左右，放開時回到中心
+    if (controls && joystickArea && joystickKnob) {
+      const maxRadius = 60; // 滑桿可移動的最大半徑（px）
+      const deadZone = 8;   // 中央死區，避免微小抖動
 
-        const start = (e) => {
-          e.preventDefault();
-          btn.classList.add('active');
-          keys[dir] = true;
-        };
+      const resetJoystick = () => {
+        joystickActive = false;
+        keys.up = keys.down = keys.left = keys.right = false;
+        joystickKnob.style.setProperty('--dx', '0px');
+        joystickKnob.style.setProperty('--dy', '0px');
+        joystickArea.classList.remove('active');
+      };
 
-        const end = (e) => {
-          e.preventDefault();
-          btn.classList.remove('active');
-          keys[dir] = false;
-        };
+      const updateFromPoint = (clientX, clientY) => {
+        const rect = joystickArea.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        let dx = clientX - centerX;
+        let dy = clientY - centerY;
+        const dist = Math.hypot(dx, dy);
 
-        btn.addEventListener('touchstart', start, { passive: false });
-        btn.addEventListener('touchend', end, { passive: false });
-        btn.addEventListener('touchcancel', end, { passive: false });
+        // 限制滑桿位置在圓形範圍內
+        const clampedDist = Math.min(dist, maxRadius);
+        const ratio = dist > 0 ? clampedDist / dist : 0;
+        dx *= ratio;
+        dy *= ratio;
 
-        btn.addEventListener('mousedown', start);
-        window.addEventListener('mouseup', end);
-      });
+        joystickKnob.style.setProperty('--dx', dx + 'px');
+        joystickKnob.style.setProperty('--dy', dy + 'px');
+
+        // 依位移方向設定鍵盤狀態（四向）
+        keys.up = keys.down = keys.left = keys.right = false;
+        if (dist < deadZone) return;
+
+        const absX = Math.abs(dx);
+        const absY = Math.abs(dy);
+        if (absX > absY) {
+          if (dx > 0) keys.right = true;
+          else keys.left = true;
+        } else {
+          if (dy > 0) keys.down = true;
+          else keys.up = true;
+        }
+      };
+
+      const start = (e) => {
+        e.preventDefault();
+        joystickActive = true;
+        joystickArea.classList.add('active');
+        const point = e.touches ? e.touches[0] : e;
+        updateFromPoint(point.clientX, point.clientY);
+      };
+
+      const move = (e) => {
+        if (!joystickActive) return;
+        e.preventDefault();
+        const point = e.touches ? e.touches[0] : e;
+        updateFromPoint(point.clientX, point.clientY);
+      };
+
+      const end = (e) => {
+        if (!joystickActive) return;
+        e.preventDefault();
+        resetJoystick();
+      };
+
+      joystickArea.addEventListener('touchstart', start, { passive: false });
+      joystickArea.addEventListener('touchmove', move, { passive: false });
+      joystickArea.addEventListener('touchend', end, { passive: false });
+      joystickArea.addEventListener('touchcancel', end, { passive: false });
+
+      joystickArea.addEventListener('mousedown', start);
+      window.addEventListener('mousemove', move);
+      window.addEventListener('mouseup', end);
     }
 
     function update(dt) {
@@ -3198,11 +3433,13 @@
       // 便當攤：月台（車廂關/車廂開皆可）col 42, row 22
       const onPlatform = currentMapIndex === 0;
       isNearBentoNow = onPlatform && distToBento < NEAR_PREVIEW_DIST;
-      const inBentoZone = onPlatform && isPlayerCenterInZone(player, bentoZone);
+      // 便當攤：改為距離判定，靠近即可觸發
+      const inBentoZone = onPlatform && distToBento < NEAR_PREVIEW_DIST;
       isNearToiletNow = onPlatform && distToToilet < NEAR_PREVIEW_DIST;
       const inToiletZone = onPlatform && isPlayerCenterInZone(player, toiletZone);
       isNearTicketNow = onPlatform && distToTicket < NEAR_PREVIEW_DIST;
-      const inTicketZone = onPlatform && isPlayerCenterInZone(player, ticketZone);
+      // 售票機：改為距離判定，靠近即可觸發
+      const inTicketZone = onPlatform && distToTicket < NEAR_PREVIEW_DIST;
       isNearBookshelfNow = onPlatform && distToBookshelf < NEAR_PREVIEW_DIST;
       const inBookshelfZone = onPlatform && isPlayerCenterInZone(player, bookshelfZone);
       isNearNoticeNow = onPlatform && distToNotice < NEAR_PREVIEW_DIST;
@@ -3564,6 +3801,7 @@
         if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.remove('open');
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
         gameState.inputLocked = true;
+        achievementUnlock('bento');
         requestAnimationFrame(function () {
           if (bottomSheetBento) bottomSheetBento.classList.add('open');
         });
@@ -3606,6 +3844,7 @@
         if (bottomSheetScrollToilet) bottomSheetScrollToilet.scrollTop = 0;
         if (popupToilet) popupToilet.classList.remove('hidden');
         gameState.inputLocked = true;
+        achievementUnlock('toilet');
         requestAnimationFrame(function () {
           if (bottomSheetToilet) bottomSheetToilet.classList.add('open');
         });
@@ -3652,6 +3891,7 @@
         if (bottomSheetScrollTicket) bottomSheetScrollTicket.scrollTop = 0;
         if (popupTicket) popupTicket.classList.remove('hidden');
         gameState.inputLocked = true;
+        achievementUnlock('ticket');
         requestAnimationFrame(function () {
           if (bottomSheetTicket) bottomSheetTicket.classList.add('open');
         });
@@ -3698,6 +3938,7 @@
         if (bottomSheetScrollBookshelf) bottomSheetScrollBookshelf.scrollTop = 0;
         if (popupBookshelf) popupBookshelf.classList.remove('hidden');
         gameState.inputLocked = true;
+        achievementUnlock('bookshelf');
         requestAnimationFrame(function () {
           if (bottomSheetBookshelf) bottomSheetBookshelf.classList.add('open');
         });
@@ -3744,6 +3985,7 @@
         if (bottomSheetScrollNotice) bottomSheetScrollNotice.scrollTop = 0;
         if (popupNotice) popupNotice.classList.remove('hidden');
         gameState.inputLocked = true;
+        achievementUnlock('notice');
         requestAnimationFrame(function () {
           if (bottomSheetNotice) bottomSheetNotice.classList.add('open');
         });
@@ -3789,6 +4031,7 @@
         if (bottomSheetScrollShinonggongshang) bottomSheetScrollShinonggongshang.scrollTop = 0;
         if (popupShinonggongshang) popupShinonggongshang.classList.remove('hidden');
         gameState.inputLocked = true;
+        achievementUnlock('shinonggongshang');
         requestAnimationFrame(function () {
           if (bottomSheetShinonggongshang) bottomSheetShinonggongshang.classList.add('open');
         });
@@ -3836,6 +4079,7 @@
         if (bottomSheetScrollStationSign) bottomSheetScrollStationSign.scrollTop = 0;
         if (popupStationSign) popupStationSign.classList.remove('hidden');
         gameState.inputLocked = true;
+        achievementUnlock('stationSign');
         requestAnimationFrame(function () {
           if (bottomSheetStationSign) bottomSheetStationSign.classList.add('open');
         });
@@ -3883,6 +4127,7 @@
         if (bottomSheetScrollElectronicBoardLeft) bottomSheetScrollElectronicBoardLeft.scrollTop = 0;
         if (popupElectronicBoardLeft) popupElectronicBoardLeft.classList.remove('hidden');
         gameState.inputLocked = true;
+        achievementUnlock('electronicBoardLeft');
         requestAnimationFrame(function () {
           if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.add('open');
         });
@@ -3930,6 +4175,7 @@
         if (bottomSheetScrollElectronicBoardRight) bottomSheetScrollElectronicBoardRight.scrollTop = 0;
         if (popupElectronicBoardRight) popupElectronicBoardRight.classList.remove('hidden');
         gameState.inputLocked = true;
+        achievementUnlock('electronicBoardRight');
         requestAnimationFrame(function () {
           if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.add('open');
         });
@@ -3961,6 +4207,7 @@
         if (popupCar3Window) popupCar3Window.classList.remove('hidden');
         if (popupCar3Window2) popupCar3Window2.classList.add('hidden');
         gameState.inputLocked = true;
+        achievementUnlock('car3Window');
         requestAnimationFrame(function () {
           if (bottomSheetCar3Window) bottomSheetCar3Window.classList.add('open');
           if (videoCar3Window) {
@@ -4004,6 +4251,7 @@
         if (bottomSheetCar3Window) bottomSheetCar3Window.classList.remove('open');
         if (popupCar3Window2) popupCar3Window2.classList.remove('hidden');
         gameState.inputLocked = true;
+        achievementUnlock('car3Window2');
         requestAnimationFrame(function () {
           if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.add('open');
           if (videoCar3Window2) {
@@ -4063,6 +4311,7 @@
         if (scrollProgressBarCar2Orc) scrollProgressBarCar2Orc.style.top = '0%';
         if (popupCar2Orc) popupCar2Orc.classList.remove('hidden');
         gameState.inputLocked = true;
+        achievementUnlock('car2Orc');
         requestAnimationFrame(function () {
           if (bottomSheetCar2Orc) bottomSheetCar2Orc.classList.add('open');
         });
@@ -4110,6 +4359,7 @@
         if (scrollProgressBarCar2Doc2) scrollProgressBarCar2Doc2.style.top = '0%';
         if (popupCar2Doc2) popupCar2Doc2.classList.remove('hidden');
         gameState.inputLocked = true;
+        achievementUnlock('car2Doc2');
         requestAnimationFrame(function () {
           if (bottomSheetCar2Doc2) bottomSheetCar2Doc2.classList.add('open');
         });
@@ -4157,6 +4407,7 @@
         if (scrollProgressBarCar2Doc3) scrollProgressBarCar2Doc3.style.top = '0%';
         if (popupCar2Doc3) popupCar2Doc3.classList.remove('hidden');
         gameState.inputLocked = true;
+        achievementUnlock('car2Doc3');
         requestAnimationFrame(function () {
           if (bottomSheetCar2Doc3) bottomSheetCar2Doc3.classList.add('open');
         });
@@ -4204,6 +4455,7 @@
         if (scrollProgressBarCar2Doc4) scrollProgressBarCar2Doc4.style.top = '0%';
         if (popupCar2Doc4) popupCar2Doc4.classList.remove('hidden');
         gameState.inputLocked = true;
+        achievementUnlock('car2Doc4');
         requestAnimationFrame(function () {
           if (bottomSheetCar2Doc4) bottomSheetCar2Doc4.classList.add('open');
         });
@@ -4239,6 +4491,7 @@
         if (bottomSheetCar3Door) bottomSheetCar3Door.classList.remove('open');
         if (popupCar3Window3) popupCar3Window3.classList.remove('hidden');
         gameState.inputLocked = true;
+        achievementUnlock('car3Window3');
         requestAnimationFrame(function () {
           if (bottomSheetCar3Window3) bottomSheetCar3Window3.classList.add('open');
           if (videoCar3Window3) {
@@ -4284,6 +4537,7 @@
         if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.remove('open');
         if (popupCar3Door) popupCar3Door.classList.remove('hidden');
         gameState.inputLocked = true;
+        achievementUnlock('car3Door');
         requestAnimationFrame(function () {
           if (bottomSheetCar3Door) bottomSheetCar3Door.classList.add('open');
           if (videoCar3Door) {
@@ -4315,6 +4569,7 @@
         } catch (e) {}
         if (popupCar3Cart) popupCar3Cart.classList.remove('hidden');
         gameState.inputLocked = true;
+        achievementUnlock('car3Cart');
         requestAnimationFrame(function () {
           if (bottomSheetCar3Cart) bottomSheetCar3Cart.classList.add('open');
         });
@@ -5312,6 +5567,36 @@
       setTimeout(function () { if (popupCar3Cart) popupCar3Cart.classList.add('hidden'); }, 300);
     }
 
+    // 關閉所有資訊彈窗：給方向鍵與 ESC 使用
+    function closeAllInfoPopups() {
+      closeModal();
+      closeModalHuang();
+      closeModalDu();
+      closeModalLiu();
+      closeModalYang();
+      closeModalWang();
+      closeModalZhugong();
+      closeModalBento();
+      closeModalToilet();
+      closeModalTicket();
+      closeModalBookshelf();
+      closeModalNotice();
+      closeModalStationSign();
+      closeModalElectronicBoardLeft();
+      closeModalElectronicBoardRight();
+      closeModalShinonggongshang();
+      closeModalXu();
+      closeModalCar2Orc();
+      closeModalCar2Doc2();
+      closeModalCar2Doc3();
+      closeModalCar2Doc4();
+      closeModalCar3Window();
+      closeModalCar3Window2();
+      closeModalCar3Window3();
+      closeModalCar3Door();
+      closeModalCar3Cart();
+    }
+
     popup.addEventListener('click', function (e) {
       if (e.target === popup) closeModal();
     });
@@ -5323,27 +5608,82 @@
       bottomSheet.addEventListener('click', function (e) { e.stopPropagation(); });
     }
 
-    // 捲動進度條（右側直條）：固定高度藍色區塊，隨捲動往下移動，點擊可跳轉
+    // 捲動進度條（右側直條）：固定高度藍色區塊，隨捲動往下移動，點擊可跳轉；內容不足則不顯示拉條
     const SCROLL_THUMB_HEIGHT_PCT = 20; // 藍色區塊佔軌道高度比例
-    function updateScrollProgress(scrollEl, bar) {
+    function updateScrollProgress(scrollEl, bar, wrap) {
       if (!scrollEl || !bar) return;
+      const needScroll = scrollEl.scrollHeight > scrollEl.clientHeight;
+      if (wrap) {
+        if (!needScroll) {
+          wrap.classList.add('no-scroll');
+          return;
+        }
+        wrap.classList.remove('no-scroll');
+      }
       const max = scrollEl.scrollHeight - scrollEl.clientHeight;
       const pct = max <= 0 ? 0 : scrollEl.scrollTop / max;
       const topPct = pct * (100 - SCROLL_THUMB_HEIGHT_PCT);
       bar.style.top = topPct.toFixed(1) + '%';
     }
+    var scrollProgressItems = [];
+    function refreshScrollProgressVisibility() {
+      requestAnimationFrame(function () {
+        scrollProgressItems.forEach(function (item) {
+          var scrollEl = item.scrollEl;
+          var bar = item.bar;
+          var wrap = item.wrap;
+          if (!scrollEl || !wrap) return;
+          if (!scrollEl.closest || !scrollEl.closest('.bottom-sheet.open')) return;
+          updateScrollProgress(scrollEl, bar, wrap);
+        });
+      });
+    }
     function setupScrollProgress(scrollEl, wrap, bar) {
       if (!scrollEl || !bar) return;
-      scrollEl.addEventListener('scroll', function () { updateScrollProgress(scrollEl, bar); });
+      scrollProgressItems.push({ scrollEl: scrollEl, bar: bar, wrap: wrap || null });
+      scrollEl.addEventListener('scroll', function () { updateScrollProgress(scrollEl, bar, wrap); });
       if (wrap) {
-        wrap.addEventListener('click', function (e) {
+        // 共用的根據指標位置更新捲動的邏輯
+        function handlePointer(clientY) {
           const rect = wrap.getBoundingClientRect();
-          const yFromBottom = rect.bottom - e.clientY;
-          const pct = Math.max(0, Math.min(1, yFromBottom / rect.height));
+          const offsetY = Math.max(0, Math.min(rect.height, clientY - rect.top));
+          const pct = Math.max(0, Math.min(1, offsetY / rect.height));
           const max = scrollEl.scrollHeight - scrollEl.clientHeight;
           scrollEl.scrollTop = pct * max;
-          updateScrollProgress(scrollEl, bar);
+          updateScrollProgress(scrollEl, bar, wrap);
+        }
+
+        // 點一下軌道：跳到指定位置
+        wrap.addEventListener('click', function (e) {
+          handlePointer(e.clientY);
         });
+
+        // 滑鼠拖曳：按住軌道或藍色區塊皆可拖動
+        wrap.addEventListener('mousedown', function (e) {
+          e.preventDefault();
+          handlePointer(e.clientY);
+          function onMove(ev) {
+            handlePointer(ev.clientY);
+          }
+          function onUp() {
+            window.removeEventListener('mousemove', onMove);
+            window.removeEventListener('mouseup', onUp);
+          }
+          window.addEventListener('mousemove', onMove);
+          window.addEventListener('mouseup', onUp);
+        });
+
+        // 觸控拖曳（手機、平板）
+        wrap.addEventListener('touchstart', function (e) {
+          if (!e.touches || !e.touches.length) return;
+          e.preventDefault();
+          handlePointer(e.touches[0].clientY);
+        }, { passive: false });
+        wrap.addEventListener('touchmove', function (e) {
+          if (!e.touches || !e.touches.length) return;
+          e.preventDefault();
+          handlePointer(e.touches[0].clientY);
+        }, { passive: false });
       }
     }
     const bottomSheetScrollZhou = document.getElementById('bottomSheetScrollZhou');
@@ -5410,6 +5750,22 @@
     setupScrollProgress(bottomSheetScrollCar3Window2, scrollProgressWrapCar3Window2, scrollProgressBarCar3Window2);
     setupScrollProgress(bottomSheetScrollCar3Window3, scrollProgressWrapCar3Window3, scrollProgressBarCar3Window3);
     setupScrollProgress(bottomSheetScrollCar3Door, scrollProgressWrapCar3Door, scrollProgressBarCar3Door);
+
+    // 任一 bottom-sheet 打開時，檢查該彈窗內容是否需捲動，不足則隱藏拉條
+    (function () {
+      var observer = new MutationObserver(function (mutations) {
+        for (var i = 0; i < mutations.length; i++) {
+          if (mutations[i].attributeName === 'class') {
+            var el = mutations[i].target;
+            if (el.classList && el.classList.contains('open')) refreshScrollProgressVisibility();
+            break;
+          }
+        }
+      });
+      document.querySelectorAll('.bottom-sheet').forEach(function (sheet) {
+        observer.observe(sheet, { attributes: true });
+      });
+    })();
 
     if (popupHuang) {
       popupHuang.addEventListener('click', function (e) {
