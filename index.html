@@ -3034,28 +3034,22 @@
         case 'ArrowUp':
         case 'w':
         case 'W':
-          if (gameState.inputLocked) closeAllInfoPopups();
           keys.up = true; break;
         case 'ArrowDown':
         case 's':
         case 'S':
-          if (gameState.inputLocked) closeAllInfoPopups();
           keys.down = true; break;
         case 'ArrowLeft':
         case 'a':
         case 'A':
-          if (gameState.inputLocked) closeAllInfoPopups();
           keys.left = true; break;
         case 'ArrowRight':
         case 'd':
         case 'D':
-          if (gameState.inputLocked) closeAllInfoPopups();
           keys.right = true; break;
         case 'Escape':
-          if (gameState.inputLocked) {
-            e.preventDefault();
-            closeAllInfoPopups();
-          }
+          e.preventDefault();
+          closeAllInfoPopups();
           break;
       }
     });
@@ -3165,7 +3159,7 @@
     function update(dt) {
       player.dt = dt;
       // If not currently moving to a tile, check held directions and start a new step.
-      if (!gameState.inputLocked && !player.moving) {
+      if (!player.moving) {
         let dir = null;
         if (keys.up) dir = 'up';
         else if (keys.down) dir = 'down';
@@ -3589,8 +3583,6 @@
         if (bottomSheetScrollZhou) bottomSheetScrollZhou.scrollTop = 0;
         popup.classList.remove('hidden');
         achievementUnlock('zhou');
-        clearKeys();
-        gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheet) bottomSheet.classList.add('open');
           if (scrollProgressBarZhou) scrollProgressBarZhou.style.top = '0%';
@@ -3628,8 +3620,6 @@
         if (bottomSheetScrollHuang) bottomSheetScrollHuang.scrollTop = 0;
         if (popupHuang) popupHuang.classList.remove('hidden');
         achievementUnlock('huang');
-        clearKeys();
-        gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetHuang) bottomSheetHuang.classList.add('open');
           if (scrollProgressBarHuang) scrollProgressBarHuang.style.top = '0%';
@@ -3667,9 +3657,6 @@
         if (bottomSheetScrollDu) bottomSheetScrollDu.scrollTop = 0;
         if (popupDu) popupDu.classList.remove('hidden');
         achievementUnlock('du');
-        clearKeys();
-        clearKeys();
-        gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetDu) bottomSheetDu.classList.add('open');
           if (scrollProgressBarDu) scrollProgressBarDu.style.top = '0%';
@@ -3707,9 +3694,6 @@
         if (bottomSheetScrollLiu) bottomSheetScrollLiu.scrollTop = 0;
         if (popupLiu) popupLiu.classList.remove('hidden');
         achievementUnlock('liu');
-        clearKeys();
-        clearKeys();
-        gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetLiu) bottomSheetLiu.classList.add('open');
           if (scrollProgressBarLiu) scrollProgressBarLiu.style.top = '0%';
@@ -3747,8 +3731,6 @@
         if (bottomSheetScrollYang) bottomSheetScrollYang.scrollTop = 0;
         if (popupYang) popupYang.classList.remove('hidden');
         achievementUnlock('yang');
-        clearKeys();
-        gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetYang) bottomSheetYang.classList.add('open');
           if (scrollProgressBarYang) scrollProgressBarYang.style.top = '0%';
@@ -3786,8 +3768,6 @@
         if (bottomSheetScrollWang) bottomSheetScrollWang.scrollTop = 0;
         if (popupWang) popupWang.classList.remove('hidden');
         achievementUnlock('wang');
-        clearKeys();
-        gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetWang) bottomSheetWang.classList.add('open');
           if (scrollProgressBarWang) scrollProgressBarWang.style.top = '0%';
@@ -3825,8 +3805,6 @@
         if (bottomSheetScrollXu) bottomSheetScrollXu.scrollTop = 0;
         if (popupXu) popupXu.classList.remove('hidden');
         achievementUnlock('xu');
-        clearKeys();
-        gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetXu) bottomSheetXu.classList.add('open');
           if (scrollProgressBarXu) scrollProgressBarXu.style.top = '0%';
@@ -3864,8 +3842,6 @@
         if (bottomSheetScrollZhugong) bottomSheetScrollZhugong.scrollTop = 0;
         if (popupZhugong) popupZhugong.classList.remove('hidden');
         achievementUnlock('zhugong');
-        clearKeys();
-        gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetZhugong) bottomSheetZhugong.classList.add('open');
           if (scrollProgressBarZhugong) scrollProgressBarZhugong.style.top = '0%';
@@ -3908,8 +3884,6 @@
         if (bottomSheetStationSign) bottomSheetStationSign.classList.remove('open');
         if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.remove('open');
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('bento');
         requestAnimationFrame(function () {
           if (bottomSheetBento) bottomSheetBento.classList.add('open');
@@ -3952,8 +3926,6 @@
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
         if (bottomSheetScrollToilet) bottomSheetScrollToilet.scrollTop = 0;
         if (popupToilet) popupToilet.classList.remove('hidden');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('toilet');
         requestAnimationFrame(function () {
           if (bottomSheetToilet) bottomSheetToilet.classList.add('open');
@@ -4000,8 +3972,6 @@
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
         if (bottomSheetScrollTicket) bottomSheetScrollTicket.scrollTop = 0;
         if (popupTicket) popupTicket.classList.remove('hidden');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('ticket');
         requestAnimationFrame(function () {
           if (bottomSheetTicket) bottomSheetTicket.classList.add('open');
@@ -4048,8 +4018,6 @@
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
         if (bottomSheetScrollBookshelf) bottomSheetScrollBookshelf.scrollTop = 0;
         if (popupBookshelf) popupBookshelf.classList.remove('hidden');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('bookshelf');
         requestAnimationFrame(function () {
           if (bottomSheetBookshelf) bottomSheetBookshelf.classList.add('open');
@@ -4096,8 +4064,6 @@
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
         if (bottomSheetScrollNotice) bottomSheetScrollNotice.scrollTop = 0;
         if (popupNotice) popupNotice.classList.remove('hidden');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('notice');
         requestAnimationFrame(function () {
           if (bottomSheetNotice) bottomSheetNotice.classList.add('open');
@@ -4143,8 +4109,6 @@
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
         if (bottomSheetScrollShinonggongshang) bottomSheetScrollShinonggongshang.scrollTop = 0;
         if (popupShinonggongshang) popupShinonggongshang.classList.remove('hidden');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('shinonggongshang');
         requestAnimationFrame(function () {
           if (bottomSheetShinonggongshang) bottomSheetShinonggongshang.classList.add('open');
@@ -4192,8 +4156,6 @@
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
         if (bottomSheetScrollStationSign) bottomSheetScrollStationSign.scrollTop = 0;
         if (popupStationSign) popupStationSign.classList.remove('hidden');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('stationSign');
         requestAnimationFrame(function () {
           if (bottomSheetStationSign) bottomSheetStationSign.classList.add('open');
@@ -4241,8 +4203,6 @@
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
         if (bottomSheetScrollElectronicBoardLeft) bottomSheetScrollElectronicBoardLeft.scrollTop = 0;
         if (popupElectronicBoardLeft) popupElectronicBoardLeft.classList.remove('hidden');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('electronicBoardLeft');
         requestAnimationFrame(function () {
           if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.add('open');
@@ -4290,8 +4250,6 @@
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
         if (bottomSheetScrollElectronicBoardRight) bottomSheetScrollElectronicBoardRight.scrollTop = 0;
         if (popupElectronicBoardRight) popupElectronicBoardRight.classList.remove('hidden');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('electronicBoardRight');
         requestAnimationFrame(function () {
           if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.add('open');
@@ -4323,8 +4281,6 @@
         if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.remove('open');
         if (popupCar3Window) popupCar3Window.classList.remove('hidden');
         if (popupCar3Window2) popupCar3Window2.classList.add('hidden');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('car3Window');
         requestAnimationFrame(function () {
           if (bottomSheetCar3Window) bottomSheetCar3Window.classList.add('open');
@@ -4368,8 +4324,6 @@
         if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
         if (bottomSheetCar3Window) bottomSheetCar3Window.classList.remove('open');
         if (popupCar3Window2) popupCar3Window2.classList.remove('hidden');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('car3Window2');
         requestAnimationFrame(function () {
           if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.add('open');
@@ -4429,8 +4383,6 @@
         if (bottomSheetScrollCar2Orc) bottomSheetScrollCar2Orc.scrollTop = 0;
         if (scrollProgressBarCar2Orc) scrollProgressBarCar2Orc.style.top = '0%';
         if (popupCar2Orc) popupCar2Orc.classList.remove('hidden');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('car2Orc');
         requestAnimationFrame(function () {
           if (bottomSheetCar2Orc) bottomSheetCar2Orc.classList.add('open');
@@ -4478,8 +4430,6 @@
         if (bottomSheetScrollCar2Doc2) bottomSheetScrollCar2Doc2.scrollTop = 0;
         if (scrollProgressBarCar2Doc2) scrollProgressBarCar2Doc2.style.top = '0%';
         if (popupCar2Doc2) popupCar2Doc2.classList.remove('hidden');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('car2Doc2');
         requestAnimationFrame(function () {
           if (bottomSheetCar2Doc2) bottomSheetCar2Doc2.classList.add('open');
@@ -4527,8 +4477,6 @@
         if (bottomSheetScrollCar2Doc3) bottomSheetScrollCar2Doc3.scrollTop = 0;
         if (scrollProgressBarCar2Doc3) scrollProgressBarCar2Doc3.style.top = '0%';
         if (popupCar2Doc3) popupCar2Doc3.classList.remove('hidden');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('car2Doc3');
         requestAnimationFrame(function () {
           if (bottomSheetCar2Doc3) bottomSheetCar2Doc3.classList.add('open');
@@ -4576,8 +4524,6 @@
         if (bottomSheetScrollCar2Doc4) bottomSheetScrollCar2Doc4.scrollTop = 0;
         if (scrollProgressBarCar2Doc4) scrollProgressBarCar2Doc4.style.top = '0%';
         if (popupCar2Doc4) popupCar2Doc4.classList.remove('hidden');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('car2Doc4');
         requestAnimationFrame(function () {
           if (bottomSheetCar2Doc4) bottomSheetCar2Doc4.classList.add('open');
@@ -4613,8 +4559,6 @@
         if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.remove('open');
         if (bottomSheetCar3Door) bottomSheetCar3Door.classList.remove('open');
         if (popupCar3Window3) popupCar3Window3.classList.remove('hidden');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('car3Window3');
         requestAnimationFrame(function () {
           if (bottomSheetCar3Window3) bottomSheetCar3Window3.classList.add('open');
@@ -4660,8 +4604,6 @@
         if (bottomSheetCar3Window) bottomSheetCar3Window.classList.remove('open');
         if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.remove('open');
         if (popupCar3Door) popupCar3Door.classList.remove('hidden');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('car3Door');
         requestAnimationFrame(function () {
           if (bottomSheetCar3Door) bottomSheetCar3Door.classList.add('open');
@@ -4693,8 +4635,6 @@
           }
         } catch (e) {}
         if (popupCar3Cart) popupCar3Cart.classList.remove('hidden');
-        clearKeys();
-        gameState.inputLocked = true;
         achievementUnlock('car3Cart');
         requestAnimationFrame(function () {
           if (bottomSheetCar3Cart) bottomSheetCar3Cart.classList.add('open');
