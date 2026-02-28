@@ -4,12 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
   <title>《島嶼候車室》線上體驗展：開往民主的轉型正義列車即將發車！</title>
-  <!-- Social / link preview -->
+  <!-- Social / link preview (absolute URL required for crawlers) -->
+  <meta property="og:url" content="https://sam0404044.github.io/Island-waiting-room/" />
   <meta property="og:title" content="《島嶼候車室》線上體驗展：開往民主的轉型正義列車即將發車！" />
   <meta property="og:description" content="在靜謐的候車室裡，威權歷史是如何成為日常的？點擊進入，領取你的民主快車票。" />
-  <meta property="og:image" content="assets/social_preview.png" />
+  <meta property="og:image" content="https://sam0404044.github.io/Island-waiting-room/assets/social_preview.png" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="《島嶼候車室》線上體驗展：開往民主的轉型正義列車即將發車！" />
+  <meta name="twitter:description" content="在靜謐的候車室裡，威權歷史是如何成為日常的？點擊進入，領取你的民主快車票。" />
+  <meta name="twitter:image" content="https://sam0404044.github.io/Island-waiting-room/assets/social_preview.png" />
   <style>
     * {
       box-sizing: border-box;
@@ -674,6 +678,45 @@
     }
     .start-button:hover {
       background: linear-gradient(to bottom, #ffffff 0%, #f0f0f0 80%);
+    }
+    .character-pick {
+      margin: 12px 0 16px 0;
+    }
+    .character-pick-label {
+      margin: 0 0 8px 0;
+      font-size: 13px;
+      color: #444;
+    }
+    .character-options {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .character-option {
+      padding: 10px;
+      border: 2px solid #c2b59b;
+      border-radius: 16px;
+      background: #f4e9d7;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .character-option:hover {
+      border-color: #8b7355;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+    .character-option.selected {
+      border-color: #2a7a4a;
+      box-shadow: 0 0 0 2px rgba(42, 122, 74, 0.4);
+    }
+    .character-option img {
+      display: block;
+      width: 56px;
+      height: 112px;
+      object-fit: contain;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
     }
     .btn {
       -webkit-appearance: none;
@@ -2008,9 +2051,20 @@
   <!-- Experience start overlay -->
   <!-- 一開始先隱藏，之後依流程顯示 -->
   <div class="start-overlay hidden" id="startOverlay">
-    <div class="start-card">
+    <div class="start-card" id="startCard">
       <h1>島嶼候車室－開往民主的轉型正義列車</h1>
       <p>點擊下方按鈕開始體驗這段關於轉型正義、記憶與前行的車站旅程。</p>
+      <div class="character-pick">
+        <p class="character-pick-label">選擇角色</p>
+        <div class="character-options">
+          <button type="button" class="character-option selected" data-character="player" aria-pressed="true" title="角色一">
+            <img src="characters/player_down.png" alt="角色一" />
+          </button>
+          <button type="button" class="character-option" data-character="player2" aria-pressed="false" title="角色二">
+            <img src="characters/player2_down.png" alt="角色二" />
+          </button>
+        </div>
+      </div>
       <button class="start-button" id="startButton">開始體驗</button>
     </div>
   </div>
@@ -2605,6 +2659,25 @@
     playerSprites.leftWalk.src = 'characters/player_left_walk.png';
     playerSprites.right.src = 'characters/player_right.png';
     playerSprites.rightWalk.src = 'characters/player_right_walk.png';
+
+    const player2Sprites = {
+      up: new Image(),
+      upWalk: new Image(),
+      down: new Image(),
+      downWalk: new Image(),
+      left: new Image(),
+      leftWalk: new Image(),
+      right: new Image(),
+      rightWalk: new Image()
+    };
+    player2Sprites.up.src = 'characters/player2_up.png';
+    player2Sprites.upWalk.src = 'characters/player2_up_walk.png';
+    player2Sprites.down.src = 'characters/player2_down.png';
+    player2Sprites.downWalk.src = 'characters/player2_down_walk.png';
+    player2Sprites.left.src = 'characters/player2_left.png';
+    player2Sprites.leftWalk.src = 'characters/player2_left_walk.png';
+    player2Sprites.right.src = 'characters/player2_right.png';
+    player2Sprites.rightWalk.src = 'characters/player2_right_walk.png';
 
     // 出生點：x、y 為地圖「比例」0～1（0.18=左側18%，0.88=下方88%）；勿用 5.40 會出界
     const PLAYER_POS = { x: 0.40, y: 0.80 };
@@ -5368,35 +5441,36 @@
       const x = p.x - halfW;
       const y = p.y - halfH;
 
-      var sprite = playerSprites[player.dir];
+      var sprites = (typeof selectedCharacter !== 'undefined' && selectedCharacter === 'player2') ? player2Sprites : playerSprites;
+      var sprite = sprites[player.dir];
       // 朝上時：走動中來回撥放 站立 / walk，停止後 0.3 秒換回站立圖
-      if (player.dir === 'up' && playerSprites.upWalk && playerSprites.upWalk.complete && playerSprites.upWalk.naturalWidth > 0) {
+      if (player.dir === 'up' && sprites.upWalk && sprites.upWalk.complete && sprites.upWalk.naturalWidth > 0) {
         if (player.moving) {
-          sprite = (Math.floor(Date.now() / 200) % 2 === 0) ? playerSprites.up : playerSprites.upWalk;
+          sprite = (Math.floor(Date.now() / 200) % 2 === 0) ? sprites.up : sprites.upWalk;
         } else {
-          sprite = (Date.now() - (player.idleSince || 0) >= 300) ? playerSprites.up : playerSprites.upWalk;
+          sprite = (Date.now() - (player.idleSince || 0) >= 300) ? sprites.up : sprites.upWalk;
         }
       }
       // 朝下時：同上
-      if (player.dir === 'down' && playerSprites.downWalk && playerSprites.downWalk.complete && playerSprites.downWalk.naturalWidth > 0) {
+      if (player.dir === 'down' && sprites.downWalk && sprites.downWalk.complete && sprites.downWalk.naturalWidth > 0) {
         if (player.moving) {
-          sprite = (Math.floor(Date.now() / 200) % 2 === 0) ? playerSprites.down : playerSprites.downWalk;
+          sprite = (Math.floor(Date.now() / 200) % 2 === 0) ? sprites.down : sprites.downWalk;
         } else {
-          sprite = (Date.now() - (player.idleSince || 0) >= 300) ? playerSprites.down : playerSprites.downWalk;
+          sprite = (Date.now() - (player.idleSince || 0) >= 300) ? sprites.down : sprites.downWalk;
         }
       }
-      if (player.dir === 'right' && playerSprites.rightWalk && playerSprites.rightWalk.complete && playerSprites.rightWalk.naturalWidth > 0) {
+      if (player.dir === 'right' && sprites.rightWalk && sprites.rightWalk.complete && sprites.rightWalk.naturalWidth > 0) {
         if (player.moving) {
-          sprite = (Math.floor(Date.now() / 200) % 2 === 0) ? playerSprites.right : playerSprites.rightWalk;
+          sprite = (Math.floor(Date.now() / 200) % 2 === 0) ? sprites.right : sprites.rightWalk;
         } else {
-          sprite = (Date.now() - (player.idleSince || 0) >= 300) ? playerSprites.right : playerSprites.rightWalk;
+          sprite = (Date.now() - (player.idleSince || 0) >= 300) ? sprites.right : sprites.rightWalk;
         }
       }
-      if (player.dir === 'left' && playerSprites.leftWalk && playerSprites.leftWalk.complete && playerSprites.leftWalk.naturalWidth > 0) {
+      if (player.dir === 'left' && sprites.leftWalk && sprites.leftWalk.complete && sprites.leftWalk.naturalWidth > 0) {
         if (player.moving) {
-          sprite = (Math.floor(Date.now() / 200) % 2 === 0) ? playerSprites.left : playerSprites.leftWalk;
+          sprite = (Math.floor(Date.now() / 200) % 2 === 0) ? sprites.left : sprites.leftWalk;
         } else {
-          sprite = (Date.now() - (player.idleSince || 0) >= 300) ? playerSprites.left : playerSprites.leftWalk;
+          sprite = (Date.now() - (player.idleSince || 0) >= 300) ? sprites.left : sprites.leftWalk;
         }
       }
       if (sprite && sprite.complete && sprite.naturalWidth > 0) {
@@ -6270,7 +6344,23 @@
       startOverlay.classList.add('hidden');
     }
     startButton.addEventListener('click', hideStartOverlay);
-    startOverlay.addEventListener('click', hideStartOverlay);
+    startOverlay.addEventListener('click', function(e) {
+      if (e.target === startOverlay) hideStartOverlay();
+    });
+    // 角色選擇
+    var selectedCharacter = 'player';
+    var characterOptions = document.querySelectorAll('.character-option');
+    characterOptions.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var ch = btn.getAttribute('data-character');
+        selectedCharacter = ch;
+        characterOptions.forEach(function(b) {
+          var isSelected = b.getAttribute('data-character') === ch;
+          b.classList.toggle('selected', isSelected);
+          b.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+        });
+      });
+    });
 
     showStartOverlayIfNeeded();
   </script>
