@@ -2731,10 +2731,10 @@
     const toiletZone = { x: 13 * TILE_SIZE + TILE_SIZE + TILE_SIZE / 2 - 32, y: 22 * TILE_SIZE + TILE_SIZE / 2 - 32, width: 64, height: 64 };
     // 售票機觸發範圍：月台 col 20, row 21（2x2 格）
     const ticketZone = { x: 20 * TILE_SIZE + TILE_SIZE / 2 - 32, y: 21 * TILE_SIZE + TILE_SIZE / 2 - 32, width: 64, height: 64 };
-    // 書架觸發範圍：月台 col 35.5, row 21+8px（3x3 格，靠近即觸發）
+    // 書架觸發範圍：月台 col 35.5, row 21+8px（案件當事人出生地，範圍加大 4x4 格）
     const bookshelfCenterX0 = (31 + 38) / 2 * TILE_SIZE + TILE_SIZE;
     const bookshelfCenterY0 = 21 * TILE_SIZE + TILE_SIZE / 2 + 8;
-    const bookshelfZone = { x: bookshelfCenterX0 - 48, y: bookshelfCenterY0 - 48, width: 96, height: 96 };
+    const bookshelfZone = { x: bookshelfCenterX0 - 64, y: bookshelfCenterY0 - 64, width: 128, height: 128 };
     // 告示觸發範圍：月台 col 39 左緣、row 26，與車廂三同為 3x3 格（96x96）
     const noticeZone = { x: (39 * TILE_SIZE) - 48, y: 26 * TILE_SIZE + TILE_SIZE / 2 - 48, width: 96, height: 96 };
     // 車廂3 車窗互動區1：介於 col 24,25 且 row 8，改為 3x3 格（寬高 96）
