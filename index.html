@@ -2749,6 +2749,15 @@
     const car3CartZone = { x: 1461 - 48, y: 320 - 48, width: 96, height: 96 };
 
     const keys = { up: false, down: false, left: false, right: false };
+    function clearKeys() { keys.up = keys.down = keys.left = keys.right = false; }
+    function releasePopupLock() {
+      gameState.inputLocked = false;
+      clearKeys();
+      player.moving = false;
+      player.targetX = player.x;
+      player.targetY = player.y;
+      player.remainingDist = 0;
+    }
     let wasInZone = false;
     let isInZoneNow = false;
     let isNearZoneNow = false;
@@ -3580,6 +3589,7 @@
         if (bottomSheetScrollZhou) bottomSheetScrollZhou.scrollTop = 0;
         popup.classList.remove('hidden');
         achievementUnlock('zhou');
+        clearKeys();
         gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheet) bottomSheet.classList.add('open');
@@ -3587,8 +3597,8 @@
         });
       } else if (!inZone && wasInZone) {
         if (bottomSheet) bottomSheet.classList.remove('open');
-        gameState.inputLocked = false;
-        setTimeout(function () { popup.classList.add('hidden'); }, 300);
+      releasePopupLock();
+      setTimeout(function () { popup.classList.add('hidden'); }, 300);
       }
       if (inHuangZone && !wasInHuangZone) {
         popup.classList.add('hidden');
@@ -3618,6 +3628,7 @@
         if (bottomSheetScrollHuang) bottomSheetScrollHuang.scrollTop = 0;
         if (popupHuang) popupHuang.classList.remove('hidden');
         achievementUnlock('huang');
+        clearKeys();
         gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetHuang) bottomSheetHuang.classList.add('open');
@@ -3625,7 +3636,7 @@
         });
       } else if (!inHuangZone && wasInHuangZone) {
         if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupHuang) popupHuang.classList.add('hidden'); }, 300);
       }
       if (inDuZone && !wasInDuZone) {
@@ -3656,6 +3667,8 @@
         if (bottomSheetScrollDu) bottomSheetScrollDu.scrollTop = 0;
         if (popupDu) popupDu.classList.remove('hidden');
         achievementUnlock('du');
+        clearKeys();
+        clearKeys();
         gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetDu) bottomSheetDu.classList.add('open');
@@ -3663,7 +3676,7 @@
         });
       } else if (!inDuZone && wasInDuZone) {
         if (bottomSheetDu) bottomSheetDu.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupDu) popupDu.classList.add('hidden'); }, 300);
       }
       if (inLiuZone && !wasInLiuZone) {
@@ -3694,6 +3707,8 @@
         if (bottomSheetScrollLiu) bottomSheetScrollLiu.scrollTop = 0;
         if (popupLiu) popupLiu.classList.remove('hidden');
         achievementUnlock('liu');
+        clearKeys();
+        clearKeys();
         gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetLiu) bottomSheetLiu.classList.add('open');
@@ -3701,7 +3716,7 @@
         });
       } else if (!inLiuZone && wasInLiuZone) {
         if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupLiu) popupLiu.classList.add('hidden'); }, 300);
       }
       if (inYangZone && !wasInYangZone) {
@@ -3732,6 +3747,7 @@
         if (bottomSheetScrollYang) bottomSheetScrollYang.scrollTop = 0;
         if (popupYang) popupYang.classList.remove('hidden');
         achievementUnlock('yang');
+        clearKeys();
         gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetYang) bottomSheetYang.classList.add('open');
@@ -3739,7 +3755,7 @@
         });
       } else if (!inYangZone && wasInYangZone) {
         if (bottomSheetYang) bottomSheetYang.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupYang) popupYang.classList.add('hidden'); }, 300);
       }
       if (inWangZone && !wasInWangZone) {
@@ -3770,6 +3786,7 @@
         if (bottomSheetScrollWang) bottomSheetScrollWang.scrollTop = 0;
         if (popupWang) popupWang.classList.remove('hidden');
         achievementUnlock('wang');
+        clearKeys();
         gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetWang) bottomSheetWang.classList.add('open');
@@ -3777,7 +3794,7 @@
         });
       } else if (!inWangZone && wasInWangZone) {
         if (bottomSheetWang) bottomSheetWang.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupWang) popupWang.classList.add('hidden'); }, 300);
       }
       if (inXuZone && !wasInXuZone) {
@@ -3808,6 +3825,7 @@
         if (bottomSheetScrollXu) bottomSheetScrollXu.scrollTop = 0;
         if (popupXu) popupXu.classList.remove('hidden');
         achievementUnlock('xu');
+        clearKeys();
         gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetXu) bottomSheetXu.classList.add('open');
@@ -3815,7 +3833,7 @@
         });
       } else if (!inXuZone && wasInXuZone) {
         if (bottomSheetXu) bottomSheetXu.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupXu) popupXu.classList.add('hidden'); }, 300);
       }
       if (inZhugongZone && !wasInZhugongZone) {
@@ -3846,6 +3864,7 @@
         if (bottomSheetScrollZhugong) bottomSheetScrollZhugong.scrollTop = 0;
         if (popupZhugong) popupZhugong.classList.remove('hidden');
         achievementUnlock('zhugong');
+        clearKeys();
         gameState.inputLocked = true;
         requestAnimationFrame(function () {
           if (bottomSheetZhugong) bottomSheetZhugong.classList.add('open');
@@ -3853,7 +3872,7 @@
         });
       } else if (!inZhugongZone && wasInZhugongZone) {
         if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupZhugong) popupZhugong.classList.add('hidden'); }, 300);
       }
       var platformPopupOpenedThisFrame = false;
@@ -3889,6 +3908,7 @@
         if (bottomSheetStationSign) bottomSheetStationSign.classList.remove('open');
         if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.remove('open');
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('bento');
         requestAnimationFrame(function () {
@@ -3896,7 +3916,7 @@
         });
       } else if (!inBentoZone && wasInBentoZone) {
         if (bottomSheetBento) bottomSheetBento.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupBento) popupBento.classList.add('hidden'); }, 300);
       }
       if (inToiletZone && !wasInToiletZone && !platformPopupOpenedThisFrame) {
@@ -3932,6 +3952,7 @@
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
         if (bottomSheetScrollToilet) bottomSheetScrollToilet.scrollTop = 0;
         if (popupToilet) popupToilet.classList.remove('hidden');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('toilet');
         requestAnimationFrame(function () {
@@ -3939,7 +3960,7 @@
         });
       } else if (!inToiletZone && wasInToiletZone) {
         if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupToilet) popupToilet.classList.add('hidden'); }, 300);
       }
       if (inTicketZone && !wasInTicketZone && !platformPopupOpenedThisFrame) {
@@ -3979,6 +4000,7 @@
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
         if (bottomSheetScrollTicket) bottomSheetScrollTicket.scrollTop = 0;
         if (popupTicket) popupTicket.classList.remove('hidden');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('ticket');
         requestAnimationFrame(function () {
@@ -3987,7 +4009,7 @@
       } else if (!inTicketZone && wasInTicketZone) {
         if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
         if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupTicket) popupTicket.classList.add('hidden'); }, 300);
       }
       if (inBookshelfZone && !wasInBookshelfZone && !platformPopupOpenedThisFrame) {
@@ -4026,6 +4048,7 @@
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
         if (bottomSheetScrollBookshelf) bottomSheetScrollBookshelf.scrollTop = 0;
         if (popupBookshelf) popupBookshelf.classList.remove('hidden');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('bookshelf');
         requestAnimationFrame(function () {
@@ -4034,7 +4057,7 @@
       } else if (!inBookshelfZone && wasInBookshelfZone) {
         if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
         if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupBookshelf) popupBookshelf.classList.add('hidden'); }, 300);
       }
       if (inNoticeZone && !wasInNoticeZone && !platformPopupOpenedThisFrame) {
@@ -4073,6 +4096,7 @@
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
         if (bottomSheetScrollNotice) bottomSheetScrollNotice.scrollTop = 0;
         if (popupNotice) popupNotice.classList.remove('hidden');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('notice');
         requestAnimationFrame(function () {
@@ -4080,7 +4104,7 @@
         });
       } else if (!inNoticeZone && wasInNoticeZone) {
         if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupNotice) popupNotice.classList.add('hidden'); }, 300);
       }
       if (inShinonggongshangZone && !wasInShinonggongshangZone && !platformPopupOpenedThisFrame) {
@@ -4119,6 +4143,7 @@
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
         if (bottomSheetScrollShinonggongshang) bottomSheetScrollShinonggongshang.scrollTop = 0;
         if (popupShinonggongshang) popupShinonggongshang.classList.remove('hidden');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('shinonggongshang');
         requestAnimationFrame(function () {
@@ -4126,7 +4151,7 @@
         });
       } else if (!inShinonggongshangZone && wasInShinonggongshangZone) {
         if (bottomSheetShinonggongshang) bottomSheetShinonggongshang.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupShinonggongshang) popupShinonggongshang.classList.add('hidden'); }, 300);
       }
       if (inStationSignZone && !wasInStationSignZone && !platformPopupOpenedThisFrame) {
@@ -4167,6 +4192,7 @@
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
         if (bottomSheetScrollStationSign) bottomSheetScrollStationSign.scrollTop = 0;
         if (popupStationSign) popupStationSign.classList.remove('hidden');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('stationSign');
         requestAnimationFrame(function () {
@@ -4174,7 +4200,7 @@
         });
       } else if (!inStationSignZone && wasInStationSignZone) {
         if (bottomSheetStationSign) bottomSheetStationSign.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupStationSign) popupStationSign.classList.add('hidden'); }, 300);
       }
       if (inElectronicBoardLeftZone && !wasInElectronicBoardLeftZone && !platformPopupOpenedThisFrame) {
@@ -4215,6 +4241,7 @@
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
         if (bottomSheetScrollElectronicBoardLeft) bottomSheetScrollElectronicBoardLeft.scrollTop = 0;
         if (popupElectronicBoardLeft) popupElectronicBoardLeft.classList.remove('hidden');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('electronicBoardLeft');
         requestAnimationFrame(function () {
@@ -4222,7 +4249,7 @@
         });
       } else if (!inElectronicBoardLeftZone && wasInElectronicBoardLeftZone) {
         if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupElectronicBoardLeft) popupElectronicBoardLeft.classList.add('hidden'); }, 300);
       }
       if (inElectronicBoardRightZone && !wasInElectronicBoardRightZone && !platformPopupOpenedThisFrame) {
@@ -4263,6 +4290,7 @@
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
         if (bottomSheetScrollElectronicBoardRight) bottomSheetScrollElectronicBoardRight.scrollTop = 0;
         if (popupElectronicBoardRight) popupElectronicBoardRight.classList.remove('hidden');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('electronicBoardRight');
         requestAnimationFrame(function () {
@@ -4270,7 +4298,7 @@
         });
       } else if (!inElectronicBoardRightZone && wasInElectronicBoardRightZone) {
         if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupElectronicBoardRight) popupElectronicBoardRight.classList.add('hidden'); }, 300);
       }
 
@@ -4295,6 +4323,7 @@
         if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.remove('open');
         if (popupCar3Window) popupCar3Window.classList.remove('hidden');
         if (popupCar3Window2) popupCar3Window2.classList.add('hidden');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('car3Window');
         requestAnimationFrame(function () {
@@ -4314,7 +4343,7 @@
             videoCar3Window.currentTime = 0;
           } catch (e) {}
         }
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupCar3Window) popupCar3Window.classList.add('hidden'); }, 300);
       }
 
@@ -4339,6 +4368,7 @@
         if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
         if (bottomSheetCar3Window) bottomSheetCar3Window.classList.remove('open');
         if (popupCar3Window2) popupCar3Window2.classList.remove('hidden');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('car3Window2');
         requestAnimationFrame(function () {
@@ -4358,7 +4388,7 @@
             videoCar3Window2.currentTime = 0;
           } catch (e) {}
         }
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupCar3Window2) popupCar3Window2.classList.add('hidden'); }, 300);
       }
 
@@ -4399,6 +4429,7 @@
         if (bottomSheetScrollCar2Orc) bottomSheetScrollCar2Orc.scrollTop = 0;
         if (scrollProgressBarCar2Orc) scrollProgressBarCar2Orc.style.top = '0%';
         if (popupCar2Orc) popupCar2Orc.classList.remove('hidden');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('car2Orc');
         requestAnimationFrame(function () {
@@ -4406,7 +4437,7 @@
         });
       } else if (!inCar2OrcZone && wasInCar2OrcZone) {
         if (bottomSheetCar2Orc) bottomSheetCar2Orc.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupCar2Orc) popupCar2Orc.classList.add('hidden'); }, 300);
       }
 
@@ -4447,6 +4478,7 @@
         if (bottomSheetScrollCar2Doc2) bottomSheetScrollCar2Doc2.scrollTop = 0;
         if (scrollProgressBarCar2Doc2) scrollProgressBarCar2Doc2.style.top = '0%';
         if (popupCar2Doc2) popupCar2Doc2.classList.remove('hidden');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('car2Doc2');
         requestAnimationFrame(function () {
@@ -4454,7 +4486,7 @@
         });
       } else if (!inCar2Doc2Zone && wasInCar2Doc2Zone) {
         if (bottomSheetCar2Doc2) bottomSheetCar2Doc2.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupCar2Doc2) popupCar2Doc2.classList.add('hidden'); }, 300);
       }
 
@@ -4495,6 +4527,7 @@
         if (bottomSheetScrollCar2Doc3) bottomSheetScrollCar2Doc3.scrollTop = 0;
         if (scrollProgressBarCar2Doc3) scrollProgressBarCar2Doc3.style.top = '0%';
         if (popupCar2Doc3) popupCar2Doc3.classList.remove('hidden');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('car2Doc3');
         requestAnimationFrame(function () {
@@ -4502,7 +4535,7 @@
         });
       } else if (!inCar2Doc3Zone && wasInCar2Doc3Zone) {
         if (bottomSheetCar2Doc3) bottomSheetCar2Doc3.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupCar2Doc3) popupCar2Doc3.classList.add('hidden'); }, 300);
       }
 
@@ -4543,6 +4576,7 @@
         if (bottomSheetScrollCar2Doc4) bottomSheetScrollCar2Doc4.scrollTop = 0;
         if (scrollProgressBarCar2Doc4) scrollProgressBarCar2Doc4.style.top = '0%';
         if (popupCar2Doc4) popupCar2Doc4.classList.remove('hidden');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('car2Doc4');
         requestAnimationFrame(function () {
@@ -4550,7 +4584,7 @@
         });
       } else if (!inCar2Doc4Zone && wasInCar2Doc4Zone) {
         if (bottomSheetCar2Doc4) bottomSheetCar2Doc4.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupCar2Doc4) popupCar2Doc4.classList.add('hidden'); }, 300);
       }
 
@@ -4579,6 +4613,7 @@
         if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.remove('open');
         if (bottomSheetCar3Door) bottomSheetCar3Door.classList.remove('open');
         if (popupCar3Window3) popupCar3Window3.classList.remove('hidden');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('car3Window3');
         requestAnimationFrame(function () {
@@ -4598,7 +4633,7 @@
             videoCar3Window3.currentTime = 0;
           } catch (e) {}
         }
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupCar3Window3) popupCar3Window3.classList.add('hidden'); }, 300);
       }
 
@@ -4625,6 +4660,7 @@
         if (bottomSheetCar3Window) bottomSheetCar3Window.classList.remove('open');
         if (bottomSheetCar3Window2) bottomSheetCar3Window2.classList.remove('open');
         if (popupCar3Door) popupCar3Door.classList.remove('hidden');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('car3Door');
         requestAnimationFrame(function () {
@@ -4644,7 +4680,7 @@
             videoCar3Door.currentTime = 0;
           } catch (e) {}
         }
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupCar3Door) popupCar3Door.classList.add('hidden'); }, 300);
       }
 
@@ -4657,6 +4693,7 @@
           }
         } catch (e) {}
         if (popupCar3Cart) popupCar3Cart.classList.remove('hidden');
+        clearKeys();
         gameState.inputLocked = true;
         achievementUnlock('car3Cart');
         requestAnimationFrame(function () {
@@ -4664,7 +4701,7 @@
         });
       } else if (!inCar3CartZone && wasInCar3CartZone) {
         if (bottomSheetCar3Cart) bottomSheetCar3Cart.classList.remove('open');
-        gameState.inputLocked = false;
+        releasePopupLock();
         setTimeout(function () { if (popupCar3Cart) popupCar3Cart.classList.add('hidden'); }, 300);
       }
 
@@ -5531,107 +5568,107 @@
     // --- Popup (Bottom Sheet) behavior ---
     function closeModal() {
       if (bottomSheet) bottomSheet.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { popup.classList.add('hidden'); }, 300);
     }
     function closeModalHuang() {
       if (bottomSheetHuang) bottomSheetHuang.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupHuang) popupHuang.classList.add('hidden'); }, 300);
     }
     function closeModalDu() {
       if (bottomSheetDu) bottomSheetDu.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupDu) popupDu.classList.add('hidden'); }, 300);
     }
     function closeModalLiu() {
       if (bottomSheetLiu) bottomSheetLiu.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupLiu) popupLiu.classList.add('hidden'); }, 300);
     }
     function closeModalYang() {
       if (bottomSheetYang) bottomSheetYang.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupYang) popupYang.classList.add('hidden'); }, 300);
     }
     function closeModalWang() {
       if (bottomSheetWang) bottomSheetWang.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupWang) popupWang.classList.add('hidden'); }, 300);
     }
     function closeModalZhugong() {
       if (bottomSheetZhugong) bottomSheetZhugong.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupZhugong) popupZhugong.classList.add('hidden'); }, 300);
     }
     function closeModalBento() {
       if (bottomSheetBento) bottomSheetBento.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupBento) popupBento.classList.add('hidden'); }, 300);
     }
     function closeModalToilet() {
       if (bottomSheetToilet) bottomSheetToilet.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupToilet) popupToilet.classList.add('hidden'); }, 300);
     }
     function closeModalTicket() {
       if (bottomSheetTicket) bottomSheetTicket.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupTicket) popupTicket.classList.add('hidden'); }, 300);
     }
     function closeModalBookshelf() {
       if (bottomSheetBookshelf) bottomSheetBookshelf.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupBookshelf) popupBookshelf.classList.add('hidden'); }, 300);
     }
     function closeModalNotice() {
       if (bottomSheetNotice) bottomSheetNotice.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupNotice) popupNotice.classList.add('hidden'); }, 300);
     }
     function closeModalStationSign() {
       if (bottomSheetStationSign) bottomSheetStationSign.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupStationSign) popupStationSign.classList.add('hidden'); }, 300);
     }
     function closeModalElectronicBoardLeft() {
       if (bottomSheetElectronicBoardLeft) bottomSheetElectronicBoardLeft.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupElectronicBoardLeft) popupElectronicBoardLeft.classList.add('hidden'); }, 300);
     }
     function closeModalElectronicBoardRight() {
       if (bottomSheetElectronicBoardRight) bottomSheetElectronicBoardRight.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupElectronicBoardRight) popupElectronicBoardRight.classList.add('hidden'); }, 300);
     }
     function closeModalShinonggongshang() {
       if (bottomSheetShinonggongshang) bottomSheetShinonggongshang.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupShinonggongshang) popupShinonggongshang.classList.add('hidden'); }, 300);
     }
     function closeModalXu() {
       if (bottomSheetXu) bottomSheetXu.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupXu) popupXu.classList.add('hidden'); }, 300);
     }
     function closeModalCar2Orc() {
       if (bottomSheetCar2Orc) bottomSheetCar2Orc.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupCar2Orc) popupCar2Orc.classList.add('hidden'); }, 300);
     }
     function closeModalCar2Doc2() {
       if (bottomSheetCar2Doc2) bottomSheetCar2Doc2.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupCar2Doc2) popupCar2Doc2.classList.add('hidden'); }, 300);
     }
     function closeModalCar2Doc3() {
       if (bottomSheetCar2Doc3) bottomSheetCar2Doc3.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupCar2Doc3) popupCar2Doc3.classList.add('hidden'); }, 300);
     }
     function closeModalCar2Doc4() {
       if (bottomSheetCar2Doc4) bottomSheetCar2Doc4.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupCar2Doc4) popupCar2Doc4.classList.add('hidden'); }, 300);
     }
     function closeModalCar3Window() {
@@ -5642,7 +5679,7 @@
           videoCar3Window.currentTime = 0;
         } catch (e) {}
       }
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupCar3Window) popupCar3Window.classList.add('hidden'); }, 300);
     }
     function closeModalCar3Window2() {
@@ -5653,7 +5690,7 @@
           videoCar3Window2.currentTime = 0;
         } catch (e) {}
       }
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupCar3Window2) popupCar3Window2.classList.add('hidden'); }, 300);
     }
 
@@ -5665,7 +5702,7 @@
           videoCar3Window3.currentTime = 0;
         } catch (e) {}
       }
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupCar3Window3) popupCar3Window3.classList.add('hidden'); }, 300);
     }
 
@@ -5677,13 +5714,13 @@
           videoCar3Door.currentTime = 0;
         } catch (e) {}
       }
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupCar3Door) popupCar3Door.classList.add('hidden'); }, 300);
     }
 
     function closeModalCar3Cart() {
       if (bottomSheetCar3Cart) bottomSheetCar3Cart.classList.remove('open');
-      gameState.inputLocked = false;
+      releasePopupLock();
       setTimeout(function () { if (popupCar3Cart) popupCar3Cart.classList.add('hidden'); }, 300);
     }
 
