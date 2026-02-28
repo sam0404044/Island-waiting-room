@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-  <title>島嶼候車室－開往民主的轉型正義列車</title>
+  <title>《島嶼候車室》線上體驗展：開往民主的轉型正義列車即將發車！</title>
   <!-- Social / link preview -->
-  <meta property="og:title" content="島嶼候車室－開往民主的轉型正義列車" />
-  <meta property="og:description" content="在車站場景中，跟隨角色一同尋找轉型正義的故事與見證點。" />
+  <meta property="og:title" content="《島嶼候車室》線上體驗展：開往民主的轉型正義列車即將發車！" />
+  <meta property="og:description" content="在靜謐的候車室裡，威權歷史是如何成為日常的？點擊進入，領取你的民主快車票。" />
   <meta property="og:image" content="assets/social_preview.png" />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -2350,6 +2350,11 @@
     const debugPanelText = document.getElementById('debugPanelText');
     const debugCopyBtn = document.getElementById('debugCopyBtn');
 
+    // 正式上線設為 false 關閉 DEBUG；開發時改為 true 可顯示 DEBUG 按鈕與座標面板（程式碼保留不刪）
+    var DEBUG_MODE = false;
+    if (!DEBUG_MODE && debugBtn) { debugBtn.style.display = 'none'; }
+    if (!DEBUG_MODE && debugPanel) { debugPanel.classList.add('hidden'); }
+
     // Logical game size; will be updated to match background image dimensions
     // World size (map) and view size (visible screen window in world coordinates)
     let WORLD_WIDTH = 1024;
@@ -4562,7 +4567,7 @@
       // 車廂3 餐車：靠近時開啟「分享本遊戲」對話框
       if (inCar3CartZone && !wasInCar3CartZone) {
         try {
-          var shareUrl = window.location.href;
+          var shareUrl = 'https://sam0404044.github.io/Island-waiting-room/';
           if (car3CartShareUrl) {
             car3CartShareUrl.textContent = shareUrl;
           }
