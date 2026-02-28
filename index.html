@@ -2589,14 +2589,22 @@
     // Player directional sprites (32x32). Put these PNGs in the same folder.
     const playerSprites = {
       up: new Image(),
+      upWalk: new Image(),
       down: new Image(),
+      downWalk: new Image(),
       left: new Image(),
-      right: new Image()
+      leftWalk: new Image(),
+      right: new Image(),
+      rightWalk: new Image()
     };
     playerSprites.up.src = 'characters/player_up.png';
+    playerSprites.upWalk.src = 'characters/player_up_walk.png';
     playerSprites.down.src = 'characters/player_down.png';
+    playerSprites.downWalk.src = 'characters/player_down_walk.png';
     playerSprites.left.src = 'characters/player_left.png';
+    playerSprites.leftWalk.src = 'characters/player_left_walk.png';
     playerSprites.right.src = 'characters/player_right.png';
+    playerSprites.rightWalk.src = 'characters/player_right_walk.png';
 
     // 出生點：x、y 為地圖「比例」0～1（0.18=左側18%，0.88=下方88%）；勿用 5.40 會出界
     const PLAYER_POS = { x: 0.40, y: 0.80 };
@@ -2613,7 +2621,8 @@
       targetY: 0,
       remainingDist: 0,
       speed: MOVE_SPEED,
-      dir: 'down' // current facing direction: 'up' | 'down' | 'left' | 'right'
+      dir: 'down', // current facing direction: 'up' | 'down' | 'left' | 'right'
+      idleSince: 0  // 停止移動時的時間戳，用於 0.3 秒後換回站立圖
     };
 
     // Single interaction point: where the character is standing on the screenshot.
@@ -3098,6 +3107,7 @@
           player.x = player.targetX;
           player.y = player.targetY;
           player.moving = false;
+          player.idleSince = Date.now();
           player.remainingDist = 0;
         } else {
           const stepX = (dx / dist) * step;
@@ -3114,6 +3124,7 @@
       // 切換地圖時清除移動狀態，避免還往舊地圖座標移動
       function onMapSwitch() {
         player.moving = false;
+        player.idleSince = Date.now();
         player.targetX = player.x;
         player.targetY = player.y;
         player.remainingDist = 0;
@@ -5357,7 +5368,37 @@
       const x = p.x - halfW;
       const y = p.y - halfH;
 
-      const sprite = playerSprites[player.dir];
+      var sprite = playerSprites[player.dir];
+      // 朝上時：走動中來回撥放 站立 / walk，停止後 0.3 秒換回站立圖
+      if (player.dir === 'up' && playerSprites.upWalk && playerSprites.upWalk.complete && playerSprites.upWalk.naturalWidth > 0) {
+        if (player.moving) {
+          sprite = (Math.floor(Date.now() / 200) % 2 === 0) ? playerSprites.up : playerSprites.upWalk;
+        } else {
+          sprite = (Date.now() - (player.idleSince || 0) >= 300) ? playerSprites.up : playerSprites.upWalk;
+        }
+      }
+      // 朝下時：同上
+      if (player.dir === 'down' && playerSprites.downWalk && playerSprites.downWalk.complete && playerSprites.downWalk.naturalWidth > 0) {
+        if (player.moving) {
+          sprite = (Math.floor(Date.now() / 200) % 2 === 0) ? playerSprites.down : playerSprites.downWalk;
+        } else {
+          sprite = (Date.now() - (player.idleSince || 0) >= 300) ? playerSprites.down : playerSprites.downWalk;
+        }
+      }
+      if (player.dir === 'right' && playerSprites.rightWalk && playerSprites.rightWalk.complete && playerSprites.rightWalk.naturalWidth > 0) {
+        if (player.moving) {
+          sprite = (Math.floor(Date.now() / 200) % 2 === 0) ? playerSprites.right : playerSprites.rightWalk;
+        } else {
+          sprite = (Date.now() - (player.idleSince || 0) >= 300) ? playerSprites.right : playerSprites.rightWalk;
+        }
+      }
+      if (player.dir === 'left' && playerSprites.leftWalk && playerSprites.leftWalk.complete && playerSprites.leftWalk.naturalWidth > 0) {
+        if (player.moving) {
+          sprite = (Math.floor(Date.now() / 200) % 2 === 0) ? playerSprites.left : playerSprites.leftWalk;
+        } else {
+          sprite = (Date.now() - (player.idleSince || 0) >= 300) ? playerSprites.left : playerSprites.leftWalk;
+        }
+      }
       if (sprite && sprite.complete && sprite.naturalWidth > 0) {
         // Use directional sprite image with a soft glow
         ctx.save();
